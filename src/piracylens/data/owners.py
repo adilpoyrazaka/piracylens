@@ -6,8 +6,10 @@ Owners are therefore grouped by a rule-based key derived from `owner_name`.
 
 from __future__ import annotations
 
+import html
 import re
 import unicodedata
+from html.entities import html5
 
 __all__ = ["normalize_owner", "split_owners"]
 
@@ -53,11 +55,35 @@ def _fix_homoglyphs(text: str) -> str:
     )
 
 
+_ENTITY = re.compile(r"&(?:#[0-9]+|#[xX][0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);")
+
+
+def _decode_entity(match: re.Match[str]) -> str:
+    entity = match.group(0)
+    if entity[1] == "#":
+        return html.unescape(entity)
+    return html5.get(entity[1:], entity)  # unknown names such as '&BassArena;' stay as they are
+
+
+def _unescape_html(text: str) -> str:
+    """Decode ';'-terminated HTML entities, repeating for nested input such as '&amp;amp;'.
+
+    Entities without a closing ';' are left alone: lenient decoding turns the real name
+    'TT&GT' into 'TT>'. Each decoding pass shortens the text, so the loop always ends.
+    """
+    while True:
+        decoded = _ENTITY.sub(_decode_entity, text)
+        if decoded == text:
+            return text
+        text = decoded
+
+
 def normalize_owner(name: str | None) -> str:
     """Return a grouping key for a single owner name ('' for empty input)."""
     if not name:
         return ""
-    text = unicodedata.normalize("NFKC", name)
+    text = unicodedata.normalize("NFKC", _unescape_html(name))
+    text = "".join(ch for ch in text if unicodedata.category(ch) != "Cf")  # zero-width etc.
     text = _fix_homoglyphs(text).casefold()
     text = text.replace("\u0307", "")  # Turkish "İ" casefolds to "i" + combining dot
     text = _QUOTES.sub("", text).translate(_TRANSLIT)
