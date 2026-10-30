@@ -1,0 +1,98 @@
+   # Reporter groups. Keys are normalized reporter names (output of normalize_owner).
+# Merge rule: an account joins an agency group only with client-portfolio evidence.
+# Accounts that file only under their own name stay separate (e.g. groupib, f6 partners,
+# red points partners, muso partners): no portfolio evidence, possible impersonation.
+# Variants below 100 requests (2021+) are not listed (heuristic threshold; known limitation).
+groups:
+  f6:
+    evidence:
+      basis: reporter
+      status: verified
+      note: >-
+        Single-month account handoffs Group-IB -> F.A.C.C.T. (2024-11) -> F6 (2025-04);
+        owner coverage 98-99% vs ~50% baseline (ContentScan). Corporate identity is carried.
+    brands:
+      - brand: Group-IB
+        keys: ["group-ib"]
+      - brand: F.A.C.C.T.
+        keys: ["f.a.c.c.t", "f.a.k.k.t"]
+      - brand: F6
+        keys: ["f6"]
+
+  dmcaforce:
+    evidence:
+      basis: reporter
+      status: verified
+      note: Spelling variants; handoff 2022 -> 2023; same top owners.
+    brands:
+      - brand: DMCA Force
+        keys: ["dmcaforce", "dmca force"]
+
+  redpoints:
+    evidence:
+      basis: reporter
+      status: verified
+      note: Spelling variants; handoff 2022 -> 2023; shared top owners (Atresmedia).
+    brands:
+      - brand: Red Points
+        keys: ["redpoints solutions s.l", "red points solutions sl", "red points solutions s.l"]
+
+  markscan:
+    evidence:
+      basis: reporter
+      status: carried
+      note: Variants differ only by legal form or spacing; portfolio overlap not measured.
+    brands:
+      - brand: MarkScan
+        keys: ["markscan", "markscan digital ip private", "markscan digital ip pvt", "mark scan"]
+
+  deleo:
+    evidence:
+      basis: reporter
+      status: verified
+      note: Same owners (same individuals) under both accounts.
+    brands:
+      - brand: Deleo Solutions
+        keys: ["deleo solutions"]
+      - brand: Deleo Solutions Influencers
+        keys: ["deleo solutions influencers"]
+
+  muso:
+    evidence:
+      basis: reporter
+      status: verified
+      note: Handoff 2022 -> 2023; owner coverage 91% / 65%; same top owner (AIM).
+    brands:
+      - brand: MUSO
+        keys: ["muso.com anti-piracy", "muso tnt"]
+
+  starmedia:
+    evidence:
+      basis: reporter
+      status: verified
+      note: Parallel accounts in 2021; owner coverage 77-88% vs ~50% Russian-network baseline.
+    brands:
+      - brand: Star Media
+        keys: ["star media"]
+      - brand: Star Media Content Protection
+        keys: ["star media content protection"]
+
+  indonesia-government:
+    evidence:
+      basis: reporter
+      status: carried
+      note: >-
+        Spelling variants, 2025-2026, all filed under their own name; whether all are the
+        same government body cannot be verified.
+    brands:
+      - brand: Government of Indonesia
+        keys:
+          - "government official indonesia"
+          - "government from indonesian"
+          - "government indonesia"
+          - "government indonesian"
+          - "government of indonesia"
+          - "government offcial indonesia"
+          - "government official indonesia!"
+          - "government from indonesia"
+          - "government official indonesian"

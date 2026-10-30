@@ -1,6 +1,7 @@
-"""Tests for alias file loading and validation (D-037, D-039)."""
+"""Tests for alias file loading and validation."""
 
 import copy
+from pathlib import Path
 
 import pytest
 import yaml
@@ -206,3 +207,11 @@ def test_missing_keys_reports_keys_absent_from_mapping():
     rows = parse_aliases(reporter(), "reporter")
     known = ["group-ib", "f6", "f.a.c.c.t"]
     assert missing_keys(rows, known) == ["f.a.k.k.t"]
+
+
+CONFIGS = Path(__file__).resolve().parents[1] / "configs"
+
+
+def test_repo_reporter_aliases_file_is_valid():
+    rows = load_aliases(CONFIGS / "reporter_aliases.yaml", "reporter")
+    assert rows
