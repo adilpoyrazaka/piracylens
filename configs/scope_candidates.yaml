@@ -29,7 +29,28 @@ sources:
     # Agencies picked by hand as film/TV (reporter groups or normalized reporter keys).
     # Filled and committed after the agency table is reviewed and before any owner
     # candidates are produced; candidate generation refuses to run while it is empty.
-    selected: []
+    # Decided by hand on 2026-10-31 from the agency table (volumes and seed share only),
+    # before any owner candidate list existed.
+    selected:
+      - "contentscan"
+      - "f6"
+      - "starmedia"
+      - "redpoints"
+      - "digiguardians"
+      - "vindex"
+      - "markscan"
+      - "marketly"
+      - "aiplex software private"
+      - "smart protection s.l"
+      - "irdeto usa"
+      - "axghouse antipiracy oü"
+      - "leakid"
+      - "start.film"
+      - "北京爱奇艺科技有限公司"
+      - "tnt-teleset"
+      - "vobile"
+      - "3ants development strategies s.l"
+      - "tsentral partnership"
 
   # Prefix scan over normalized owner keys. Prefixes are written in normalized form.
   # "prefix": plain startswith. "word": the prefix must not be followed by a letter or digit.
