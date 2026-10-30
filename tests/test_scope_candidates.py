@@ -1,19 +1,25 @@
 """Tests for scope candidate parameters and matching helpers."""
 
+import csv
 import datetime as dt
 import re
 from pathlib import Path
 
+import duckdb
 import pytest
+import yaml
 
 from piracylens.data.aliases import AliasRow
 from piracylens.data.scope_candidates import (
     ParamsError,
+    absent_keys,
+    build_agency_table,
     find_prefix_matches,
     load_params,
     matches_prefix,
     parse_params,
     resolve_reporter,
+    unknown_reporters,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -149,3 +155,103 @@ def test_repo_parameter_file_is_valid():
     assert modes.count("word") == 49
     assert len(params.seed_owner_keys) == 104
     assert params.network_reporters == ("contentscan", "f6", "starmedia", "vindex")
+
+
+def test_absent_keys_returns_sorted_missing():
+    assert absent_keys(["b", "a", "c", "a"], ["c"]) == ["a", "b"]
+    assert absent_keys([], ["c"]) == []
+
+
+def test_unknown_reporters_accepts_groups_and_data_keys():
+    lookup = {"group-ib": AliasRow("group-ib", "f6", "Group-IB", "reporter", "verified")}
+    result = unknown_reporters(["f6", "contentscan", "vindex"], lookup, ["contentscan"])
+    assert result == ["vindex"]
+
+
+def _write_synthetic(tmp_path: Path, seed: list[str]) -> dict[str, Path]:
+    params = _valid()
+    params["sources"]["protection_network"]["reporters"] = ["f6"]
+    params["sources"]["film_tv_agencies"]["min_reporter_requests"] = 2
+    params["seed_owner_keys"] = seed
+    paths = {
+        "params": tmp_path / "params.yaml",
+        "aliases": tmp_path / "aliases.yaml",
+        "requests": tmp_path / "requests.parquet",
+        "owner_keys": tmp_path / "owner_keys.parquet",
+        "out": tmp_path / "out" / "agencies.csv",
+    }
+    paths["params"].write_text(yaml.safe_dump(params), encoding="utf-8")
+    paths["aliases"].write_text(
+        yaml.safe_dump(
+            {
+                "groups": {
+                    "f6": {
+                        "evidence": {"basis": "reporter", "status": "verified"},
+                        "brands": [
+                            {"brand": "Group-IB", "keys": ["group-ib"]},
+                            {"brand": "F6", "keys": ["f6"]},
+                        ],
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    con = duckdb.connect()
+    con.execute(
+        f"""
+        COPY (SELECT * FROM (VALUES
+            (1, TIMESTAMP '2020-06-01', 'Group-IB', 'VGTRK'),
+            (2, TIMESTAMP '2021-02-01', 'Group-IB', 'VGTRK'),
+            (3, TIMESTAMP '2022-03-01', 'F6', 'Ivi.ru'),
+            (4, TIMESTAMP '2023-04-01', 'F6', 'Other Studio'),
+            (5, TIMESTAMP '2023-05-01', 'Lone Agency', 'Other Studio'),
+            (6, TIMESTAMP '2023-06-01', NULL, 'VGTRK')
+        ) AS t(request_id, requested_at_utc, reporter_name, owner_name))
+        TO '{paths["requests"]}' (FORMAT parquet)
+        """
+    ).fetchall()
+    con.execute(
+        f"""
+        COPY (SELECT * FROM (VALUES
+            ('VGTRK', 'vgtrk'), ('Ivi.ru', 'ivi.ru'), ('Other Studio', 'other studio')
+        ) AS t(owner_name, owner_key))
+        TO '{paths["owner_keys"]}' (FORMAT parquet)
+        """
+    ).fetchall()
+    return paths
+
+
+def _run(paths: dict[str, Path]) -> None:
+    build_agency_table(
+        paths["params"],
+        paths["aliases"],
+        paths["requests"],
+        paths["owner_keys"],
+        paths["out"],
+        threads=1,
+        memory_limit="1GB",
+    )
+
+
+def test_build_agency_table_on_synthetic_data(tmp_path):
+    paths = _write_synthetic(tmp_path, ["vgtrk", "ivi.ru"])
+    _run(paths)
+    with paths["out"].open(encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+    # Request 1 is before the window, request 6 has no reporter, "lone agency" is below
+    # the volume threshold; Group-IB and F6 are merged into one group.
+    assert [r["reporter_group"] for r in rows] == ["f6"]
+    assert rows[0]["requests"] == "3"
+    assert rows[0]["seed_requests"] == "2"
+    assert float(rows[0]["seed_share"]) == pytest.approx(0.6667)
+    assert rows[0]["seed_flag"] == "true"
+    assert rows[0]["reporter_keys"] == "2"
+    assert not any(p.suffix == ".tmp" for p in paths["out"].parent.iterdir())
+
+
+def test_build_agency_table_stops_on_missing_seed_key(tmp_path):
+    paths = _write_synthetic(tmp_path, ["vgtrk", "not in mapping"])
+    with pytest.raises(SystemExit, match="seed owner keys missing"):
+        _run(paths)
+    assert not paths["out"].exists()

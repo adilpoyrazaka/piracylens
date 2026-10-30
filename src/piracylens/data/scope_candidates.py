@@ -3,19 +3,26 @@
 The parameter file fixes every threshold, reporter list and name prefix before
 any candidate list is produced. This module loads that file under a strict
 schema and provides the matching helpers used by the candidate queries.
+
+Usage (from the repo root):
+    python -m piracylens.data.scope_candidates agencies
 """
 
 from __future__ import annotations
 
+import argparse
 import datetime as dt
+import time
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
 
+import duckdb
 import yaml
 
-from piracylens.data.aliases import AliasRow
+from piracylens.data.aliases import AliasRow, load_aliases, missing_keys, to_lookup
+from piracylens.data.owners import normalize_owner
 
 Mode = Literal["prefix", "word"]
 MODES: tuple[Mode, ...] = ("prefix", "word")
@@ -185,3 +192,208 @@ def _key_list(
             raise ParamsError(f"{name}: duplicate entry {item!r}")
         seen.add(item)
     return tuple(value)
+
+
+# --- Agency table (first stage of the film/TV agency source) -------------------------
+
+DEFAULT_PARAMS = Path("configs/scope_candidates.yaml")
+DEFAULT_REPORTER_ALIASES = Path("configs/reporter_aliases.yaml")
+DEFAULT_REQUESTS = Path("data/processed/requests.parquet")
+DEFAULT_OWNER_KEYS = Path("data/interim/owner_name_keys.parquet")
+DEFAULT_AGENCIES_OUT = Path("data/interim/scope_agencies.csv")
+
+
+def absent_keys(keys: Iterable[str], known: Iterable[str]) -> list[str]:
+    """Return the keys that are not in the known set, sorted."""
+    known_set = set(known)
+    return sorted(k for k in set(keys) if k not in known_set)
+
+
+def unknown_reporters(
+    reporters: Iterable[str], lookup: Mapping[str, AliasRow], reporter_keys: Iterable[str]
+) -> list[str]:
+    """Return reporters that are neither an alias group nor a normalized key in the data."""
+    groups = {row.group for row in lookup.values()}
+    return absent_keys(reporters, groups | set(reporter_keys))
+
+
+def _scalar(con: duckdb.DuckDBPyConnection, sql: str, params: list | None = None):
+    """Run a single-value query and read its result completely (DuckDB 2.0 rule)."""
+    return con.execute(sql, params or []).fetchall()[0][0]
+
+
+def build_agency_table(
+    params_path: Path,
+    aliases_path: Path,
+    requests: Path,
+    owner_keys: Path,
+    out: Path,
+    threads: int = 16,
+    memory_limit: str = "14GB",
+) -> None:
+    """Write one row per reporter group above the agency volume threshold.
+
+    The table holds only reporter-level volumes and the seed share. It contains no
+    per-owner results, so the film/TV decision on agencies is made before any owner
+    candidate is seen.
+    """
+    for path in (params_path, aliases_path, requests, owner_keys):
+        if not path.is_file():
+            raise SystemExit(f"input not found: {path}")
+    params = load_params(params_path)
+    alias_rows = load_aliases(aliases_path, "reporter")
+    lookup = to_lookup(alias_rows)
+    start = params.window_start.isoformat()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    tsv = out.parent / f"{out.stem}.reporters.tsv.tmp"
+    tmp = out.parent / f"{out.stem}.csv.tmp"
+
+    con = duckdb.connect()
+    con.execute(f"SET threads = {threads}").fetchall()
+    con.execute(f"SET memory_limit = '{memory_limit}'").fetchall()
+    t0 = time.perf_counter()
+
+    # 1. Seed owner keys must exist in the owner key mapping.
+    owner_key_set = {
+        row[0]
+        for row in con.execute(
+            f"SELECT DISTINCT owner_key FROM read_parquet('{owner_keys}')"
+        ).fetchall()
+    }
+    missing_seed = absent_keys(params.seed_owner_keys, owner_key_set)
+    if missing_seed:
+        raise SystemExit(f"seed owner keys missing from the mapping: {missing_seed}")
+
+    # 2. Normalize every distinct reporter name in the window and resolve its group.
+    con.execute(
+        f"""
+        CREATE TABLE names AS
+        SELECT row_number() OVER (ORDER BY reporter_name) AS name_id, reporter_name
+        FROM (SELECT DISTINCT reporter_name FROM read_parquet('{requests}')
+              WHERE requested_at_utc >= CAST(? AS TIMESTAMP) AND reporter_name IS NOT NULL)
+        """,
+        [start],
+    ).fetchall()
+    names = con.execute("SELECT name_id, reporter_name FROM names").fetchall()
+    reporter_keys: set[str] = set()
+    n_empty = 0
+    with tsv.open("w", encoding="utf-8") as f:
+        f.write("name_id\treporter_key\treporter_group\n")
+        for name_id, name in names:
+            key = normalize_owner(name)
+            if not key:
+                n_empty += 1
+                continue
+            group = resolve_reporter(key, lookup)
+            for value in (key, group):
+                # Plain TSV is safe only because keys never contain these characters.
+                if "\t" in value or "\n" in value or '"' in value:
+                    raise SystemExit(f"unsafe key for TSV: {value!r} (name_id {name_id})")
+            reporter_keys.add(key)
+            f.write(f"{name_id}\t{key}\t{group}\n")
+
+    # 3. Alias keys and protection-network reporters must exist in the data.
+    missing_alias = missing_keys(alias_rows, reporter_keys)
+    if missing_alias:
+        tsv.unlink()
+        raise SystemExit(f"reporter alias keys missing from the data: {missing_alias}")
+    missing_network = unknown_reporters(params.network_reporters, lookup, reporter_keys)
+    if missing_network:
+        tsv.unlink()
+        raise SystemExit(f"protection-network reporters missing from the data: {missing_network}")
+
+    # 4. Volume and seed share per reporter group.
+    con.execute(
+        f"""
+        CREATE TABLE reporters AS
+        SELECT n.reporter_name, r.reporter_key, r.reporter_group
+        FROM read_csv('{tsv}', delim = '\t', header = true,
+                      columns = {{'name_id': 'BIGINT', 'reporter_key': 'VARCHAR',
+                                  'reporter_group': 'VARCHAR'}}) AS r
+        JOIN names AS n USING (name_id)
+        """
+    ).fetchall()
+    total = _scalar(
+        con,
+        f"SELECT count(*) FROM read_parquet('{requests}') "
+        "WHERE requested_at_utc >= CAST(? AS TIMESTAMP)",
+        [start],
+    )
+    con.execute(
+        f"""
+        CREATE TABLE agencies AS
+        WITH req AS (
+            SELECT q.request_id, q.owner_name, p.reporter_group, p.reporter_key
+            FROM read_parquet('{requests}') AS q
+            JOIN reporters AS p USING (reporter_name)
+            WHERE q.requested_at_utc >= CAST(? AS TIMESTAMP)
+        ),
+        seeded AS (
+            SELECT DISTINCT req.request_id
+            FROM req JOIN read_parquet('{owner_keys}') AS k USING (owner_name)
+            WHERE list_contains(?::VARCHAR[], k.owner_key)
+        )
+        SELECT req.reporter_group,
+               count(*) AS requests,
+               count(s.request_id) AS seed_requests,
+               round(count(s.request_id) / count(*), 4) AS seed_share,
+               count(DISTINCT req.reporter_key) AS reporter_keys
+        FROM req LEFT JOIN seeded AS s USING (request_id)
+        GROUP BY req.reporter_group
+        HAVING count(*) >= ?
+        """,
+        [start, list(params.seed_owner_keys), params.agency_min_reporter_requests],
+    ).fetchall()
+    con.execute(
+        f"""
+        COPY (
+            SELECT reporter_group, requests, seed_requests, seed_share,
+                   seed_share >= ? AS seed_flag, reporter_keys
+            FROM agencies ORDER BY requests DESC, reporter_group
+        ) TO '{tmp}' (FORMAT csv, HEADER true)
+        """,
+        [params.agency_seed_share],
+    ).fetchall()
+
+    rows = con.execute(
+        "SELECT reporter_group, requests, seed_share FROM agencies "
+        "ORDER BY requests DESC, reporter_group"
+    ).fetchall()
+    covered = sum(r[1] for r in rows)
+    n_csv = _scalar(con, f"SELECT count(*) FROM read_csv('{tmp}', header = true)")
+    if n_csv != len(rows):
+        tmp.unlink()
+        raise SystemExit(f"row count mismatch: {len(rows)} groups, csv has {n_csv}")
+    tmp.replace(out)
+    tsv.unlink()
+
+    print(
+        f"reporter names {len(names):,} | empty key {n_empty:,} | reporter keys "
+        f"{len(reporter_keys):,} | requests {total:,} | groups >= "
+        f"{params.agency_min_reporter_requests:,}: {len(rows)} ({covered / total:.1%}) | "
+        f"{time.perf_counter() - t0:.1f}s -> {out}"
+    )
+    print("checks: seed keys, reporter alias keys, network reporters all present")
+    for group, requests_n, share in rows:
+        flag = "*" if share >= params.agency_seed_share else " "
+        print(f"{flag} {group[:48]:48s} {requests_n:>11,} {share:7.1%}")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Generate owner scope candidates.")
+    sub = parser.add_subparsers(dest="mode", required=True)
+    agencies = sub.add_parser("agencies", help="write the reporter-group table for review")
+    agencies.add_argument("--params", type=Path, default=DEFAULT_PARAMS)
+    agencies.add_argument("--reporter-aliases", type=Path, default=DEFAULT_REPORTER_ALIASES)
+    agencies.add_argument("--requests", type=Path, default=DEFAULT_REQUESTS)
+    agencies.add_argument("--owner-keys", type=Path, default=DEFAULT_OWNER_KEYS)
+    agencies.add_argument("--out", type=Path, default=DEFAULT_AGENCIES_OUT)
+    args = parser.parse_args()
+    if args.mode == "agencies":
+        build_agency_table(
+            args.params, args.reporter_aliases, args.requests, args.owner_keys, args.out
+        )
+
+
+if __name__ == "__main__":
+    main()
