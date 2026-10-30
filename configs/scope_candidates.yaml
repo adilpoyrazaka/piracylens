@@ -14,6 +14,8 @@ sources:
   # Owners served by the Russian TV protection network (reporter groups or normalized keys).
   protection_network:
     reporters: ["contentscan", "f6", "starmedia", "vindex"]
+    # Counted on the owner's requests filed through these reporters, not on the owner's
+    # total volume. Clarified before any candidate list was produced.
     min_owner_requests: 500
 
   # Reporters that mainly handle film/TV. The seed share (share of a reporter's requests
@@ -21,6 +23,8 @@ sources:
   film_tv_agencies:
     min_reporter_requests: 50000
     seed_share: 0.5
+    # Counted on the owner's requests filed through the selected film/TV agencies, not on
+    # the owner's total volume. Clarified before any candidate list was produced.
     min_owner_requests: 500
 
   # Prefix scan over normalized owner keys. Prefixes are written in normalized form.
