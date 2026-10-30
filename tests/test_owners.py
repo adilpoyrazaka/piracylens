@@ -32,6 +32,15 @@ def test_ivi_variants_share_one_key(name):
         ("LLC", "llc"),  # a name made only of a legal form is kept
         ('ООО "Окко"', "okko"),
         ("北京爱奇艺科技有限公司", "北京爱奇艺科技有限公司"),  # non-Cyrillic scripts pass through
+        (
+            "BluTV İletişim ve Dijital Yayın Hizmetleri A.Ş.",
+            "blutv iletişim ve dijital yayın hizmetleri",
+        ),
+        (
+            "Demirören TV Radyo Yayıncılık Yapımcılık A.Ş.",
+            "demirören tv radyo yayıncılık yapımcılık",
+        ),
+        ("Örnek Film Ltd. Şti.", "örnek film"),
     ],
 )
 def test_normalize_owner_cases(name, expected):

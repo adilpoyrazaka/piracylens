@@ -41,6 +41,7 @@ _LEGAL_FORMS = frozenset(
     {
         "llc", "lcc", "ltd", "limited", "inc", "corp", "corporation", "co", "gmbh",
         "sa", "srl", "bv", "nv", "plc", "ag", "ooo", "ao", "oao", "zao", "pao", "tov",
+        "aş", "şti",
     }
 )  # fmt: skip
 
@@ -58,6 +59,7 @@ def normalize_owner(name: str | None) -> str:
         return ""
     text = unicodedata.normalize("NFKC", name)
     text = _fix_homoglyphs(text).casefold()
+    text = text.replace("\u0307", "")  # Turkish "İ" casefolds to "i" + combining dot
     text = _QUOTES.sub("", text).translate(_TRANSLIT)
     text = _SEPARATORS.sub(" ", text)
 
