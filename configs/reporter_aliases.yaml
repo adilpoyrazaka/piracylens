@@ -1,7 +1,7 @@
-   # Reporter groups. Keys are normalized reporter names (output of normalize_owner).
+# Reporter groups. Keys are normalized reporter names (output of normalize_owner).
 # Merge rule: an account joins an agency group only with client-portfolio evidence.
-# Accounts that file only under their own name stay separate (e.g. groupib, f6 partners,
-# red points partners, muso partners): no portfolio evidence, possible impersonation.
+# Accounts that file only under their own name stay separate: they show no
+# client-portfolio evidence.
 # Variants below 100 requests (2021+) are not listed (heuristic threshold; known limitation).
 groups:
   f6:
