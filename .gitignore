@@ -21,5 +21,5 @@ Thumbs.db
 .vscode/
 
 
-# Tracked on purpose (D-017): pins the pyenv env; overrides a global ignore rule
+# Tracked on purpose: pins the pyenv env; overrides a global ignore rule
 !.python-version

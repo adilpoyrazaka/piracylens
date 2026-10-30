@@ -1,4 +1,4 @@
-"""Load and validate alias files that group normalized keys (D-037, D-039).
+"""Load and validate alias files that group normalized owner and reporter keys.
 
 Both files share one nested layout:
 
