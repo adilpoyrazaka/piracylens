@@ -8,11 +8,12 @@ on:
 
 jobs:
   checks:
-    runs-on: ubuntu-latest
+    # Pinned: the exact Python patch release is not built for newer runner images.
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12.9"
           cache: pip
