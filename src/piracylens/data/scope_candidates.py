@@ -39,6 +39,7 @@ class Params:
     agency_min_reporter_requests: int
     agency_seed_share: float
     agency_min_owner_requests: int
+    agency_selected: tuple[str, ...]
     prefix_min_requests: int
     prefixes: tuple[tuple[str, Mode], ...]
     seed_owner_keys: tuple[str, ...]
@@ -63,7 +64,7 @@ def parse_params(data: Any) -> Params:
     )
     agencies = _mapping(
         sources["film_tv_agencies"],
-        {"min_reporter_requests", "seed_share", "min_owner_requests"},
+        {"min_reporter_requests", "seed_share", "min_owner_requests", "selected"},
         "sources.film_tv_agencies",
     )
     scan = _mapping(
@@ -91,6 +92,7 @@ def parse_params(data: Any) -> Params:
         agency_min_reporter_requests=_positive_int(agencies, "min_reporter_requests", w_agency),
         agency_seed_share=_share(agencies, "seed_share", w_agency),
         agency_min_owner_requests=_positive_int(agencies, "min_owner_requests", w_agency),
+        agency_selected=_key_list(agencies, "selected", w_agency, allow_empty=True),
         prefix_min_requests=_positive_int(scan, "min_requests", "sources.prefix_scan"),
         prefixes=tuple(prefixes),
         seed_owner_keys=_key_list(top, "seed_owner_keys", ""),
@@ -162,10 +164,14 @@ def _iso_date(obj: Mapping[str, Any], field: str, where: str) -> dt.date:
         raise ParamsError(f"{name} is not an ISO date: {value!r}") from exc
 
 
-def _key_list(obj: Mapping[str, Any], field: str, where: str) -> tuple[str, ...]:
+def _key_list(
+    obj: Mapping[str, Any], field: str, where: str, *, allow_empty: bool = False
+) -> tuple[str, ...]:
     value = obj[field]
     name = _name(where, field)
-    if not isinstance(value, list) or not value:
+    if not isinstance(value, list):
+        raise ParamsError(f"{name} must be a list")
+    if not value and not allow_empty:
         raise ParamsError(f"{name} must be a non-empty list")
     seen: set[str] = set()
     for item in value:

@@ -26,6 +26,10 @@ sources:
     # Counted on the owner's requests filed through the selected film/TV agencies, not on
     # the owner's total volume. Clarified before any candidate list was produced.
     min_owner_requests: 500
+    # Agencies picked by hand as film/TV (reporter groups or normalized reporter keys).
+    # Filled and committed after the agency table is reviewed and before any owner
+    # candidates are produced; candidate generation refuses to run while it is empty.
+    selected: []
 
   # Prefix scan over normalized owner keys. Prefixes are written in normalized form.
   # "prefix": plain startswith. "word": the prefix must not be followed by a letter or digit.

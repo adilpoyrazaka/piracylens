@@ -30,6 +30,7 @@ def _valid() -> dict:
                 "min_reporter_requests": 50000,
                 "seed_share": 0.5,
                 "min_owner_requests": 500,
+                "selected": [],
             },
             "prefix_scan": {
                 "min_requests": 5,
@@ -85,12 +86,19 @@ def test_parse_params_accepts_valid_document():
     assert params.window_start == dt.date(2021, 1, 1)
     assert params.network_reporters == ("contentscan", "f6")
     assert params.agency_seed_share == 0.5
+    assert params.agency_selected == ()
     assert params.prefixes == (
         ("disney", "prefix"),
         ("canal", "prefix"),
         ("sts", "word"),
         ("hbo", "word"),
     )
+
+
+def test_parse_params_keeps_selected_agencies_in_order():
+    doc = _valid()
+    doc["sources"]["film_tv_agencies"]["selected"] = ["f6", "contentscan"]
+    assert parse_params(doc).agency_selected == ("f6", "contentscan")
 
 
 def test_parse_params_rejects_non_mapping():
@@ -114,6 +122,10 @@ def test_parse_params_rejects_non_mapping():
         ("sources.prefix_scan.word", ["sts", "disney"], "both"),
         ("sources.prefix_scan.word", [False], "quoted string"),
         ("seed_owner_keys", [], "non-empty list"),
+        ("sources.film_tv_agencies.selected", _DELETE, "missing fields"),
+        ("sources.film_tv_agencies.selected", "f6", "must be a list"),
+        ("sources.film_tv_agencies.selected", ["F6"], "casefolded"),
+        ("sources.film_tv_agencies.selected", ["f6", "f6"], "duplicate"),
     ],
 )
 def test_parse_params_rejects_invalid_documents(path, value, message):
