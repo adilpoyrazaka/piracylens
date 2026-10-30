@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "piracylens"
+version = "0.1.0"
+description = "Machine learning for anti-piracy: copy detection, takedown auditing, volume forecasting and pirate-domain clustering."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "duckdb==2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "pytest",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/piracylens"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

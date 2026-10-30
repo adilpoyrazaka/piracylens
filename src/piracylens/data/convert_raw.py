@@ -8,6 +8,7 @@ Guards (assert-before-write):
   * header row must match the expected header exactly
   * output is written to a .tmp file and renamed only on success
 """
+
 from __future__ import annotations
 
 import argparse
@@ -41,33 +42,57 @@ TABLES = {
     "requests": {
         "file": "requests.csv",
         "bytes": 7_738_066_978,
-        "header": ["Request ID", "Date", "Lumen URL", "Copyright owner ID",
-                   "Copyright owner name", "Reporting organization ID",
-                   "Reporting organization name", *COUNT_HEADERS, "From Abuser"],
-        "columns": {"request_id": "BIGINT", "date_raw": "VARCHAR",
-                    "lumen_url": "VARCHAR", "owner_id": "BIGINT",
-                    "owner_name": "VARCHAR", "reporter_id": "BIGINT",
-                    "reporter_name": "VARCHAR", **COUNTS,
-                    "from_abuser": "BOOLEAN"},
+        "header": [
+            "Request ID",
+            "Date",
+            "Lumen URL",
+            "Copyright owner ID",
+            "Copyright owner name",
+            "Reporting organization ID",
+            "Reporting organization name",
+            *COUNT_HEADERS,
+            "From Abuser",
+        ],
+        "columns": {
+            "request_id": "BIGINT",
+            "date_raw": "VARCHAR",
+            "lumen_url": "VARCHAR",
+            "owner_id": "BIGINT",
+            "owner_name": "VARCHAR",
+            "reporter_id": "BIGINT",
+            "reporter_name": "VARCHAR",
+            **COUNTS,
+            "from_abuser": "BOOLEAN",
+        },
         # Strict ISO-8601 UTC parse: any malformed date fails the run loudly.
-        "select": ("SELECT request_id, "
-                   "strptime(date_raw, '%Y-%m-%dT%H:%M:%SZ') AS requested_at_utc, "
-                   "* EXCLUDE (request_id, date_raw)"),
+        "select": (
+            "SELECT request_id, "
+            "strptime(date_raw, '%Y-%m-%dT%H:%M:%SZ') AS requested_at_utc, "
+            "* EXCLUDE (request_id, date_raw)"
+        ),
     },
     "domains": {
         "file": "domains.csv",
         "bytes": 36_409_779_308,
         "header": ["Request ID", "Domain", *COUNT_HEADERS, "From Abuser"],
-        "columns": {"request_id": "BIGINT", "domain": "VARCHAR", **COUNTS,
-                    "from_abuser": "BOOLEAN"},
+        "columns": {
+            "request_id": "BIGINT",
+            "domain": "VARCHAR",
+            **COUNTS,
+            "from_abuser": "BOOLEAN",
+        },
         "select": "SELECT *",
     },
     "urls_no_action": {
         "file": "urls-no-action-taken.csv",
         "bytes": 45_524_457_061,
         "header": ["Request ID", "Domain", "URL", "From Abuser"],
-        "columns": {"request_id": "BIGINT", "domain": "VARCHAR",
-                    "url": "VARCHAR", "from_abuser": "BOOLEAN"},
+        "columns": {
+            "request_id": "BIGINT",
+            "domain": "VARCHAR",
+            "url": "VARCHAR",
+            "from_abuser": "BOOLEAN",
+        },
         "select": "SELECT *",
     },
 }
@@ -87,8 +112,7 @@ def check_input(spec: dict) -> Path:
     with src.open(newline="", encoding="utf-8") as f:
         header = next(csv.reader(f))
     if header != spec["header"]:
-        fail(f"unexpected header in {src.name}:\n  got      {header}\n"
-             f"  expected {spec['header']}")
+        fail(f"unexpected header in {src.name}:\n  got      {header}\n  expected {spec['header']}")
     return src
 
 
@@ -110,22 +134,28 @@ def convert(name: str, force: bool) -> None:
     con.execute("SET preserve_insertion_order = false")
 
     cols = ", ".join(f"'{c}': '{t}'" for c, t in spec["columns"].items())
-    source = (f"read_csv('{src}', header = true, delim = ',', quote = '\"', "
-              f"escape = '\"', columns = {{{cols}}})")
+    source = (
+        f"read_csv('{src}', header = true, delim = ',', quote = '\"', "
+        f"escape = '\"', columns = {{{cols}}})"
+    )
 
     t0 = time.perf_counter()
-    con.execute(f"COPY ({spec['select']} FROM {source}) "
-                f"TO '{tmp}' (FORMAT parquet, COMPRESSION zstd)")
+    con.execute(
+        f"COPY ({spec['select']} FROM {source}) TO '{tmp}' (FORMAT parquet, COMPRESSION zstd)"
+    )
     elapsed = time.perf_counter() - t0
 
     os.replace(tmp, out)
-    
+
     rows = con.execute(f"SELECT count(*) FROM read_parquet('{out}')").fetchall()[0][0]
-    print(f"OK {name}: {rows:,} rows -> {out} "
-          f"({out.stat().st_size / 1e9:.2f} GB) in {elapsed / 60:.1f} min")
+    print(
+        f"OK {name}: {rows:,} rows -> {out} "
+        f"({out.stat().st_size / 1e9:.2f} GB) in {elapsed / 60:.1f} min"
+    )
     summary = con.execute(
         f"SELECT column_name, column_type, min, max, null_percentage "
-        f"FROM (SUMMARIZE SELECT * FROM read_parquet('{out}'))").fetchall()
+        f"FROM (SUMMARIZE SELECT * FROM read_parquet('{out}'))"
+    ).fetchall()
     for col, typ, lo, hi, nulls in summary:
         print(f"  {col:<20} {typ:<10} min={lo!s:<22} max={hi!s:<22} null={nulls}")
 
