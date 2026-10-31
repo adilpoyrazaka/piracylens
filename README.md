@@ -95,6 +95,24 @@ python -m piracylens.data.build_owner_keys
 
 Writes `data/interim/owner_name_keys.parquet`, which maps each raw copyright owner name to a normalized key. Normalization covers HTML entities, invisible Unicode characters, Cyrillic transliteration, legal-form suffixes and repeated tokens. On this snapshot: 1,702,749 names map to 1,544,395 keys; about 18 s on the reference machine.
 
+### 4. Generate scope candidates
+
+Scope is defined by a rule and applied in two stages, so the one manual decision is made before any owner-level output exists. Every threshold, reporter list and name prefix is in `configs/scope_candidates.yaml`, committed before any candidate list was produced.
+
+```bash
+python -m piracylens.data.scope_candidates agencies
+```
+
+Writes `data/interim/scope_agencies.csv`: one row per reporter group above the volume threshold, with its request count and seed share (the share of its requests that belong to the seed owners listed in the parameter file). Reporter names are normalized and merged with `configs/reporter_aliases.yaml`. The film/TV agencies are then picked by hand from this table and recorded under `film_tv_agencies.selected`. On this snapshot: 58 groups covering 71.2% of requests since 2021-01-01; about 19 s on the reference machine.
+
+```bash
+python -m piracylens.data.scope_candidates candidates
+```
+
+Writes `data/interim/scope_candidates.csv`: one row per owner key caught by any of four sources (request volume, the protection-network reporters, the selected agencies, the name-prefix scan), plus every seed owner. Columns hold volumes and evidence only: source flags, matched prefixes, name variants, and the top reporter group with its share. There is no label or outcome column, so the scope review cannot be steered by results. The command refuses to run while `selected` is empty or names a group outside the agency table. On this snapshot: 1,302 candidates; about 27 s on the reference machine.
+
+Both modes stop before writing anything if a seed owner key, a reporter alias key or a protection-network reporter is missing from the data.
+
 ## Development
 
 ```bash
