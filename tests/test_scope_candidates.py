@@ -11,10 +11,13 @@ import yaml
 
 from piracylens.data.aliases import AliasRow
 from piracylens.data.scope_candidates import (
+    CANDIDATE_COLUMNS,
     ParamsError,
     absent_keys,
     build_agency_table,
+    build_candidates,
     find_prefix_matches,
+    format_prefix_matches,
     load_params,
     matches_prefix,
     parse_params,
@@ -255,3 +258,164 @@ def test_build_agency_table_stops_on_missing_seed_key(tmp_path):
     with pytest.raises(SystemExit, match="seed owner keys missing"):
         _run(paths)
     assert not paths["out"].exists()
+
+
+def test_format_prefix_matches():
+    assert format_prefix_matches([("sts", "word"), ("disney", "prefix")]) == (
+        "sts:word;disney:prefix"
+    )
+    assert format_prefix_matches([]) == ""
+
+
+def _write_candidate_synthetic(tmp_path: Path, selected: list[str]) -> dict[str, Path]:
+    params = _valid()
+    params["sources"]["ranking"]["min_requests"] = 4
+    params["sources"]["protection_network"] = {"reporters": ["f6"], "min_owner_requests": 2}
+    params["sources"]["film_tv_agencies"].update(
+        {"min_reporter_requests": 3, "min_owner_requests": 2, "selected": selected}
+    )
+    params["sources"]["prefix_scan"] = {"min_requests": 2, "prefix": ["disney"], "word": ["sts"]}
+    params["seed_owner_keys"] = ["vgtrk", "quiet seed", "old seed"]
+    paths = _write_synthetic(tmp_path, ["vgtrk"])
+    paths["params"].write_text(yaml.safe_dump(params), encoding="utf-8")
+    paths["out"] = tmp_path / "out" / "candidates.csv"
+    big = 'Big "Owner"\nLtd'
+    requests = [
+        (1, "2019-05-01", "Group-IB", "VGTRK"),
+        (2, "2021-02-01", "Group-IB", "VGTRK"),
+        (3, "2022-02-01", "Group-IB", "VGTRK"),
+        (4, "2022-03-01", "F6", "Vgtrk"),
+        (5, "2023-01-01", "Small Rep", big),
+        (6, "2023-01-02", "Small Rep", big),
+        (7, "2023-01-03", "Small Rep", big),
+        (8, "2023-01-04", None, big),
+        (9, "2023-02-01", "Agency X", "Studio Y"),
+        (10, "2023-02-02", "Agency X", "Studio Y"),
+        (11, "2023-02-03", "Agency X", "Other"),
+        (12, "2024-01-01", "Small Rep", "STS TV"),
+        (13, "2024-01-02", "Small Rep", "STS TV"),
+        (14, "2024-01-03", "Small Rep", "STS TV, Disney Plus"),
+        (15, "2024-01-04", "Small Rep", "Disney Plus"),
+        (16, "2024-02-01", "Small Rep", "STSoft"),
+        (17, "2024-02-02", "Small Rep", "STSoft"),
+        (18, "2024-02-03", "Small Rep", "STSoft"),
+        (19, "2024-03-01", "Small Rep", "Quiet Seed"),
+        (20, "2019-07-01", "Small Rep", "Old Seed"),
+    ]
+    owner_keys = [
+        ("VGTRK", "vgtrk"),
+        ("Vgtrk", "vgtrk"),
+        (big, "big owner"),
+        ("Studio Y", "studio y"),
+        ("Other", "other"),
+        ("STS TV", "sts tv"),
+        ("STS TV, Disney Plus", "sts tv"),
+        ("STS TV, Disney Plus", "disney plus"),
+        ("Disney Plus", "disney plus"),
+        ("STSoft", "stsoft"),
+        ("Quiet Seed", "quiet seed"),
+        ("Old Seed", "old seed"),
+    ]
+    con = duckdb.connect()
+    con.execute(
+        "CREATE TABLE r (request_id INTEGER, requested_at_utc TIMESTAMP, "
+        "reporter_name VARCHAR, owner_name VARCHAR)"
+    ).fetchall()
+    con.executemany("INSERT INTO r VALUES (?, CAST(? AS TIMESTAMP), ?, ?)", requests)
+    con.execute(f"COPY r TO '{paths['requests']}' (FORMAT parquet)").fetchall()
+    con.execute("CREATE TABLE k (owner_name VARCHAR, owner_key VARCHAR)").fetchall()
+    con.executemany("INSERT INTO k VALUES (?, ?)", owner_keys)
+    con.execute(f"COPY k TO '{paths['owner_keys']}' (FORMAT parquet)").fetchall()
+    return paths
+
+
+def _run_candidates(paths: dict[str, Path]) -> list[dict[str, str]]:
+    build_candidates(
+        paths["params"],
+        paths["aliases"],
+        paths["requests"],
+        paths["owner_keys"],
+        paths["out"],
+        threads=1,
+        memory_limit="1GB",
+    )
+    with paths["out"].open(encoding="utf-8", newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def test_build_candidates_on_synthetic_data(tmp_path):
+    paths = _write_candidate_synthetic(tmp_path, ["agency x"])
+    rows = _run_candidates(paths)
+    by_key = {r["owner_key"]: r for r in rows}
+    # "other" and "stsoft" are caught by no source and are not seeds; "stsoft" shows that
+    # word mode rejects a prefix followed by a letter.
+    assert [r["owner_key"] for r in rows] == [
+        "big owner",
+        "sts tv",
+        "vgtrk",
+        "disney plus",
+        "studio y",
+        "quiet seed",
+        "old seed",
+    ]
+    flags = {
+        k: tuple(r[f"source_{s}"] == "true" for s in "abcd") + (r["in_seed"] == "true",)
+        for k, r in by_key.items()
+    }
+    assert flags == {
+        "big owner": (True, False, False, False, False),
+        "sts tv": (False, False, False, True, False),
+        "vgtrk": (False, True, False, False, True),
+        "disney plus": (False, False, False, True, False),
+        "studio y": (False, False, True, False, False),
+        "quiet seed": (False, False, False, False, True),
+        "old seed": (False, False, False, False, True),
+    }
+    vgtrk = by_key["vgtrk"]
+    # The 2019 request is outside the window for counts but inside the full year range.
+    assert (vgtrk["requests"], vgtrk["network_requests"], vgtrk["agency_requests"]) == (
+        "3",
+        "3",
+        "0",
+    )
+    assert (vgtrk["first_year_all"], vgtrk["last_year_all"]) == ("2019", "2022")
+    assert (vgtrk["variants"], vgtrk["top_raw_name"]) == ("2", "VGTRK")
+    assert (vgtrk["top_reporter_group"], float(vgtrk["top_reporter_share"])) == ("f6", 1.0)
+    big = by_key["big owner"]
+    # A request without a reporter counts in the volume but never as the top reporter.
+    assert big["top_raw_name"] == 'Big "Owner"\nLtd'
+    assert (big["top_reporter_group"], float(big["top_reporter_share"])) == ("small rep", 0.75)
+    assert by_key["studio y"]["agency_requests"] == "2"
+    # The compound name counts once for each of its keys.
+    assert (by_key["sts tv"]["requests"], by_key["sts tv"]["prefixes"]) == ("3", "sts:word")
+    assert (by_key["disney plus"]["requests"], by_key["disney plus"]["prefixes"]) == (
+        "2",
+        "disney:prefix",
+    )
+    old = by_key["old seed"]
+    assert (old["requests"], old["first_year_all"], old["top_raw_name"]) == ("0", "2019", "")
+    assert not any(p.suffix == ".tmp" for p in paths["out"].parent.iterdir())
+
+
+def test_build_candidates_has_no_outcome_columns(tmp_path):
+    paths = _write_candidate_synthetic(tmp_path, ["agency x"])
+    _run_candidates(paths)
+    with paths["out"].open(encoding="utf-8", newline="") as f:
+        header = next(csv.reader(f))
+    assert tuple(header) == CANDIDATE_COLUMNS
+    assert not [c for c in header if re.search("label|action|removed|index|pending", c)]
+
+
+def test_build_candidates_refuses_empty_selection(tmp_path):
+    paths = _write_candidate_synthetic(tmp_path, [])
+    with pytest.raises(SystemExit, match="selected is empty"):
+        _run_candidates(paths)
+    assert not paths["out"].exists()
+
+
+def test_build_candidates_refuses_agency_outside_table(tmp_path):
+    paths = _write_candidate_synthetic(tmp_path, ["agency x", "ghost agency"])
+    with pytest.raises(SystemExit, match=r"not in the agency table: \['ghost agency'\]"):
+        _run_candidates(paths)
+    assert not paths["out"].exists()
+    assert not any(p.suffix == ".tmp" for p in paths["out"].parent.iterdir())
