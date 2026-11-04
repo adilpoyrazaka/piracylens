@@ -113,6 +113,14 @@ Writes `data/interim/scope_candidates.csv`: one row per owner key caught by any 
 
 Both modes stop before writing anything if a seed owner key, a reporter alias key or a protection-network reporter is missing from the data.
 
+### 5. Measure scope coverage
+
+```bash
+python -m piracylens.data.scope_metrics
+```
+
+Reads the reviewed scope in `configs/owner_aliases.yaml`, the candidate table and the parameter file, and writes `data/interim/scope_metrics.json` and `data/interim/scope_metrics_keys.csv`. All figures are request counts from the window start, and each request counts once: the scope share; the share in scope of requests filed by the protection-network reporters and by the other selected agencies, with the out-of-scope remainder split into owners reviewed and left out, owners never caught by a source, and requests without an owner key; in-scope breakdowns by group, market, evidence basis and candidate source; and the owner keys a lower ranking threshold (2,000) would add as unreviewed candidates. No label or outcome column is read. On this snapshot: about 24 s on the reference machine.
+
 ## Development
 
 ```bash
