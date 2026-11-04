@@ -135,6 +135,7 @@ CI runs the same checks on every push to `main` and on pull requests. The tests 
 
 ```
 configs/            alias groups and pre-registered parameters (YAML)
+docs/               data card and public summary of the scope review
 src/piracylens/     package source
   data/             conversion, owner normalization, alias loading
 tests/              unit tests
