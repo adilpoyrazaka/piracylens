@@ -215,3 +215,9 @@ CONFIGS = Path(__file__).resolve().parents[1] / "configs"
 def test_repo_reporter_aliases_file_is_valid():
     rows = load_aliases(CONFIGS / "reporter_aliases.yaml", "reporter")
     assert rows
+
+
+def test_repo_owner_aliases_file_is_valid():
+    rows = load_aliases(CONFIGS / "owner_aliases.yaml", "owner")
+    assert rows
+    assert all(row.region and row.content_type and row.market for row in rows)

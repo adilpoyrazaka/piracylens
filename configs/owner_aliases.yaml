@@ -1,0 +1,2650 @@
+# Owner groups for the film/TV scope. Keys are normalized owner names (output of normalize_owner).
+# Group = corporate owner at the end of the data (2026-10-24); brands keep operational differences.
+# region = owner headquarters; market = the brand's operating market; content_type = tv, film or
+# mixed (mixed also covers owners whose film/TV split is unknown). region, market and content_type
+# are heuristic labels; "unknown" marks an owner whose identity could not be resolved.
+# evidence.basis = strongest evidence that the group is a film/TV rights holder; all carried.
+groups:
+  vgtrk:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "VGTRK"
+        market: "ru"
+        keys: ["vgtrk", "vgt"]
+  ivi:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Ivi"
+        market: "ru"
+        keys: ["ivi.ru", "ivi", "ivi ru"]
+  mauris-film:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Mauris Film"
+        market: "ru"
+        keys: ["mauris film"]
+  skydance:
+    region: "us"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "BluTV"
+        market: "tr"
+        keys: ["blutv iletişim ve dijital yayın hizmetleri", "bluetv copyright", "blutv", "blu tv"]
+      - brand: "Warner Bros."
+        market: "global"
+        keys: ["warner bros entertainment", "warner bros", "warner bros pictures", "warner bros television", "warner bros digital distribution a division of home entertainment", "warner brothers entertainment", "warner brothers"]
+      - brand: "Warner Bros. Discovery"
+        market: "global"
+        keys: ["warner bros discovery", "warner brothers discovery", "warnermedia"]
+      - brand: "Warner Bros. International TV"
+        market: "global"
+        keys: ["warner bros international television distribution"]
+      - brand: "Warner Bros. Netherlands"
+        market: "nl"
+        keys: ["warner bros entertainment nederland"]
+      - brand: "Warner Bros. Polska"
+        market: "pl"
+        keys: ["warner bros entertainment polska sp z o.o"]
+      - brand: "Warner Bros. Spain"
+        market: "es"
+        keys: ["warner bros entertainment españa", "warner bros españa camera café"]
+      - brand: "Warner Bros. Turkey"
+        market: "tr"
+        keys: ["warner bros turkey film sti", "warner bros turkey film"]
+      - brand: "Warner Bros. India"
+        market: "in"
+        keys: ["warner bros pictures india"]
+      - brand: "Paramount"
+        market: "global"
+        keys: ["paramount global", "paramount pictures", "paramount", "paramount global fka viacomcbs", "paramount skydance"]
+      - brand: "ViacomCBS"
+        market: "global"
+        keys: ["viacomcbs", "viacom cbs", "cbs viacom"]
+      - brand: "Viacom"
+        market: "global"
+        keys: ["viacom", "viacom international"]
+      - brand: "VIMN Media Vostok"
+        market: "ru"
+        keys: ["vimn media vostok"]
+      - brand: "VIMN Netherlands"
+        market: "nl"
+        keys: ["vimn netherlands"]
+      - brand: "CBS"
+        market: "us"
+        keys: ["columbia broadcasting system", "cbs showtime", "cbs studios", "cbs television studios", "cbs", "cbs broadcasting"]
+      - brand: "HBO"
+        market: "global"
+        keys: ["home box office", "hbo max", "hbo", "hbo go", "hbo entertainment"]
+      - brand: "HBO Latin America"
+        market: "latam"
+        keys: ["hbo latin america production services l.c"]
+      - brand: "HBO Max Turkiye"
+        market: "tr"
+        keys: ["max türkiye"]
+      - brand: "Discovery"
+        market: "global"
+        keys: ["discovery communications"]
+      - brand: "Discovery Spain"
+        market: "es"
+        keys: ["discovery networks sl"]
+  starmedia:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Star Media"
+        market: "ru"
+        keys: ["starmedia", "star media", "star media distribution", "star media distribyushn"]
+  nmg:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "STS"
+        market: "ru"
+        keys: ["sts", "set televizionnykh stantsiy", "1 sts"]
+      - brand: "Channel Five"
+        market: "ru"
+        keys: ["teleradiokompaniya peterburg"]
+      - brand: "REN TV"
+        market: "ru"
+        keys: ["aktsept televizionnyy kanal ren-tv", "1aktsept"]
+      - brand: "NMG"
+        market: "ru"
+        keys: ["nmg studiya", "nmg kinoprokat"]
+  prior:
+    region: "ru"
+    content_type: "mixed"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Prior"
+        market: "ru"
+        keys: ["prior"]
+  okko:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Okko"
+        market: "ru"
+        keys: ["okko", "1ooo okko", "okko lls", "okko.tv", "okko tv"]
+  gazprom-media:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "TNT"
+        market: "ru"
+        keys: ["tnt-teleset", "tnt teleset", "tnt‐teleset jsc"]
+      - brand: "Central Partnership"
+        market: "ru"
+        keys: ["tsentral partnership", "tsentral partnership seylz khaus", "tsentral partnership khaus"]
+      - brand: "Premier"
+        market: "ru"
+        keys: ["premer", "premier", "premier gpm rtv"]
+      - brand: "TV3"
+        market: "ru"
+        keys: ["telekanal tv3"]
+      - brand: "NTV"
+        market: "ru"
+        keys: ["telekompaniya ntv"]
+  televisaunivision:
+    region: "us"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "ViX"
+        market: "latam"
+        keys: ["vix", "vix televisa univision"]
+      - brand: "TelevisaUnivision"
+        market: "us"
+        keys: ["televisaunivision", "univision communications", "televisa univision"]
+      - brand: "Televisa"
+        market: "mx"
+        keys: ["televisa"]
+      - brand: "Videocine"
+        market: "mx"
+        keys: ["videocine televisa"]
+  sony:
+    region: "jp"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Sony Pictures Entertainment"
+        market: "global"
+        keys: ["sony pictures entertainment", "sony pictures", "sony pictures worldwide acquisitions", "worldwide acquisitions", "sony pictures digital productions", "cpt holdings"]
+      - brand: "Columbia Pictures"
+        market: "global"
+        keys: ["columbia pictures industries", "columbia pictures"]
+      - brand: "Columbia Pictures Asia"
+        market: "asia"
+        keys: ["columbia pictures film production asia"]
+      - brand: "Sony Pictures Television"
+        market: "global"
+        keys: ["sony pictures television", "columbia tristar television", "tristar television"]
+      - brand: "Screen Gems"
+        market: "global"
+        keys: ["screen gems", "screen gems productions"]
+      - brand: "Sony Pictures Classics"
+        market: "global"
+        keys: ["sony pictures classics", "sony picture classic"]
+      - brand: "Sony Pictures Animation"
+        market: "global"
+        keys: ["sony pictures animation"]
+      - brand: "TriStar Pictures"
+        market: "global"
+        keys: ["tristar pictures", "tristar productions"]
+      - brand: "Sony Pictures Releasing"
+        market: "global"
+        keys: ["sony pictures releasing", "sony pictures production and releasing", "sony pictures home entertainment"]
+      - brand: "Crunchyroll"
+        market: "global"
+        keys: ["crunchyroll", "crunchyroll_llc"]
+      - brand: "Sony Pictures Iberia"
+        market: "es"
+        keys: ["sony pictures entertainment iberia s.l.u", "sony pictures entertainment iberia slu", "sony pictures entertainment iberia", "sony pictures entertainment iberia s.l.u spain"]
+      - brand: "Sony Pictures France"
+        market: "fr"
+        keys: ["sony pictures entertainment france sas", "sony pictures france"]
+      - brand: "Sony Pictures Korea"
+        market: "kr"
+        keys: ["sony pictures entertainment korea"]
+      - brand: "Culver Max Entertainment"
+        market: "in"
+        keys: ["sony pictures networks india pvt", "culver max entertainment private", "sony pictures networks india private", "sony pictures network india pvt", "sony pictures network india", "sony pictures networks distribution india private", "sonyliv", "sonyliv culver max entertainment", "sony liv", "sonytv", "sony pictures india"]
+      - brand: "Sony Pictures Films India"
+        market: "in"
+        keys: ["sony pictures films india private"]
+  canal:
+    region: "fr"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Canal+"
+        market: "fr"
+        keys: ["groupe canal", "canal", "canal group", "canal plus", "canalplus.com", "canalplus", "canal france"]
+      - brand: "Canal+ International"
+        market: "global"
+        keys: ["canal international"]
+      - brand: "Canal+ Afrique"
+        market: "africa"
+        keys: ["canal afrique", "canal afrique group", "canal plus afrique"]
+      - brand: "Canal+ Myanmar"
+        market: "mm"
+        keys: ["canal myanmar"]
+      - brand: "Canal+ Polska"
+        market: "pl"
+        keys: ["canal polska", "canal poland"]
+      - brand: "Studiocanal"
+        market: "global"
+        keys: ["studiocanal"]
+      - brand: "MultiChoice"
+        market: "za"
+        keys: ["multichoice group"]
+  a-serial:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "A Serial"
+        market: "ru"
+        keys: ["a serial"]
+  r1:
+    region: "ru"
+    content_type: "mixed"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "R1"
+        market: "ru"
+        keys: ["r-1", "r1"]
+  apple:
+    region: "us"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Apple TV"
+        market: "global"
+        keys: ["apple video programming", "apple and video programming", "apple tv", "apple studios", "appletv"]
+  start:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "START"
+        market: "ru"
+        keys: ["start.film", "start.ru", "start ru"]
+      - brand: "START Studio"
+        market: "ru"
+        keys: ["start studio"]
+  atresmedia:
+    region: "es"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Atresmedia"
+        market: "es"
+        keys: ["atresmedia cmc", "atresmedia"]
+  disney:
+    region: "us"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Walt Disney"
+        market: "global"
+        keys: ["disney enterprises", "disney", "the walt disney company", "walt disney", "walt disney company", "disney enterprises and marvel television", "disney enterprises and pixar", "disneyplus"]
+      - brand: "Walt Disney Studios"
+        market: "global"
+        keys: ["walt disney studios motion pictures", "disney studios", "walt disney pictures", "walt disney animation studios motion pictures", "walt disney animation studios", "walt disney animation studios pictures motion"]
+      - brand: "Marvel (MVL Film Finance)"
+        market: "global"
+        keys: ["mvl film finance"]
+      - brand: "Fox 21 Television Studios"
+        market: "global"
+        keys: ["fox 21"]
+  comcast:
+    region: "us"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "NBCUniversal"
+        market: "global"
+        keys: ["nbcuniversal", "nbcuniversal media"]
+      - brand: "NBCUniversal Latin America"
+        market: "latam"
+        keys: ["nbc universal liv"]
+      - brand: "Universal Pictures"
+        market: "global"
+        keys: ["universal pictures", "universal studios international", "universal pictures subscription television", "universal city studios"]
+      - brand: "Universal Cable Productions"
+        market: "us"
+        keys: ["universal cable productions"]
+      - brand: "Universal Pictures France"
+        market: "fr"
+        keys: ["universal pictures france"]
+      - brand: "Universal Pictures Spain"
+        market: "es"
+        keys: ["universal spain"]
+      - brand: "Universal Pictures Germany"
+        market: "de"
+        keys: ["universal pictures germany"]
+      - brand: "Universal Pictures Japan"
+        market: "jp"
+        keys: ["universal pictures japan"]
+      - brand: "Universal Pictures Korea"
+        market: "kr"
+        keys: ["universal pictures international korea"]
+      - brand: "Sky UK"
+        market: "gb"
+        keys: ["sky uk", "sky group", "sky pictures", "sky cinema"]
+      - brand: "Sky Italia"
+        market: "it"
+        keys: ["sky italia", "sky it"]
+      - brand: "Sky Deutschland (Comcast filings)"
+        market: "de"
+        keys: ["sky uk de"]
+      - brand: "Sky Europe"
+        market: "eu"
+        keys: ["sky uk italia deutschland fernsehen kg and österreich", "sky uk de it", "sky italia and deutschland fernsehen kg"]
+  baidu:
+    region: "cn"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "iQIYI"
+        market: "cn"
+        keys: ["北京爱奇艺科技有限公司", "iqiyi", "beijing iqiyi science technology", "北京爱奇艺有限公司", "北京爱奇艺科技有公司"]
+      - brand: "iQIYI International"
+        market: "asia"
+        keys: ["iqiyi international singapore pte", "iqiyi tw"]
+  media-hub-distribution-sia:
+    region: "lv"
+    content_type: "mixed"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Media Hub Distribution"
+        market: "ru"
+        keys: ["media hub distribution sia"]
+  m3:
+    region: "ru"
+    content_type: "mixed"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "M3"
+        market: "ru"
+        keys: ["m3"]
+  amazon:
+    region: "us"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Prime Video"
+        market: "global"
+        keys: ["amazon content services", "amazon prime video", "amazon prime", "prime video", "amazon digital services", "amazon digital uk 1 principal place worship street london ec2a 2fa"]
+      - brand: "Prime Video India"
+        market: "in"
+        keys: ["amazon.com services", "amazon prime video india"]
+      - brand: "Prime Video Turkey"
+        market: "tr"
+        keys: ["amazon turkey video dijital yayıncılık anonim şirketi"]
+      - brand: "Amazon miniTV"
+        market: "in"
+        keys: ["amazon minitv"]
+      - brand: "MX Player"
+        market: "in"
+        keys: ["mx media entertainment pte", "amazon mx player"]
+      - brand: "Amazon MGM Studios"
+        market: "global"
+        keys: ["amazon mgm studios", "amazon studios", "amazon mgm", "amazon mgm studios prime video"]
+      - brand: "Amazon Studios SEA"
+        market: "asia"
+        keys: ["amazon studios sea"]
+      - brand: "MGM"
+        market: "global"
+        keys: ["metro-goldwyn-mayer studios", "mgm studios"]
+      - brand: "United Artists Releasing"
+        market: "us"
+        keys: ["united artists releasing"]
+  cm:
+    region: "ru"
+    content_type: "mixed"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "CM"
+        market: "ru"
+        keys: ["cm"]
+  mts:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "KION / ON Media"
+        market: "ru"
+        keys: ["mts media", "kion"]
+      - brand: "KION Film Studio"
+        market: "ru"
+        keys: ["kion film studio"]
+  zee:
+    region: "in"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Zee"
+        market: "in"
+        keys: ["zee entertainment enterprises", "zee entertainment", "zee entertaiment enterprises", "zee studios"]
+      - brand: "Zee CIS"
+        market: "ru"
+        keys: ["zee cis"]
+      - brand: "ZEE5"
+        market: "in"
+        keys: ["zee5", "zee5 entertainment"]
+      - brand: "Weyyak"
+        market: "mena"
+        keys: ["zeetv and wayaak"]
+      - brand: "Essel Vision"
+        market: "in"
+        keys: ["essel vision production", "essel vision productions"]
+  kinofon:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Kinofon"
+        market: "ru"
+        keys: ["kinofon"]
+  media-group-ukraine:
+    region: "ua"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Video Content Library"
+        market: "ua"
+        keys: ["video content library"]
+      - brand: "TRK Ukraina"
+        market: "ua"
+        keys: ["television channel ukraine"]
+  ardila-lulle:
+    region: "co"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "RCN"
+        market: "co"
+        keys: ["rcn vod", "rcn", "rcn cha", "rcn televisión", "canal rcn", "rcn liv", "rcn canal principal cha"]
+  demiroren:
+    region: "tr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Kanal D"
+        market: "tr"
+        keys: ["demirören tv radyo yayıncılık yapımcılık", "kanal d demirören medya yatırımları ticaret", "kanal d", "demirören medya yatırımları ticaret", "kanal d productions"]
+  diamond-films:
+    region: "ar"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Diamond Films"
+        market: "latam"
+        keys: ["diamond films"]
+  netflix:
+    region: "us"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Netflix"
+        market: "global"
+        keys: ["netflix", "netflix worldwide entertainment", "netflix us", "netflix worldwide entertainment lnc", "netflix com", "netflix studios", "netflix.com"]
+      - brand: "Netflix India"
+        market: "in"
+        keys: ["netflix entertainment services india llp", "netflix india"]
+      - brand: "Netflix Türkiye"
+        market: "tr"
+        keys: ["netflix türkiye"]
+  el-comercio:
+    region: "pe"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "America TV"
+        market: "pe"
+        keys: ["america tv peru", "america tv vod", "america tv cha"]
+  tvb:
+    region: "hk"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "TVB"
+        market: "hk"
+        keys: ["television broadcasts", "tvb group", "tvb", "tvb jade", "tvb international", "tvb network"]
+  pervyy-kanal:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Channel One"
+        market: "ru"
+        keys: ["pervyy kanal", "pervyy kanal jsc channel one"]
+  reliance:
+    region: "in"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Viacom18"
+        market: "in"
+        keys: ["viacom18 media private", "viacom18 media pvt"]
+      - brand: "Hotstar"
+        market: "in"
+        keys: ["novi digital entertainment pvt", "hotstar"]
+      - brand: "Jio Studios"
+        market: "in"
+        keys: ["jio studios"]
+      - brand: "JioStar"
+        market: "in"
+        keys: ["jiostar india private", "disney hotstar", "viacom 18", "viacom18 motion pictures", "viacom18", "viacom 18 media private", "hotstar.com", "viacom18 media private jiohotstar", "viacom 18 media pvt"]
+      - brand: "Star India"
+        market: "in"
+        keys: ["star india private", "star india pvt"]
+  viasat-russia:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Viasat"
+        market: "ru"
+        keys: ["viasat global", "viasat"]
+  mbc-unresolved:
+    region: "unknown"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "MBC"
+        market: "unknown"
+        keys: ["mbc", "mbc network"]
+  dogus:
+    region: "tr"
+    content_type: "tv"
+    evidence:
+      basis: web
+      status: carried
+    brands:
+      - brand: "Dogus Digital"
+        market: "tr"
+        keys: ["doğuş digital hizmetleri"]
+  metropolitan-filmexport:
+    region: "fr"
+    content_type: "film"
+    evidence:
+      basis: web
+      status: carried
+    brands:
+      - brand: "Metropolitan FilmExport"
+        market: "fr"
+        keys: ["metropolitan"]
+  desyat-bukv:
+    region: "ru"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Desyat Bukv"
+        market: "ru"
+        keys: ["desyat bukv", "ten letters"]
+  toei:
+    region: "jp"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Toei Animation"
+        market: "jp"
+        keys: ["toei animation"]
+      - brand: "Toei Animation Europe"
+        market: "eu"
+        keys: ["toei animation europe sas"]
+      - brand: "Toei"
+        market: "jp"
+        keys: ["toei"]
+  joongang:
+    region: "kr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "SLL"
+        market: "kr"
+        keys: ["sll"]
+      - brand: "JTBC"
+        market: "kr"
+        keys: ["jtbc"]
+  salto:
+    region: "fr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Salto"
+        market: "fr"
+        keys: ["salto"]
+  bouygues:
+    region: "fr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Newen Studios"
+        market: "fr"
+        keys: ["newen"]
+      - brand: "TF1"
+        market: "fr"
+        keys: ["tf1 television francaise 1", "tf1"]
+  e-and:
+    region: "ae"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "STARZPLAY"
+        market: "mena"
+        keys: ["playco entertainment fz", "playco entertainment fz starzplay"]
+      - brand: "eVision (e&)"
+        market: "mena"
+        keys: ["emirates cable tv and multimedia evision from e"]
+  taeyoung:
+    region: "kr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "SBS"
+        market: "kr"
+        keys: ["sbs", "sbs international", "sbs contentshub", "sbs content hub", "sbs network"]
+      - brand: "SBS Contents Hub"
+        market: "kr"
+        keys: ["sbs contents hub"]
+  france-televisions:
+    region: "fr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "France Televisions"
+        market: "fr"
+        keys: ["france t l visions", "france télévisions"]
+  volgafilm:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "VLG.FILM"
+        market: "ru"
+        keys: ["volgafilm", "vlg.film"]
+  pccw:
+    region: "hk"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Viu"
+        market: "asia"
+        keys: ["viu", "viu network", "viu philippines"]
+      - brand: "Viu Original"
+        market: "asia"
+        keys: ["viu original", "viu originals"]
+      - brand: "Viu Middle East"
+        market: "mena"
+        keys: ["vuclip middle east", "viu middle east"]
+      - brand: "Viu (PCCW OTT)"
+        market: "asia"
+        keys: ["pccw ott hong kong", "pccw ott hong kong 7", "pccw ott hong kong 2", "pccw ott hong kong 8", "pccw ott hong kong 6", "pccw ott hong kong 4"]
+  gemplex:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: web
+      status: carried
+    brands:
+      - brand: "Gemplex"
+        market: "in"
+        keys: ["gemplex media pvt"]
+  globo:
+    region: "br"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Globo"
+        market: "br"
+        keys: ["globo comunicação e participações", "globo comunicacao e participacoes", "globo network", "globo comunicação e participações s a", "globo", "globo comunicações e participações s a", "globo brazil"]
+      - brand: "Globo International"
+        market: "global"
+        keys: ["globo international company"]
+  kbs:
+    region: "kr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "KBS"
+        market: "kr"
+        keys: ["kbs", "kbs network"]
+      - brand: "KBS Media"
+        market: "kr"
+        keys: ["kbs media"]
+  pathe:
+    region: "fr"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Pathe"
+        market: "fr"
+        keys: ["pathé", "path", "pathé distribution"]
+      - brand: "Pathe Films"
+        market: "fr"
+        keys: ["pathé films"]
+      - brand: "Pathe UK"
+        market: "gb"
+        keys: ["pathé uk"]
+      - brand: "Pathe Film (Turkey)"
+        market: "tr"
+        keys: ["pathe film"]
+  cj:
+    region: "kr"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "CJ ENM"
+        market: "kr"
+        keys: ["cj enm", "cj enm i"]
+      - brand: "CJ ENM Turkey"
+        market: "tr"
+        keys: ["cj enm medya film yapım ve dağıtım", "cj enm medya film yapım ve dağıtım anonim şirketi", "cj enm medya film yapim ve dağitim anonim şirketi"]
+      - brand: "TVING"
+        market: "kr"
+        keys: ["tving"]
+      - brand: "Endeavor Content (Fifth Season)"
+        market: "global"
+        keys: ["endeavor content"]
+  toho:
+    region: "jp"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Toho"
+        market: "jp"
+        keys: ["toho", "toho towa", "toho global"]
+  bertelsmann:
+    region: "de"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "6play"
+        market: "fr"
+        keys: ["6play"]
+      - brand: "Sky Deutschland"
+        market: "de"
+        keys: ["sky de", "sky deutschland fernsehen kg", "sky deutschland", "sky deutschland fernsehen"]
+      - brand: "RTL Deutschland"
+        market: "de"
+        keys: ["rtl interactive", "rtl protect"]
+  mars-media:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Mars Media"
+        market: "ru"
+        keys: ["mars media entertainment", "mars media enterteyment", "mars media enterteynment"]
+  gain:
+    region: "tr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Gain"
+        market: "tr"
+        keys: ["gain medya", "gain medya a ş", "gain"]
+  sun-tv:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Sun TV"
+        market: "in"
+        keys: ["sun tv network", "sun tv pvt"]
+  acun-medya:
+    region: "tr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Exxen"
+        market: "tr"
+        keys: ["exxen dijital platform hizmetleri", "exxen"]
+  lionsgate:
+    region: "us"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Lionsgate"
+        market: "global"
+        keys: ["lionsgate", "lionsgate entertainment", "lionsgate us"]
+      - brand: "Lionsgate UK"
+        market: "gb"
+        keys: ["lionsgate films uk"]
+  nippon-tv:
+    region: "jp"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Studio Ghibli"
+        market: "jp"
+        keys: ["ghibli"]
+  carsey-werner:
+    region: "us"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Carsey-Werner"
+        market: "global"
+        keys: ["carsey werner distribution"]
+  el-deseo:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "El Deseo"
+        market: "es"
+        keys: ["el deseo"]
+  mbc-korea:
+    region: "kr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "MBC"
+        market: "kr"
+        keys: ["munhwa broadcasting"]
+      - brand: "MBC Every1"
+        market: "kr"
+        keys: ["mbc every1"]
+      - brand: "MBC M"
+        market: "kr"
+        keys: ["mbc m"]
+  art-pikchers:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Art Pictures Distribution"
+        market: "ru"
+        keys: ["art pikchers prodakshn", "art pikchers distribyushn"]
+  kplus:
+    region: "vn"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "K+"
+        market: "vn"
+        keys: ["kplus"]
+  pinnacle-peak:
+    region: "us"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Pinnacle Peak Pictures"
+        market: "us"
+        keys: ["pinnacle peak pictures"]
+      - brand: "Pinnacle Peak Studios"
+        market: "us"
+        keys: ["pinnacle peak studios"]
+  sreda:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Sreda"
+        market: "ru"
+        keys: ["obshchestvo s ogranichennoy otvetstvennostyu prodyuserskaya kompaniya sreda"]
+  chaupal:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Chaupal"
+        market: "in"
+        keys: ["bosna digital entertainment pvt", "bosna digital entertainment private chaupal"]
+  citel:
+    region: "fr"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Citel Video"
+        market: "fr"
+        keys: ["citel video"]
+  mega:
+    region: "cl"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Mega"
+        market: "cl"
+        keys: ["mega"]
+  amc-networks:
+    region: "us"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "AMC"
+        market: "global"
+        keys: ["amc film holdings"]
+  upera:
+    region: "ir"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Upera"
+        market: "ir"
+        keys: ["upera"]
+  deaplaneta:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "DeAPlaneta"
+        market: "es"
+        keys: ["deaplaneta"]
+  fuji-media:
+    region: "jp"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Fuji TV"
+        market: "jp"
+        keys: ["fuji television network"]
+  arha:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "aha"
+        market: "in"
+        keys: ["arha media broadcasting pvt.ltd", "arha media broadcasting pvt"]
+  galaxy-play:
+    region: "vn"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Galaxy Play"
+        market: "vn"
+        keys: ["galaxy play jsc"]
+  world-of-wonder:
+    region: "us"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "World of Wonder"
+        market: "us"
+        keys: ["world of wonder productions"]
+  yash-raj:
+    region: "in"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Yash Raj Films"
+        market: "in"
+        keys: ["yash raj films pvt", "yash raj films"]
+  kinokompaniya-stv:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "STV"
+        market: "ru"
+        keys: ["kinokompaniya stv"]
+  stc:
+    region: "sa"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Intigral"
+        market: "mena"
+        keys: ["intigral"]
+  telefonica:
+    region: "es"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Movistar Plus+"
+        market: "es"
+        keys: ["series y películas telefónica"]
+      - brand: "Movistar Plus+ (Telefonica)"
+        market: "es"
+        keys: ["programas telefónica"]
+      - brand: "Movistar channels (Telefonica)"
+        market: "es"
+        keys: ["canales telefónica"]
+  paris-filmes:
+    region: "br"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Paris Filmes"
+        market: "br"
+        keys: ["paris filmes"]
+  yango:
+    region: "ae"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Yango Play"
+        market: "mena"
+        keys: ["yango play"]
+  osn:
+    region: "ae"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "OSN"
+        market: "mena"
+        keys: ["osn gulf dth fz"]
+  balaji-telefilms:
+    region: "in"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "ALTBalaji"
+        market: "in"
+        keys: ["alt balaji"]
+      - brand: "Balaji Motion Pictures"
+        market: "in"
+        keys: ["balaji motion pictures"]
+  vertice360:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Vertice 360"
+        market: "es"
+        keys: ["vertice360", "vertice 360"]
+  trt:
+    region: "tr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "TRT"
+        market: "tr"
+        keys: ["türkiye radyo televizyon kurumu trt", "trt", "trt 1", "trt televizyonları", "trt televizyonlari"]
+  asahi-broadcasting:
+    region: "jp"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "ABC Animation"
+        market: "jp"
+        keys: ["abc animation"]
+  hoichoi:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Hoichoi"
+        market: "in"
+        keys: ["hoichoi technologies pvt"]
+  kvartal-95:
+    region: "ua"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Kvartal 95"
+        market: "ua"
+        keys: ["kvartal 95"]
+  emtek:
+    region: "id"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Vidio"
+        market: "id"
+        keys: ["pt vidio dot com"]
+  studiya-voenfilm:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Voenfilm"
+        market: "ru"
+        keys: ["studiya voenfilm"]
+  rvv-film:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "RWV Film"
+        market: "ru"
+        keys: ["rvv film", "rwv film"]
+  vertical:
+    region: "us"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Vertical Entertainment"
+        market: "us"
+        keys: ["vertical entertainment"]
+  ugc:
+    region: "fr"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "UGC"
+        market: "fr"
+        keys: ["ugc images"]
+  viettel:
+    region: "vn"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Viettel Media"
+        market: "vn"
+        keys: ["viettel media"]
+  tpo-rok:
+    region: "ru"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "TPO Rok"
+        market: "ru"
+        keys: ["tpo rok"]
+  vi-brodkasting:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "VI Broadcasting"
+        market: "ru"
+        keys: ["vi brodkasting"]
+  korner-vork:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Korner Vork"
+        market: "ru"
+        keys: ["korner vork"]
+  wtw-films:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "WTW Films"
+        market: "ru"
+        keys: ["wtw films"]
+  turkcell:
+    region: "tr"
+    content_type: "tv"
+    evidence:
+      basis: web
+      status: carried
+    brands:
+      - brand: "lifecell TV"
+        market: "tr"
+        keys: ["lifecell tv yayin ve içerik hizmetleri anonim şirketi"]
+  aditya-birla:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Applause Entertainment"
+        market: "in"
+        keys: ["applause entertainment"]
+  world-pictures:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "World Pictures"
+        market: "ru"
+        keys: ["world pictures", "uorld pikcherz"]
+  films-du-losange:
+    region: "fr"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Les Films du Losange"
+        market: "fr"
+        keys: ["les films du losange"]
+  telefilms:
+    region: "ar"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Telefilms"
+        market: "latam"
+        keys: ["telefilms"]
+  itv:
+    region: "gb"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "ITV"
+        market: "gb"
+        keys: ["itv"]
+      - brand: "ITV Studios"
+        market: "global"
+        keys: ["itv studios", "itv studios global distribution", "itv rights"]
+      - brand: "ITV Studios France"
+        market: "fr"
+        keys: ["itv studios france"]
+  rialto:
+    region: "nz"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Rialto Distribution"
+        market: "nz"
+        keys: ["rialto distribution"]
+  mediapro:
+    region: "es"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Mediapro"
+        market: "es"
+        keys: ["mediapro"]
+  medium-kvoliti-prodakshn:
+    region: "ru"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Medium Kvoliti"
+        market: "ru"
+        keys: ["medium kvoliti prodakshn"]
+  yandex:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Kinopoisk"
+        market: "ru"
+        keys: ["kinopoisk"]
+  studiya-sverdlovsk:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Studiya Sverdlovsk"
+        market: "ru"
+        keys: ["studiya sverdlovsk"]
+  tv-servis:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "TV Servis"
+        market: "ru"
+        keys: ["tv servis"]
+  fox-corp:
+    region: "us"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Fox"
+        market: "us"
+        keys: ["fox"]
+  starlight-media:
+    region: "ua"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Novyi Kanal"
+        market: "ua"
+        keys: ["novyy kanal"]
+  soyuzmultfilm:
+    region: "ru"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Soyuzmultfilm"
+        market: "ru"
+        keys: ["soyuzmultfilm"]
+  paradiz:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Paradise"
+        market: "ru"
+        keys: ["distributsionaya kinokompaniya paradiz"]
+  mubi:
+    region: "gb"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "MUBI"
+        market: "global"
+        keys: ["mubi"]
+      - brand: "MUBI UK"
+        market: "gb"
+        keys: ["mubi uk"]
+      - brand: "MUBI Turkey"
+        market: "tr"
+        keys: ["mubi dijital hizmetler"]
+  flins-y-piniculas:
+    region: "es"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Flins y Piniculas"
+        market: "es"
+        keys: ["flins y piniculas"]
+  mbc-group:
+    region: "ae"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "MBC Group"
+        market: "mena"
+        keys: ["mbc group"]
+      - brand: "MBC"
+        market: "mena"
+        keys: ["mbc fz"]
+  dharma:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Dharma Productions"
+        market: "in"
+        keys: ["dharma productions", "dharma productions pvt"]
+  a-e-networks:
+    region: "us"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "A+E"
+        market: "global"
+        keys: ["a e television networks"]
+  pi-ay-telekontent:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Pi Ay Telekontent"
+        market: "ru"
+        keys: ["pi ay telekontent"]
+  kinoatis:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Kinoatis"
+        market: "ru"
+        keys: ["kinoatis"]
+  hallmark:
+    region: "us"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Hallmark (Crown Media)"
+        market: "us"
+        keys: ["crown media united states"]
+      - brand: "Hallmark Channel"
+        market: "us"
+        keys: ["hallmark channel"]
+  a-contracorriente:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "A Contracorriente Films"
+        market: "es"
+        keys: ["a contracorriente films"]
+  inter-ua:
+    region: "ua"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Inter"
+        market: "ua"
+        keys: ["tv channel inter pjsc"]
+  selecta-vision:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Selecta Vision"
+        market: "es"
+        keys: ["selecta vision"]
+  swell-film:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: web
+      status: carried
+    brands:
+      - brand: "Swell Film"
+        market: "ru"
+        keys: ["swell film"]
+  shemaroo:
+    region: "in"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Shemaroo"
+        market: "in"
+        keys: ["shemaroo entertainment"]
+  a-1-film:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "A-1 Film"
+        market: "ru"
+        keys: ["a-1 film"]
+  alibaba:
+    region: "cn"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Youku"
+        market: "cn"
+        keys: ["youku", "youku network", "youku copyright enforcement division", "youku entertainment"]
+  avalon:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Avalon"
+        market: "es"
+        keys: ["avalon"]
+  vertigo-films:
+    region: "gb"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Vertigo Films"
+        market: "gb"
+        keys: ["vertigo films"]
+  bf-distribution:
+    region: "ar"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "BF Distribution"
+        market: "latam"
+        keys: ["bf distribution"]
+  ott-ukraine:
+    region: "ua"
+    content_type: "tv"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "OTT Ukraine"
+        market: "ua"
+        keys: ["ott ukraine"]
+  red-chillies:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Red Chillies"
+        market: "in"
+        keys: ["red chillies entertainments pvt"]
+  a24:
+    region: "us"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "A24"
+        market: "global"
+        keys: ["a24 films", "a24 distribution", "a24"]
+  signature:
+    region: "gb"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Signature Entertainment"
+        market: "gb"
+        keys: ["signature entertainment"]
+  maddock:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Maddock Films"
+        market: "in"
+        keys: ["maddock films pvt", "maddock films"]
+  gaumont:
+    region: "fr"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Gaumont"
+        market: "fr"
+        keys: ["gaumont"]
+      - brand: "Gaumont Television"
+        market: "global"
+        keys: ["gaumont télévision"]
+  lionsgate-play:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Lionsgate Play"
+        market: "in"
+        keys: ["lions gate play llp"]
+  doc-cinema:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "DOC-Cinema"
+        market: "ru"
+        keys: ["doc-cinema"]
+  ramoji:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "ETV"
+        market: "in"
+        keys: ["eenadu television pvt"]
+  pioner:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Pioner"
+        market: "ru"
+        keys: ["kinokompaniya pioner"]
+  salman-khan-films:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Salman Khan Films"
+        market: "in"
+        keys: ["salman khan ventures pvt"]
+  amedia:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Amedia"
+        market: "ru"
+        keys: ["amedia production"]
+  good-deed:
+    region: "us"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Good Deed Entertainment"
+        market: "us"
+        keys: ["good deed entertainment"]
+  cine-video-y-tv:
+    region: "mx"
+    content_type: "tv"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Cine Video y TV"
+        market: "mx"
+        keys: ["cine video y tv de c.v"]
+  filmin:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Filmin"
+        market: "es"
+        keys: ["filmin"]
+  zapping:
+    region: "cl"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Zapping"
+        market: "cl"
+        keys: ["zapping liv"]
+  panorama-studios:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Panorama Studios"
+        market: "in"
+        keys: ["panorama studios"]
+  astro:
+    region: "my"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Astro"
+        market: "my"
+        keys: ["measat broadcast network systems sdn bhd"]
+  megofilm:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Megofilm"
+        market: "ru"
+        keys: ["megofilm"]
+  stx:
+    region: "us"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "STX"
+        market: "us"
+        keys: ["stx financing"]
+  uip-turkey:
+    region: "tr"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "UIP Turkey"
+        market: "tr"
+        keys: ["uip filmcilik ve ticaret"]
+  youplanet:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Youplanet Pictures"
+        market: "es"
+        keys: ["youplanet pictures"]
+  rkd-studios:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "RKD Studios"
+        market: "in"
+        keys: ["rkd studios pvt"]
+  inter-medya:
+    region: "tr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Inter Medya"
+        market: "global"
+        keys: ["inter medya"]
+  legendary:
+    region: "us"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Legendary"
+        market: "global"
+        keys: ["legendary pictures"]
+  bkm:
+    region: "tr"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "BKM"
+        market: "tr"
+        keys: ["beşiktaş kültür merkezi"]
+  vayt-media:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "White Media"
+        market: "ru"
+        keys: ["vayt media"]
+  kinotelefilm:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Kinotelefilm"
+        market: "ru"
+        keys: ["kinotelefilm"]
+  bazelevs:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Bazelevs"
+        market: "ru"
+        keys: ["bazelevs"]
+  elastica:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Elastica Films"
+        market: "es"
+        keys: ["elastica films"]
+  angel-studios:
+    region: "us"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Angel Studios"
+        market: "global"
+        keys: ["angel studios"]
+  epic-pictures:
+    region: "us"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Epic Pictures"
+        market: "us"
+        keys: ["epic pictures releasing"]
+  mahaakaal:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Mahaakaal Pictures"
+        market: "in"
+        keys: ["mahaakaal pictures"]
+  key-d-studios:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Key D Studios"
+        market: "ru"
+        keys: ["key di studios"]
+  kandoo:
+    region: "us"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Kandoo Films"
+        market: "us"
+        keys: ["kandoo films"]
+  sunshine-pictures:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Sunshine Pictures"
+        market: "in"
+        keys: ["sunshine pictures"]
+  enter10:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Enter10"
+        market: "in"
+        keys: ["enter10 tv", "enter 10 television private"]
+  atrangii:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Atrangii"
+        market: "in"
+        keys: ["atrangi network private"]
+  mass-movie-makers:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Mass Movie Makers"
+        market: "in"
+        keys: ["mass movie makers llp"]
+  trafic-films:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Trafic Films"
+        market: "ru"
+        keys: ["trafic films"]
+  rts-senegal:
+    region: "sn"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "RTS"
+        market: "sn"
+        keys: ["rts radio television senegalaise"]
+  tandem-films:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Tandem Films"
+        market: "es"
+        keys: ["tandem films"]
+  aamir-khan-productions:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Aamir Khan Productions"
+        market: "in"
+        keys: ["aamir khan productions"]
+  tencent:
+    region: "cn"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Tencent Video"
+        market: "cn"
+        keys: ["tencent video"]
+  ciner-yayin:
+    region: "tr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Show TV"
+        market: "tr"
+        keys: ["show tv"]
+  imagem-filmes:
+    region: "br"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Imagem Filmes"
+        market: "br"
+        keys: ["imagem filmes"]
+  filmax:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Filmax"
+        market: "es"
+        keys: ["filmax"]
+  arka-media-works:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Arka Media Works"
+        market: "in"
+        keys: ["arka media works"]
+  werthein:
+    region: "ar"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "DirecTV"
+        market: "latam"
+        keys: ["directv"]
+  kartoon-studios:
+    region: "us"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Frederator"
+        market: "us"
+        keys: ["frederator networks"]
+  surinder-films:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Surinder Films"
+        market: "in"
+        keys: ["surinder films private"]
+  bteam-pictures:
+    region: "es"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "BTeam Pictures"
+        market: "es"
+        keys: ["bteam pictures sl"]
+  goodeye-pictures:
+    region: "it"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Goodeye Pictures"
+        market: "it"
+        keys: ["goodeye pictures"]
+  planet-marathi:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Planet Marathi"
+        market: "in"
+        keys: ["planet marathi private"]
+  hanway:
+    region: "gb"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "HanWay Films"
+        market: "global"
+        keys: ["hanway films"]
+  anupam-kher-studios:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Anupam Kher Studios"
+        market: "in"
+        keys: ["anupam kher studios"]
+  addatimes:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Addatimes"
+        market: "in"
+        keys: ["addatimes media private"]
+  ubay-film:
+    region: "tr"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Ubay Film"
+        market: "tr"
+        keys: ["ubay film yapim san tic sti"]
+  excel-entertainment:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Excel Entertainment"
+        market: "in"
+        keys: ["excel entertainment pvt"]
+  nmk-cinemas:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "NMK Cinemas"
+        market: "in"
+        keys: ["nmk cinemas"]
+  a2-films:
+    region: "pe"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "A2 Films"
+        market: "latam"
+        keys: ["a2 films great movies distribution"]
+  otkrytie-tv:
+    region: "ru"
+    content_type: "tv"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Otkrytie TV"
+        market: "ru"
+        keys: ["otkrytie tv"]
+  sudaca-films:
+    region: "pe"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Sudaca Films"
+        market: "pe"
+        keys: ["sudaca films eirl"]
+  camasirhane-film:
+    region: "tr"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Camasirhane Film"
+        market: "tr"
+        keys: ["çamaşırhane film yapım"]
+  pooja-entertainment:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Pooja Entertainment"
+        market: "in"
+        keys: ["pooja entertainment india"]
+  hunan-broadcasting:
+    region: "cn"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Mango TV"
+        market: "cn"
+        keys: ["mango tv"]
+  khayp-film:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Hype Film"
+        market: "ru"
+        keys: ["khayp film"]
+  gfm-films:
+    region: "gb"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "GFM Films"
+        market: "gb"
+        keys: ["gfm films"]
+  kino-kerbez:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Kino Kerbez"
+        market: "ru"
+        keys: ["kino kerbez"]
+  artkontinent:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Artkontinent"
+        market: "ru"
+        keys: ["kinokompaniya artkontinent"]
+  bbc:
+    region: "gb"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "BBC"
+        market: "gb"
+        keys: ["bbc broadcasting house", "bbc uk", "bbc news", "bbc world news", "bbc", "bbc news uk"]
+      - brand: "BBC Studios"
+        market: "global"
+        keys: ["bbc studios distribution", "bbc studios productions", "bbc studios"]
+  odisha-tv:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Odisha TV"
+        market: "in"
+        keys: ["odisha television"]
+  cineverse:
+    region: "us"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Cineverse"
+        market: "us"
+        keys: ["cineverse"]
+  kinoland:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Kinoland"
+        market: "ru"
+        keys: ["kinoland"]
+  sb-film:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "SB Film"
+        market: "ru"
+        keys: ["sb film"]
+  bos-movie:
+    region: "us"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Bos Movie"
+        market: "us"
+        keys: ["bos movie"]
+  kvn-productions:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "KVN Productions"
+        market: "in"
+        keys: ["kvn productions"]
+  inferno:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Kinokompaniya Inferno"
+        market: "ru"
+        keys: ["kinokompaniya ivana arkhipova inferno"]
+  pen-india:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Pen Studios"
+        market: "in"
+        keys: ["pen india pvt"]
+  karo:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Karo.Prokat"
+        market: "ru"
+        keys: ["obshchestvo s ogranichennoy otvetstvennostyu karoprokat"]
+  nadiadwala:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Nadiadwala Grandson"
+        market: "in"
+        keys: ["nadiadwala grandson entertainment private"]
+  sohum-shah-films:
+    region: "in"
+    content_type: "film"
+    evidence:
+      basis: reporter
+      status: carried
+    brands:
+      - brand: "Sohum Shah Films"
+        market: "in"
+        keys: ["sohum shah films"]
+  gorky-film-studio:
+    region: "ru"
+    content_type: "film"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Gorky Film Studio"
+        market: "ru"
+        keys: ["kinostudiya im gorkogo"]
+  viasat-world:
+    region: "gb"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Viasat World"
+        market: "eu"
+        keys: ["viasat world"]
+  eros:
+    region: "in"
+    content_type: "mixed"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Eros"
+        market: "in"
+        keys: ["eros international", "eros international media", "eros"]
+  mfe:
+    region: "it"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Mediaset"
+        market: "it"
+        keys: ["mediaset"]
+      - brand: "Mediaset España"
+        market: "es"
+        keys: ["mediaset españa comunicación"]
+  dpg-media:
+    region: "be"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Videoland (RTL)"
+        market: "nl"
+        keys: ["rtl videoland"]
+  cme:
+    region: "cz"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "RTL Hrvatska"
+        market: "hr"
+        keys: ["rtl hrvatska d.o.o", "rtl hrvatska"]
+  wavve:
+    region: "kr"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Wavve"
+        market: "kr"
+        keys: ["wavve"]
+  canal-13-unresolved:
+    region: "unknown"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Canal 13"
+        market: "unknown"
+        keys: ["canal 13"]
+  zee-media:
+    region: "in"
+    content_type: "tv"
+    evidence:
+      basis: company_knowledge
+      status: carried
+    brands:
+      - brand: "Zee Media"
+        market: "in"
+        keys: ["zee media"]
