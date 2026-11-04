@@ -251,12 +251,14 @@ def _prepare(
     threads: int,
     memory_limit: str,
     require_selected: bool,
+    names_start: str | None = None,
 ) -> _Prepared:
     """Check inputs, normalize reporter names and register the `reporters` table.
 
-    Stops before any query output is produced if an input file is missing, if a seed
-    owner key is not in the owner key mapping, or if a reporter alias key or
-    protection-network reporter is not in the data.
+    Reporter names are taken from the window start onward, or from `names_start` when a
+    caller also needs earlier rows. Stops before any query output is produced if an input
+    file is missing, if a seed owner key is not in the owner key mapping, or if a reporter
+    alias key or protection-network reporter is not in the data.
     """
     for path in (params_path, aliases_path, requests, owner_keys):
         if not path.is_file():
@@ -295,7 +297,7 @@ def _prepare(
         FROM (SELECT DISTINCT reporter_name FROM read_parquet('{requests}')
               WHERE requested_at_utc >= CAST(? AS TIMESTAMP) AND reporter_name IS NOT NULL)
         """,
-        [start],
+        [names_start or start],
     ).fetchall()
     names = con.execute("SELECT name_id, reporter_name FROM names").fetchall()
     reporter_keys: set[str] = set()
