@@ -121,6 +121,19 @@ python -m piracylens.data.scope_metrics
 
 Reads the reviewed scope in `configs/owner_aliases.yaml`, the candidate table and the parameter file, and writes `data/interim/scope_metrics.json` and `data/interim/scope_metrics_keys.csv`. All figures are request counts from the window start, and each request counts once: the scope share; the share in scope of requests filed by the protection-network reporters and by the other selected agencies, with the out-of-scope remainder split into owners reviewed and left out, owners never caught by a source, and requests without an owner key; in-scope breakdowns by group, market, evidence basis and candidate source; and the owner keys a lower ranking threshold (2,000) would add as unreviewed candidates. No label or outcome column is read. On this snapshot: about 24 s on the reference machine.
 
+### 6. Build the scoped sub-tables
+
+```bash
+python -m piracylens.data.scoped_tables requests
+python -m piracylens.data.scoped_tables domains
+```
+
+`requests` writes `data/interim/scoped_requests.parquet`: one row per in-scope request from 2019-01-01, with the owner group, brand, market, region, content type and evidence basis from `configs/owner_aliases.yaml`, the reporter key and group, the candidate source flags and the four URL counters. Rows before the window start are feature history only (`in_window` is false). The command stops if a request maps to more than one in-scope owner key, or if the number of in-window rows differs from the in-scope count in `data/interim/scope_metrics.json`, so the table is provably the scope measured in step 5. Raw owner and reporter names are not copied; they can be joined back by `request_id`. On this snapshot: 8,924,437 requests (8,247,558 in the window), about 105 MB; about 100 s and up to 14 GB of memory on the reference machine.
+
+`domains` writes `data/interim/scoped_domains.parquet`: the request × domain rows of those requests, with the four counters, the request time and `in_window`. Other attributes come from a join on `request_id`. On this snapshot: 195,531,504 rows (169,861,660 in the window), about 1.0 GB; about 18 s.
+
+Both commands print row counts only, per window flag and per year; they print no sums or rates of the URL counters.
+
 ## Development
 
 ```bash
