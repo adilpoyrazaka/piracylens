@@ -1,0 +1,82 @@
+# Pre-registered design of the takedown audit model.
+# Fixed before any label rate or model output was looked at. Later changes are logged
+# with a date and a reason and reported separately from the main result.
+# Dates refer to the request filing time (requested_at_utc, UTC) and are inclusive.
+
+data:
+  table: "data/interim/scoped_domains.parquet"
+  window_start: "2021-01-01"
+  data_end: "2026-10-24"
+  # Rows earlier than the window are feature history only, never training examples.
+  history_start: "2019-01-01"
+
+population:
+  # Only rows where Google decided at least one URL; not-in-index and pending are dropped.
+  decided_counters: ["urls_removed", "urls_no_action"]
+
+label:
+  # Primary label: Google took no action on at least one URL of the domain in the request.
+  primary: {counter: "urls_no_action", min_count: 1}
+  # Sensitivity label, fixed together with the primary one so neither is picked after a look:
+  # share of decided URLs with no action is at least this value (heuristic).
+  sensitivity_min_share: 0.5
+
+split:
+  train: {start: "2021-01-01", end: "2024-12-31"}
+  validation: {start: "2025-01-01", end: "2025-06-30"}
+  test: {start: "2025-07-01", end: "2026-10-24"}
+  # Grouping unit for folds inside training and for bootstrap resampling.
+  group_by: "domain"
+  # The test set is also reported on domains never seen before the test start.
+  report_unseen_domains: true
+
+features:
+  # A domain's past no-action rate uses only requests filed at least this many days
+  # earlier, because the decision date is not in the data (heuristic).
+  past_rate_min_gap_days: 30
+  # Never used as features: the URL-level file, an undocumented column, raw free-text names.
+  excluded: ["url_file", "from_abuser", "owner_name", "reporter_name"]
+
+sampling:
+  # Training examples are whole requests (all of their domains). The size is set by a
+  # memory measurement that reads no label, and is written here before any model runs;
+  # training refuses to run while it is empty.
+  train_unit: "request"
+  train_requests: null
+  # Validation and test keep the real class rate: no rebalancing.
+  rebalance_eval: false
+  seed: 20261104
+
+models:
+  baselines: ["base_rate", "domain_past_rate"]
+  candidates: ["logistic_regression", "linear_svm_sgd", "xgboost"]
+  imbalance_variants: ["none", "class_weight"]
+  calibration: "isotonic"
+  # Hyperparameters and the decision threshold are tuned on validation only;
+  # the test set is evaluated once, at the end.
+  tune_on: "validation"
+
+metrics:
+  primary: "pr_auc"
+  others: ["recall_at_precision", "brier"]
+  precision_target: 0.80
+  bootstrap: {resamples: 1000, unit: "domain", confidence: 0.95}
+
+business_metric:
+  # At the precision target: share and count of test no-action URLs that would have been
+  # flagged before the notice was filed.
+  name: "preventable_no_action_urls"
+  at_precision: 0.80
+
+checks:
+  # Same validation and test sets, training restricted to requests from this date.
+  stability_train_start: "2023-01-01"
+  excluded_groups: ["vgtrk"]
+  # Per-group metrics are reported for groups with at least this many test rows (heuristic).
+  per_group_min_test_rows: 1000
+  reporter_ablation: true
+  # Owners that entered the scope through the owner ranking or the prefix scan only.
+  source_subset: ["source_a", "source_d"]
+  no_reporter_model: true
+  # A drop in PR-AUC larger than this (absolute) counts as a large gap (heuristic).
+  large_gap_pr_auc: 0.05
