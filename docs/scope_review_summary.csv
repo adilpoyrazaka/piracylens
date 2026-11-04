@@ -1,0 +1,780 @@
+owner_key,decision,reason,group,brand,market,region,content_type,evidence_basis,keys
+a-1 film,in,film_tv_rule,a-1-film,A-1 Film,ru,ru,film,reporter,1
+a contracorriente films,in,film_tv_rule,a-contracorriente,A Contracorriente Films,es,es,film,company_knowledge,1
+a e television networks,in,film_tv_rule,a-e-networks,A+E,global,us,tv,company_knowledge,1
+a2 films great movies distribution,in,film_tv_rule,a2-films,A2 Films,latam,pe,film,reporter,1
+a24,in,film_tv_rule,a24,A24,global,us,mixed,company_knowledge,1
+a24 distribution,in,film_tv_rule,a24,A24,global,us,mixed,company_knowledge,1
+a24 films,in,film_tv_rule,a24,A24,global,us,mixed,company_knowledge,1
+aamir khan productions,in,film_tv_rule,aamir-khan-productions,Aamir Khan Productions,in,in,film,company_knowledge,1
+exxen,in,film_tv_rule,acun-medya,Exxen,tr,tr,tv,company_knowledge,1
+exxen dijital platform hizmetleri,in,film_tv_rule,acun-medya,Exxen,tr,tr,tv,company_knowledge,1
+addatimes media private,in,film_tv_rule,addatimes,Addatimes,in,in,tv,company_knowledge,1
+applause entertainment,in,film_tv_rule,aditya-birla,Applause Entertainment,in,in,tv,company_knowledge,1
+youku,in,film_tv_rule,alibaba,Youku,cn,cn,tv,company_knowledge,1
+youku copyright enforcement division,in,film_tv_rule,alibaba,Youku,cn,cn,tv,company_knowledge,1
+youku entertainment,in,film_tv_rule,alibaba,Youku,cn,cn,tv,company_knowledge,1
+youku network,in,film_tv_rule,alibaba,Youku,cn,cn,tv,company_knowledge,1
+amazon digital services,in,film_tv_rule,amazon,Prime Video,global,us,mixed,company_knowledge,1
+amazon digital uk 1 principal place worship street london ec2a 2fa,in,film_tv_rule,amazon,Prime Video,global,us,mixed,company_knowledge,1
+amazon mgm,in,film_tv_rule,amazon,Amazon MGM Studios,global,us,mixed,company_knowledge,1
+amazon mgm studios,in,film_tv_rule,amazon,Amazon MGM Studios,global,us,mixed,company_knowledge,1
+amazon mgm studios prime video,in,film_tv_rule,amazon,Amazon MGM Studios,global,us,mixed,company_knowledge,1
+amazon minitv,in,film_tv_rule,amazon,Amazon miniTV,in,us,mixed,company_knowledge,1
+amazon mx player,in,film_tv_rule,amazon,MX Player,in,us,mixed,company_knowledge,1
+amazon prime,in,film_tv_rule,amazon,Prime Video,global,us,mixed,company_knowledge,1
+amazon prime video india,in,film_tv_rule,amazon,Prime Video India,in,us,mixed,company_knowledge,1
+amazon studios sea,in,film_tv_rule,amazon,Amazon Studios SEA,asia,us,mixed,company_knowledge,1
+amazon turkey video dijital yayıncılık anonim şirketi,in,film_tv_rule,amazon,Prime Video Turkey,tr,us,mixed,company_knowledge,1
+amazon.com services,in,film_tv_rule,amazon,Prime Video India,in,us,mixed,company_knowledge,1
+metro-goldwyn-mayer studios,in,film_tv_rule,amazon,MGM,global,us,mixed,company_knowledge,1
+mgm studios,in,film_tv_rule,amazon,MGM,global,us,mixed,company_knowledge,1
+mx media entertainment pte,in,film_tv_rule,amazon,MX Player,in,us,mixed,company_knowledge,1
+prime video,in,film_tv_rule,amazon,Prime Video,global,us,mixed,company_knowledge,1
+united artists releasing,in,film_tv_rule,amazon,United Artists Releasing,us,us,mixed,company_knowledge,1
+amc film holdings,in,film_tv_rule,amc-networks,AMC,global,us,tv,company_knowledge,1
+amedia production,in,film_tv_rule,amedia,Amedia,ru,ru,tv,company_knowledge,1
+angel studios,in,film_tv_rule,angel-studios,Angel Studios,global,us,film,company_knowledge,1
+anupam kher studios,in,film_tv_rule,anupam-kher-studios,Anupam Kher Studios,in,in,film,reporter,1
+apple and video programming,in,film_tv_rule,apple,Apple TV,global,us,tv,company_knowledge,1
+apple studios,in,film_tv_rule,apple,Apple TV,global,us,tv,company_knowledge,1
+apple tv,in,film_tv_rule,apple,Apple TV,global,us,tv,company_knowledge,1
+appletv,in,film_tv_rule,apple,Apple TV,global,us,tv,company_knowledge,1
+canal rcn,in,film_tv_rule,ardila-lulle,RCN,co,co,tv,company_knowledge,1
+rcn canal principal cha,in,film_tv_rule,ardila-lulle,RCN,co,co,tv,company_knowledge,1
+rcn cha,in,film_tv_rule,ardila-lulle,RCN,co,co,tv,company_knowledge,1
+rcn liv,in,film_tv_rule,ardila-lulle,RCN,co,co,tv,company_knowledge,1
+rcn televisión,in,film_tv_rule,ardila-lulle,RCN,co,co,tv,company_knowledge,1
+arha media broadcasting pvt,in,film_tv_rule,arha,aha,in,in,tv,company_knowledge,1
+arha media broadcasting pvt.ltd,in,film_tv_rule,arha,aha,in,in,tv,company_knowledge,1
+arka media works,in,film_tv_rule,arka-media-works,Arka Media Works,in,in,film,company_knowledge,1
+art pikchers distribyushn,in,film_tv_rule,art-pikchers,Art Pictures Distribution,ru,ru,film,company_knowledge,1
+kinokompaniya artkontinent,in,film_tv_rule,artkontinent,Artkontinent,ru,ru,film,reporter,1
+abc animation,in,film_tv_rule,asahi-broadcasting,ABC Animation,jp,jp,tv,company_knowledge,1
+measat broadcast network systems sdn bhd,in,film_tv_rule,astro,Astro,my,my,tv,company_knowledge,1
+atrangi network private,in,film_tv_rule,atrangii,Atrangii,in,in,tv,company_knowledge,1
+atresmedia,in,film_tv_rule,atresmedia,Atresmedia,es,es,tv,company_knowledge,1
+avalon,in,film_tv_rule,avalon,Avalon,es,es,film,company_knowledge,1
+iqiyi international singapore pte,in,film_tv_rule,baidu,iQIYI International,asia,cn,tv,company_knowledge,1
+iqiyi tw,in,film_tv_rule,baidu,iQIYI International,asia,cn,tv,company_knowledge,1
+北京爱奇艺有限公司,in,film_tv_rule,baidu,iQIYI,cn,cn,tv,company_knowledge,1
+北京爱奇艺科技有公司,in,film_tv_rule,baidu,iQIYI,cn,cn,tv,company_knowledge,1
+alt balaji,in,film_tv_rule,balaji-telefilms,ALTBalaji,in,in,mixed,company_knowledge,1
+balaji motion pictures,in,film_tv_rule,balaji-telefilms,Balaji Motion Pictures,in,in,mixed,company_knowledge,1
+bazelevs,in,film_tv_rule,bazelevs,Bazelevs,ru,ru,film,company_knowledge,1
+bbc,in,film_tv_rule,bbc,BBC,gb,gb,tv,company_knowledge,1
+bbc broadcasting house,in,film_tv_rule,bbc,BBC,gb,gb,tv,company_knowledge,1
+bbc news,in,film_tv_rule,bbc,BBC,gb,gb,tv,company_knowledge,1
+bbc news uk,in,film_tv_rule,bbc,BBC,gb,gb,tv,company_knowledge,1
+bbc studios,in,film_tv_rule,bbc,BBC Studios,global,gb,tv,company_knowledge,1
+bbc studios distribution,in,film_tv_rule,bbc,BBC Studios,global,gb,tv,company_knowledge,1
+bbc studios productions,in,film_tv_rule,bbc,BBC Studios,global,gb,tv,company_knowledge,1
+bbc uk,in,film_tv_rule,bbc,BBC,gb,gb,tv,company_knowledge,1
+bbc world news,in,film_tv_rule,bbc,BBC,gb,gb,tv,company_knowledge,1
+6play,in,film_tv_rule,bertelsmann,6play,fr,de,tv,company_knowledge,1
+rtl interactive,in,film_tv_rule,bertelsmann,RTL Deutschland,de,de,tv,company_knowledge,1
+rtl protect,in,film_tv_rule,bertelsmann,RTL Deutschland,de,de,tv,company_knowledge,1
+sky de,in,film_tv_rule,bertelsmann,Sky Deutschland,de,de,tv,company_knowledge,1
+sky deutschland,in,film_tv_rule,bertelsmann,Sky Deutschland,de,de,tv,company_knowledge,1
+sky deutschland fernsehen,in,film_tv_rule,bertelsmann,Sky Deutschland,de,de,tv,company_knowledge,1
+sky deutschland fernsehen kg,in,film_tv_rule,bertelsmann,Sky Deutschland,de,de,tv,company_knowledge,1
+bf distribution,in,film_tv_rule,bf-distribution,BF Distribution,latam,ar,film,company_knowledge,1
+beşiktaş kültür merkezi,in,film_tv_rule,bkm,BKM,tr,tr,mixed,company_knowledge,1
+bos movie,in,film_tv_rule,bos-movie,Bos Movie,us,us,film,reporter,1
+newen,in,film_tv_rule,bouygues,Newen Studios,fr,fr,tv,company_knowledge,1
+tf1,in,film_tv_rule,bouygues,TF1,fr,fr,tv,company_knowledge,1
+tf1 television francaise 1,in,film_tv_rule,bouygues,TF1,fr,fr,tv,company_knowledge,1
+bteam pictures sl,in,film_tv_rule,bteam-pictures,BTeam Pictures,es,es,film,reporter,1
+çamaşırhane film yapım,in,film_tv_rule,camasirhane-film,Camasirhane Film,tr,tr,film,reporter,1
+canal afrique group,in,film_tv_rule,canal,Canal+ Afrique,africa,fr,mixed,company_knowledge,1
+canal france,in,film_tv_rule,canal,Canal+,fr,fr,mixed,company_knowledge,1
+canal group,in,film_tv_rule,canal,Canal+,fr,fr,mixed,company_knowledge,1
+canal plus,in,film_tv_rule,canal,Canal+,fr,fr,mixed,company_knowledge,1
+canal plus afrique,in,film_tv_rule,canal,Canal+ Afrique,africa,fr,mixed,company_knowledge,1
+canal poland,in,film_tv_rule,canal,Canal+ Polska,pl,fr,mixed,company_knowledge,1
+canalplus,in,film_tv_rule,canal,Canal+,fr,fr,mixed,company_knowledge,1
+canalplus.com,in,film_tv_rule,canal,Canal+,fr,fr,mixed,company_knowledge,1
+multichoice group,in,film_tv_rule,canal,MultiChoice,za,fr,mixed,company_knowledge,1
+studiocanal,in,film_tv_rule,canal,Studiocanal,global,fr,mixed,company_knowledge,1
+canal 13,in,film_tv_rule,canal-13-unresolved,Canal 13,unknown,unknown,tv,company_knowledge,1
+carsey werner distribution,in,film_tv_rule,carsey-werner,Carsey-Werner,global,us,tv,company_knowledge,1
+bosna digital entertainment private chaupal,in,film_tv_rule,chaupal,Chaupal,in,in,tv,company_knowledge,1
+bosna digital entertainment pvt,in,film_tv_rule,chaupal,Chaupal,in,in,tv,company_knowledge,1
+cine video y tv de c.v,in,film_tv_rule,cine-video-y-tv,Cine Video y TV,mx,mx,tv,reporter,1
+show tv,in,film_tv_rule,ciner-yayin,Show TV,tr,tr,tv,company_knowledge,1
+cineverse,in,film_tv_rule,cineverse,Cineverse,us,us,mixed,company_knowledge,1
+citel video,in,film_tv_rule,citel,Citel Video,fr,fr,film,company_knowledge,1
+cj enm,in,film_tv_rule,cj,CJ ENM,kr,kr,mixed,company_knowledge,1
+cj enm i,in,film_tv_rule,cj,CJ ENM,kr,kr,mixed,company_knowledge,1
+cj enm medya film yapim ve dağitim anonim şirketi,in,film_tv_rule,cj,CJ ENM Turkey,tr,kr,mixed,company_knowledge,1
+cj enm medya film yapım ve dağıtım,in,film_tv_rule,cj,CJ ENM Turkey,tr,kr,mixed,company_knowledge,1
+cj enm medya film yapım ve dağıtım anonim şirketi,in,film_tv_rule,cj,CJ ENM Turkey,tr,kr,mixed,company_knowledge,1
+endeavor content,in,film_tv_rule,cj,Endeavor Content (Fifth Season),global,kr,mixed,company_knowledge,1
+tving,in,film_tv_rule,cj,TVING,kr,kr,mixed,company_knowledge,1
+rtl hrvatska,in,film_tv_rule,cme,RTL Hrvatska,hr,cz,tv,company_knowledge,1
+rtl hrvatska d.o.o,in,film_tv_rule,cme,RTL Hrvatska,hr,cz,tv,company_knowledge,1
+nbc universal liv,in,film_tv_rule,comcast,NBCUniversal Latin America,latam,us,mixed,company_knowledge,1
+nbcuniversal,in,film_tv_rule,comcast,NBCUniversal,global,us,mixed,company_knowledge,1
+nbcuniversal media,in,film_tv_rule,comcast,NBCUniversal,global,us,mixed,company_knowledge,1
+sky cinema,in,film_tv_rule,comcast,Sky UK,gb,us,mixed,company_knowledge,1
+sky group,in,film_tv_rule,comcast,Sky UK,gb,us,mixed,company_knowledge,1
+sky it,in,film_tv_rule,comcast,Sky Italia,it,us,mixed,company_knowledge,1
+sky italia,in,film_tv_rule,comcast,Sky Italia,it,us,mixed,company_knowledge,1
+sky italia and deutschland fernsehen kg,in,film_tv_rule,comcast,Sky Europe,eu,us,mixed,company_knowledge,1
+sky pictures,in,film_tv_rule,comcast,Sky UK,gb,us,mixed,company_knowledge,1
+sky uk,in,film_tv_rule,comcast,Sky UK,gb,us,mixed,company_knowledge,1
+sky uk de,in,film_tv_rule,comcast,Sky Deutschland (Comcast filings),de,us,mixed,company_knowledge,1
+sky uk de it,in,film_tv_rule,comcast,Sky Europe,eu,us,mixed,company_knowledge,1
+sky uk italia deutschland fernsehen kg and österreich,in,film_tv_rule,comcast,Sky Europe,eu,us,mixed,company_knowledge,1
+universal cable productions,in,film_tv_rule,comcast,Universal Cable Productions,us,us,mixed,company_knowledge,1
+universal city studios,in,film_tv_rule,comcast,Universal Pictures,global,us,mixed,company_knowledge,1
+universal pictures,in,film_tv_rule,comcast,Universal Pictures,global,us,mixed,company_knowledge,1
+universal pictures france,in,film_tv_rule,comcast,Universal Pictures France,fr,us,mixed,company_knowledge,1
+universal pictures germany,in,film_tv_rule,comcast,Universal Pictures Germany,de,us,mixed,company_knowledge,1
+universal pictures international korea,in,film_tv_rule,comcast,Universal Pictures Korea,kr,us,mixed,company_knowledge,1
+universal pictures japan,in,film_tv_rule,comcast,Universal Pictures Japan,jp,us,mixed,company_knowledge,1
+universal pictures subscription television,in,film_tv_rule,comcast,Universal Pictures,global,us,mixed,company_knowledge,1
+universal spain,in,film_tv_rule,comcast,Universal Pictures Spain,es,us,mixed,company_knowledge,1
+universal studios international,in,film_tv_rule,comcast,Universal Pictures,global,us,mixed,company_knowledge,1
+deaplaneta,in,film_tv_rule,deaplaneta,DeAPlaneta,es,es,film,company_knowledge,1
+demirören medya yatırımları ticaret,in,film_tv_rule,demiroren,Kanal D,tr,tr,tv,company_knowledge,1
+kanal d,in,film_tv_rule,demiroren,Kanal D,tr,tr,tv,company_knowledge,1
+kanal d demirören medya yatırımları ticaret,in,film_tv_rule,demiroren,Kanal D,tr,tr,tv,company_knowledge,1
+kanal d productions,in,film_tv_rule,demiroren,Kanal D,tr,tr,tv,company_knowledge,1
+dharma productions,in,film_tv_rule,dharma,Dharma Productions,in,in,film,company_knowledge,1
+dharma productions pvt,in,film_tv_rule,dharma,Dharma Productions,in,in,film,company_knowledge,1
+disney enterprises and marvel television,in,film_tv_rule,disney,Walt Disney,global,us,mixed,company_knowledge,1
+disney enterprises and pixar,in,film_tv_rule,disney,Walt Disney,global,us,mixed,company_knowledge,1
+disney studios,in,film_tv_rule,disney,Walt Disney Studios,global,us,mixed,company_knowledge,1
+disneyplus,in,film_tv_rule,disney,Walt Disney,global,us,mixed,company_knowledge,1
+fox 21,in,film_tv_rule,disney,Fox 21 Television Studios,global,us,mixed,company_knowledge,1
+mvl film finance,in,film_tv_rule,disney,Marvel (MVL Film Finance),global,us,mixed,company_knowledge,1
+walt disney,in,film_tv_rule,disney,Walt Disney,global,us,mixed,company_knowledge,1
+walt disney animation studios,in,film_tv_rule,disney,Walt Disney Studios,global,us,mixed,company_knowledge,1
+walt disney animation studios motion pictures,in,film_tv_rule,disney,Walt Disney Studios,global,us,mixed,company_knowledge,1
+walt disney animation studios pictures motion,in,film_tv_rule,disney,Walt Disney Studios,global,us,mixed,company_knowledge,1
+walt disney company,in,film_tv_rule,disney,Walt Disney,global,us,mixed,company_knowledge,1
+walt disney pictures,in,film_tv_rule,disney,Walt Disney Studios,global,us,mixed,company_knowledge,1
+walt disney studios motion pictures,in,film_tv_rule,disney,Walt Disney Studios,global,us,mixed,company_knowledge,1
+doc-cinema,in,film_tv_rule,doc-cinema,DOC-Cinema,ru,ru,film,reporter,1
+doğuş digital hizmetleri,in,film_tv_rule,dogus,Dogus Digital,tr,tr,tv,web,1
+rtl videoland,in,film_tv_rule,dpg-media,Videoland (RTL),nl,be,tv,company_knowledge,1
+emirates cable tv and multimedia evision from e,in,film_tv_rule,e-and,eVision (e&),mena,ae,tv,company_knowledge,1
+playco entertainment fz,in,film_tv_rule,e-and,STARZPLAY,mena,ae,tv,company_knowledge,1
+playco entertainment fz starzplay,in,film_tv_rule,e-and,STARZPLAY,mena,ae,tv,company_knowledge,1
+america tv cha,in,film_tv_rule,el-comercio,America TV,pe,pe,tv,company_knowledge,1
+america tv vod,in,film_tv_rule,el-comercio,America TV,pe,pe,tv,company_knowledge,1
+el deseo,in,film_tv_rule,el-deseo,El Deseo,es,es,film,company_knowledge,1
+elastica films,in,film_tv_rule,elastica,Elastica Films,es,es,film,reporter,1
+pt vidio dot com,in,film_tv_rule,emtek,Vidio,id,id,tv,company_knowledge,1
+enter 10 television private,in,film_tv_rule,enter10,Enter10,in,in,tv,company_knowledge,1
+enter10 tv,in,film_tv_rule,enter10,Enter10,in,in,tv,company_knowledge,1
+epic pictures releasing,in,film_tv_rule,epic-pictures,Epic Pictures,us,us,film,company_knowledge,1
+eros,in,film_tv_rule,eros,Eros,in,in,mixed,company_knowledge,1
+eros international,in,film_tv_rule,eros,Eros,in,in,mixed,company_knowledge,1
+eros international media,in,film_tv_rule,eros,Eros,in,in,mixed,company_knowledge,1
+excel entertainment pvt,in,film_tv_rule,excel-entertainment,Excel Entertainment,in,in,film,company_knowledge,1
+filmax,in,film_tv_rule,filmax,Filmax,es,es,film,company_knowledge,1
+filmin,in,film_tv_rule,filmin,Filmin,es,es,film,company_knowledge,1
+les films du losange,in,film_tv_rule,films-du-losange,Les Films du Losange,fr,fr,film,company_knowledge,1
+flins y piniculas,in,film_tv_rule,flins-y-piniculas,Flins y Piniculas,es,es,tv,company_knowledge,1
+fox,in,film_tv_rule,fox-corp,Fox,us,us,tv,company_knowledge,1
+france t l visions,in,film_tv_rule,france-televisions,France Televisions,fr,fr,tv,company_knowledge,1
+france télévisions,in,film_tv_rule,france-televisions,France Televisions,fr,fr,tv,company_knowledge,1
+fuji television network,in,film_tv_rule,fuji-media,Fuji TV,jp,jp,tv,company_knowledge,1
+gain,in,film_tv_rule,gain,Gain,tr,tr,tv,company_knowledge,1
+gain medya,in,film_tv_rule,gain,Gain,tr,tr,tv,company_knowledge,1
+gain medya a ş,in,film_tv_rule,gain,Gain,tr,tr,tv,company_knowledge,1
+galaxy play jsc,in,film_tv_rule,galaxy-play,Galaxy Play,vn,vn,tv,company_knowledge,1
+gaumont,in,film_tv_rule,gaumont,Gaumont,fr,fr,mixed,company_knowledge,1
+gaumont télévision,in,film_tv_rule,gaumont,Gaumont Television,global,fr,mixed,company_knowledge,1
+premier gpm rtv,in,film_tv_rule,gazprom-media,Premier,ru,ru,tv,company_knowledge,1
+telekanal tv3,in,film_tv_rule,gazprom-media,TV3,ru,ru,tv,company_knowledge,1
+telekompaniya ntv,in,film_tv_rule,gazprom-media,NTV,ru,ru,tv,company_knowledge,1
+tnt‐teleset jsc,in,film_tv_rule,gazprom-media,TNT,ru,ru,tv,company_knowledge,1
+tsentral partnership khaus,in,film_tv_rule,gazprom-media,Central Partnership,ru,ru,tv,company_knowledge,1
+gemplex media pvt,in,film_tv_rule,gemplex,Gemplex,in,in,tv,web,1
+gfm films,in,film_tv_rule,gfm-films,GFM Films,gb,gb,film,reporter,1
+globo,in,film_tv_rule,globo,Globo,br,br,tv,company_knowledge,1
+globo brazil,in,film_tv_rule,globo,Globo,br,br,tv,company_knowledge,1
+globo comunicacao e participacoes,in,film_tv_rule,globo,Globo,br,br,tv,company_knowledge,1
+globo comunicação e participações,in,film_tv_rule,globo,Globo,br,br,tv,company_knowledge,1
+globo comunicação e participações s a,in,film_tv_rule,globo,Globo,br,br,tv,company_knowledge,1
+globo comunicações e participações s a,in,film_tv_rule,globo,Globo,br,br,tv,company_knowledge,1
+globo international company,in,film_tv_rule,globo,Globo International,global,br,tv,company_knowledge,1
+globo network,in,film_tv_rule,globo,Globo,br,br,tv,company_knowledge,1
+good deed entertainment,in,film_tv_rule,good-deed,Good Deed Entertainment,us,us,film,company_knowledge,1
+goodeye pictures,in,film_tv_rule,goodeye-pictures,Goodeye Pictures,it,it,film,reporter,1
+kinostudiya im gorkogo,in,film_tv_rule,gorky-film-studio,Gorky Film Studio,ru,ru,film,company_knowledge,1
+crown media united states,in,film_tv_rule,hallmark,Hallmark (Crown Media),us,us,tv,company_knowledge,1
+hallmark channel,in,film_tv_rule,hallmark,Hallmark Channel,us,us,tv,company_knowledge,1
+hanway films,in,film_tv_rule,hanway,HanWay Films,global,gb,film,company_knowledge,1
+hoichoi technologies pvt,in,film_tv_rule,hoichoi,Hoichoi,in,in,tv,company_knowledge,1
+mango tv,in,film_tv_rule,hunan-broadcasting,Mango TV,cn,cn,tv,company_knowledge,1
+imagem filmes,in,film_tv_rule,imagem-filmes,Imagem Filmes,br,br,film,company_knowledge,1
+kinokompaniya ivana arkhipova inferno,in,film_tv_rule,inferno,Kinokompaniya Inferno,ru,ru,film,reporter,1
+inter medya,in,film_tv_rule,inter-medya,Inter Medya,global,tr,tv,company_knowledge,1
+tv channel inter pjsc,in,film_tv_rule,inter-ua,Inter,ua,ua,tv,company_knowledge,1
+itv,in,film_tv_rule,itv,ITV,gb,gb,tv,company_knowledge,1
+itv rights,in,film_tv_rule,itv,ITV Studios,global,gb,tv,company_knowledge,1
+itv studios,in,film_tv_rule,itv,ITV Studios,global,gb,tv,company_knowledge,1
+itv studios france,in,film_tv_rule,itv,ITV Studios France,fr,gb,tv,company_knowledge,1
+itv studios global distribution,in,film_tv_rule,itv,ITV Studios,global,gb,tv,company_knowledge,1
+ivi,in,film_tv_rule,ivi,Ivi,ru,ru,tv,company_knowledge,1
+ivi ru,in,film_tv_rule,ivi,Ivi,ru,ru,tv,company_knowledge,1
+jtbc,in,film_tv_rule,joongang,JTBC,kr,kr,tv,company_knowledge,1
+sll,in,film_tv_rule,joongang,SLL,kr,kr,tv,company_knowledge,1
+kandoo films,in,film_tv_rule,kandoo,Kandoo Films,us,us,film,reporter,1
+obshchestvo s ogranichennoy otvetstvennostyu karoprokat,in,film_tv_rule,karo,Karo.Prokat,ru,ru,film,company_knowledge,1
+frederator networks,in,film_tv_rule,kartoon-studios,Frederator,us,us,tv,company_knowledge,1
+kbs,in,film_tv_rule,kbs,KBS,kr,kr,tv,company_knowledge,1
+kbs media,in,film_tv_rule,kbs,KBS Media,kr,kr,tv,company_knowledge,1
+kbs network,in,film_tv_rule,kbs,KBS,kr,kr,tv,company_knowledge,1
+key di studios,in,film_tv_rule,key-d-studios,Key D Studios,ru,ru,film,reporter,1
+khayp film,in,film_tv_rule,khayp-film,Hype Film,ru,ru,film,reporter,1
+kino kerbez,in,film_tv_rule,kino-kerbez,Kino Kerbez,ru,ru,film,reporter,1
+kinoatis,in,film_tv_rule,kinoatis,Kinoatis,ru,ru,film,reporter,1
+kinoland,in,film_tv_rule,kinoland,Kinoland,ru,ru,film,reporter,1
+kinotelefilm,in,film_tv_rule,kinotelefilm,Kinotelefilm,ru,ru,film,reporter,1
+kplus,in,film_tv_rule,kplus,K+,vn,vn,tv,company_knowledge,1
+kvn productions,in,film_tv_rule,kvn-productions,KVN Productions,in,in,film,company_knowledge,1
+legendary pictures,in,film_tv_rule,legendary,Legendary,global,us,film,company_knowledge,1
+lionsgate,in,film_tv_rule,lionsgate,Lionsgate,global,us,mixed,company_knowledge,1
+lionsgate entertainment,in,film_tv_rule,lionsgate,Lionsgate,global,us,mixed,company_knowledge,1
+lionsgate films uk,in,film_tv_rule,lionsgate,Lionsgate UK,gb,us,mixed,company_knowledge,1
+lionsgate us,in,film_tv_rule,lionsgate,Lionsgate,global,us,mixed,company_knowledge,1
+lions gate play llp,in,film_tv_rule,lionsgate-play,Lionsgate Play,in,in,tv,company_knowledge,1
+maddock films,in,film_tv_rule,maddock,Maddock Films,in,in,film,company_knowledge,1
+maddock films pvt,in,film_tv_rule,maddock,Maddock Films,in,in,film,company_knowledge,1
+mahaakaal pictures,in,film_tv_rule,mahaakaal,Mahaakaal Pictures,in,in,film,reporter,1
+mars media enterteyment,in,film_tv_rule,mars-media,Mars Media,ru,ru,tv,company_knowledge,1
+mars media enterteynment,in,film_tv_rule,mars-media,Mars Media,ru,ru,tv,company_knowledge,1
+mass movie makers llp,in,film_tv_rule,mass-movie-makers,Mass Movie Makers,in,in,film,reporter,1
+mbc fz,in,film_tv_rule,mbc-group,MBC,mena,ae,tv,company_knowledge,1
+mbc group,in,film_tv_rule,mbc-group,MBC Group,mena,ae,tv,company_knowledge,1
+mbc every1,in,film_tv_rule,mbc-korea,MBC Every1,kr,kr,tv,company_knowledge,1
+mbc m,in,film_tv_rule,mbc-korea,MBC M,kr,kr,tv,company_knowledge,1
+munhwa broadcasting,in,film_tv_rule,mbc-korea,MBC,kr,kr,tv,company_knowledge,1
+mbc,in,film_tv_rule,mbc-unresolved,MBC,unknown,unknown,tv,company_knowledge,1
+mbc network,in,film_tv_rule,mbc-unresolved,MBC,unknown,unknown,tv,company_knowledge,1
+mediapro,in,film_tv_rule,mediapro,Mediapro,es,es,mixed,company_knowledge,1
+mega,in,film_tv_rule,mega,Mega,cl,cl,tv,company_knowledge,1
+megofilm,in,film_tv_rule,megofilm,Megofilm,ru,ru,film,reporter,1
+metropolitan,in,film_tv_rule,metropolitan-filmexport,Metropolitan FilmExport,fr,fr,film,web,1
+mediaset,in,film_tv_rule,mfe,Mediaset,it,it,tv,company_knowledge,1
+mediaset españa comunicación,in,film_tv_rule,mfe,Mediaset España,es,it,tv,company_knowledge,1
+kion film studio,in,film_tv_rule,mts,KION Film Studio,ru,ru,tv,company_knowledge,1
+mubi,in,film_tv_rule,mubi,MUBI,global,gb,film,company_knowledge,1
+mubi dijital hizmetler,in,film_tv_rule,mubi,MUBI Turkey,tr,gb,film,company_knowledge,1
+mubi uk,in,film_tv_rule,mubi,MUBI UK,gb,gb,film,company_knowledge,1
+nadiadwala grandson entertainment private,in,film_tv_rule,nadiadwala,Nadiadwala Grandson,in,in,film,company_knowledge,1
+netflix com,in,film_tv_rule,netflix,Netflix,global,us,tv,company_knowledge,1
+netflix entertainment services india llp,in,film_tv_rule,netflix,Netflix India,in,us,tv,company_knowledge,1
+netflix india,in,film_tv_rule,netflix,Netflix India,in,us,tv,company_knowledge,1
+netflix studios,in,film_tv_rule,netflix,Netflix,global,us,tv,company_knowledge,1
+netflix türkiye,in,film_tv_rule,netflix,Netflix Türkiye,tr,us,tv,company_knowledge,1
+netflix worldwide entertainment lnc,in,film_tv_rule,netflix,Netflix,global,us,tv,company_knowledge,1
+netflix.com,in,film_tv_rule,netflix,Netflix,global,us,tv,company_knowledge,1
+ghibli,in,film_tv_rule,nippon-tv,Studio Ghibli,jp,jp,film,company_knowledge,1
+1aktsept,in,film_tv_rule,nmg,REN TV,ru,ru,tv,company_knowledge,1
+nmk cinemas,in,film_tv_rule,nmk-cinemas,NMK Cinemas,in,in,film,reporter,1
+odisha television,in,film_tv_rule,odisha-tv,Odisha TV,in,in,tv,company_knowledge,1
+okko lls,in,film_tv_rule,okko,Okko,ru,ru,tv,company_knowledge,1
+okko tv,in,film_tv_rule,okko,Okko,ru,ru,tv,company_knowledge,1
+okko.tv,in,film_tv_rule,okko,Okko,ru,ru,tv,company_knowledge,1
+osn gulf dth fz,in,film_tv_rule,osn,OSN,mena,ae,tv,company_knowledge,1
+otkrytie tv,in,film_tv_rule,otkrytie-tv,Otkrytie TV,ru,ru,tv,reporter,1
+ott ukraine,in,film_tv_rule,ott-ukraine,OTT Ukraine,ua,ua,tv,reporter,1
+panorama studios,in,film_tv_rule,panorama-studios,Panorama Studios,in,in,film,reporter,1
+distributsionaya kinokompaniya paradiz,in,film_tv_rule,paradiz,Paradise,ru,ru,film,reporter,1
+paris filmes,in,film_tv_rule,paris-filmes,Paris Filmes,br,br,film,company_knowledge,1
+path,in,film_tv_rule,pathe,Pathe,fr,fr,mixed,company_knowledge,1
+pathe film,in,film_tv_rule,pathe,Pathe Film (Turkey),tr,fr,mixed,company_knowledge,1
+pathé,in,film_tv_rule,pathe,Pathe,fr,fr,mixed,company_knowledge,1
+pathé distribution,in,film_tv_rule,pathe,Pathe,fr,fr,mixed,company_knowledge,1
+pathé films,in,film_tv_rule,pathe,Pathe Films,fr,fr,mixed,company_knowledge,1
+pathé uk,in,film_tv_rule,pathe,Pathe UK,gb,fr,mixed,company_knowledge,1
+pccw ott hong kong,in,film_tv_rule,pccw,Viu (PCCW OTT),asia,hk,tv,company_knowledge,1
+pccw ott hong kong 2,in,film_tv_rule,pccw,Viu (PCCW OTT),asia,hk,tv,company_knowledge,1
+pccw ott hong kong 4,in,film_tv_rule,pccw,Viu (PCCW OTT),asia,hk,tv,company_knowledge,1
+pccw ott hong kong 6,in,film_tv_rule,pccw,Viu (PCCW OTT),asia,hk,tv,company_knowledge,1
+pccw ott hong kong 7,in,film_tv_rule,pccw,Viu (PCCW OTT),asia,hk,tv,company_knowledge,1
+pccw ott hong kong 8,in,film_tv_rule,pccw,Viu (PCCW OTT),asia,hk,tv,company_knowledge,1
+viu,in,film_tv_rule,pccw,Viu,asia,hk,tv,company_knowledge,1
+viu middle east,in,film_tv_rule,pccw,Viu Middle East,mena,hk,tv,company_knowledge,1
+viu network,in,film_tv_rule,pccw,Viu,asia,hk,tv,company_knowledge,1
+viu original,in,film_tv_rule,pccw,Viu Original,asia,hk,tv,company_knowledge,1
+viu originals,in,film_tv_rule,pccw,Viu Original,asia,hk,tv,company_knowledge,1
+viu philippines,in,film_tv_rule,pccw,Viu,asia,hk,tv,company_knowledge,1
+vuclip middle east,in,film_tv_rule,pccw,Viu Middle East,mena,hk,tv,company_knowledge,1
+pen india pvt,in,film_tv_rule,pen-india,Pen Studios,in,in,film,company_knowledge,1
+pervyy kanal jsc channel one,in,film_tv_rule,pervyy-kanal,Channel One,ru,ru,tv,company_knowledge,1
+pi ay telekontent,in,film_tv_rule,pi-ay-telekontent,Pi Ay Telekontent,ru,ru,tv,reporter,1
+pinnacle peak pictures,in,film_tv_rule,pinnacle-peak,Pinnacle Peak Pictures,us,us,film,company_knowledge,1
+pinnacle peak studios,in,film_tv_rule,pinnacle-peak,Pinnacle Peak Studios,us,us,film,company_knowledge,1
+kinokompaniya pioner,in,film_tv_rule,pioner,Pioner,ru,ru,film,reporter,1
+planet marathi private,in,film_tv_rule,planet-marathi,Planet Marathi,in,in,tv,company_knowledge,1
+pooja entertainment india,in,film_tv_rule,pooja-entertainment,Pooja Entertainment,in,in,film,company_knowledge,1
+eenadu television pvt,in,film_tv_rule,ramoji,ETV,in,in,tv,company_knowledge,1
+red chillies entertainments pvt,in,film_tv_rule,red-chillies,Red Chillies,in,in,film,company_knowledge,1
+disney hotstar,in,film_tv_rule,reliance,JioStar,in,in,mixed,company_knowledge,1
+hotstar,in,film_tv_rule,reliance,Hotstar,in,in,mixed,company_knowledge,1
+hotstar.com,in,film_tv_rule,reliance,JioStar,in,in,mixed,company_knowledge,1
+jio studios,in,film_tv_rule,reliance,Jio Studios,in,in,mixed,company_knowledge,1
+jiostar india private,in,film_tv_rule,reliance,JioStar,in,in,mixed,company_knowledge,1
+novi digital entertainment pvt,in,film_tv_rule,reliance,Hotstar,in,in,mixed,company_knowledge,1
+star india private,in,film_tv_rule,reliance,Star India,in,in,mixed,company_knowledge,1
+star india pvt,in,film_tv_rule,reliance,Star India,in,in,mixed,company_knowledge,1
+viacom 18,in,film_tv_rule,reliance,JioStar,in,in,mixed,company_knowledge,1
+viacom 18 media private,in,film_tv_rule,reliance,JioStar,in,in,mixed,company_knowledge,1
+viacom 18 media pvt,in,film_tv_rule,reliance,JioStar,in,in,mixed,company_knowledge,1
+viacom18,in,film_tv_rule,reliance,JioStar,in,in,mixed,company_knowledge,1
+viacom18 media private,in,film_tv_rule,reliance,Viacom18,in,in,mixed,company_knowledge,1
+viacom18 media private jiohotstar,in,film_tv_rule,reliance,JioStar,in,in,mixed,company_knowledge,1
+viacom18 media pvt,in,film_tv_rule,reliance,Viacom18,in,in,mixed,company_knowledge,1
+viacom18 motion pictures,in,film_tv_rule,reliance,JioStar,in,in,mixed,company_knowledge,1
+rialto distribution,in,film_tv_rule,rialto,Rialto Distribution,nz,nz,film,company_knowledge,1
+rkd studios pvt,in,film_tv_rule,rkd-studios,RKD Studios,in,in,film,reporter,1
+rts radio television senegalaise,in,film_tv_rule,rts-senegal,RTS,sn,sn,tv,company_knowledge,1
+rwv film,in,film_tv_rule,rvv-film,RWV Film,ru,ru,film,company_knowledge,1
+salman khan ventures pvt,in,film_tv_rule,salman-khan-films,Salman Khan Films,in,in,film,company_knowledge,1
+salto,in,film_tv_rule,salto,Salto,fr,fr,tv,company_knowledge,1
+sb film,in,film_tv_rule,sb-film,SB Film,ru,ru,film,reporter,1
+selecta vision,in,film_tv_rule,selecta-vision,Selecta Vision,es,es,film,company_knowledge,1
+shemaroo entertainment,in,film_tv_rule,shemaroo,Shemaroo,in,in,mixed,company_knowledge,1
+signature entertainment,in,film_tv_rule,signature,Signature Entertainment,gb,gb,film,company_knowledge,1
+blu tv,in,film_tv_rule,skydance,BluTV,tr,us,mixed,company_knowledge,1
+bluetv copyright,in,film_tv_rule,skydance,BluTV,tr,us,mixed,company_knowledge,1
+cbs,in,film_tv_rule,skydance,CBS,us,us,mixed,company_knowledge,1
+cbs broadcasting,in,film_tv_rule,skydance,CBS,us,us,mixed,company_knowledge,1
+cbs showtime,in,film_tv_rule,skydance,CBS,us,us,mixed,company_knowledge,1
+cbs studios,in,film_tv_rule,skydance,CBS,us,us,mixed,company_knowledge,1
+cbs television studios,in,film_tv_rule,skydance,CBS,us,us,mixed,company_knowledge,1
+cbs viacom,in,film_tv_rule,skydance,ViacomCBS,global,us,mixed,company_knowledge,1
+columbia broadcasting system,in,film_tv_rule,skydance,CBS,us,us,mixed,company_knowledge,1
+discovery communications,in,film_tv_rule,skydance,Discovery,global,us,mixed,company_knowledge,1
+discovery networks sl,in,film_tv_rule,skydance,Discovery Spain,es,us,mixed,company_knowledge,1
+hbo,in,film_tv_rule,skydance,HBO,global,us,mixed,company_knowledge,1
+hbo entertainment,in,film_tv_rule,skydance,HBO,global,us,mixed,company_knowledge,1
+hbo go,in,film_tv_rule,skydance,HBO,global,us,mixed,company_knowledge,1
+hbo latin america production services l.c,in,film_tv_rule,skydance,HBO Latin America,latam,us,mixed,company_knowledge,1
+hbo max,in,film_tv_rule,skydance,HBO,global,us,mixed,company_knowledge,1
+home box office,in,film_tv_rule,skydance,HBO,global,us,mixed,company_knowledge,1
+max türkiye,in,film_tv_rule,skydance,HBO Max Turkiye,tr,us,mixed,company_knowledge,1
+paramount skydance,in,film_tv_rule,skydance,Paramount,global,us,mixed,company_knowledge,1
+viacom,in,film_tv_rule,skydance,Viacom,global,us,mixed,company_knowledge,1
+viacom cbs,in,film_tv_rule,skydance,ViacomCBS,global,us,mixed,company_knowledge,1
+viacom international,in,film_tv_rule,skydance,Viacom,global,us,mixed,company_knowledge,1
+viacomcbs,in,film_tv_rule,skydance,ViacomCBS,global,us,mixed,company_knowledge,1
+vimn netherlands,in,film_tv_rule,skydance,VIMN Netherlands,nl,us,mixed,company_knowledge,1
+warner bros digital distribution a division of home entertainment,in,film_tv_rule,skydance,Warner Bros.,global,us,mixed,company_knowledge,1
+warner bros entertainment españa,in,film_tv_rule,skydance,Warner Bros. Spain,es,us,mixed,company_knowledge,1
+warner bros entertainment polska sp z o.o,in,film_tv_rule,skydance,Warner Bros. Polska,pl,us,mixed,company_knowledge,1
+warner bros españa camera café,in,film_tv_rule,skydance,Warner Bros. Spain,es,us,mixed,company_knowledge,1
+warner bros international television distribution,in,film_tv_rule,skydance,Warner Bros. International TV,global,us,mixed,company_knowledge,1
+warner bros pictures,in,film_tv_rule,skydance,Warner Bros.,global,us,mixed,company_knowledge,1
+warner bros pictures india,in,film_tv_rule,skydance,Warner Bros. India,in,us,mixed,company_knowledge,1
+warner bros television,in,film_tv_rule,skydance,Warner Bros.,global,us,mixed,company_knowledge,1
+warner bros turkey film,in,film_tv_rule,skydance,Warner Bros. Turkey,tr,us,mixed,company_knowledge,1
+warner bros turkey film sti,in,film_tv_rule,skydance,Warner Bros. Turkey,tr,us,mixed,company_knowledge,1
+warner brothers,in,film_tv_rule,skydance,Warner Bros.,global,us,mixed,company_knowledge,1
+warner brothers discovery,in,film_tv_rule,skydance,Warner Bros. Discovery,global,us,mixed,company_knowledge,1
+warner brothers entertainment,in,film_tv_rule,skydance,Warner Bros.,global,us,mixed,company_knowledge,1
+warnermedia,in,film_tv_rule,skydance,Warner Bros. Discovery,global,us,mixed,company_knowledge,1
+sohum shah films,in,film_tv_rule,sohum-shah-films,Sohum Shah Films,in,in,film,reporter,1
+columbia pictures,in,film_tv_rule,sony,Columbia Pictures,global,jp,mixed,company_knowledge,1
+columbia pictures film production asia,in,film_tv_rule,sony,Columbia Pictures Asia,asia,jp,mixed,company_knowledge,1
+columbia tristar television,in,film_tv_rule,sony,Sony Pictures Television,global,jp,mixed,company_knowledge,1
+cpt holdings,in,film_tv_rule,sony,Sony Pictures Entertainment,global,jp,mixed,company_knowledge,1
+crunchyroll,in,film_tv_rule,sony,Crunchyroll,global,jp,mixed,company_knowledge,1
+crunchyroll_llc,in,film_tv_rule,sony,Crunchyroll,global,jp,mixed,company_knowledge,1
+culver max entertainment private,in,film_tv_rule,sony,Culver Max Entertainment,in,jp,mixed,company_knowledge,1
+screen gems productions,in,film_tv_rule,sony,Screen Gems,global,jp,mixed,company_knowledge,1
+sony liv,in,film_tv_rule,sony,Culver Max Entertainment,in,jp,mixed,company_knowledge,1
+sony picture classic,in,film_tv_rule,sony,Sony Pictures Classics,global,jp,mixed,company_knowledge,1
+sony pictures,in,film_tv_rule,sony,Sony Pictures Entertainment,global,jp,mixed,company_knowledge,1
+sony pictures digital productions,in,film_tv_rule,sony,Sony Pictures Entertainment,global,jp,mixed,company_knowledge,1
+sony pictures entertainment france sas,in,film_tv_rule,sony,Sony Pictures France,fr,jp,mixed,company_knowledge,1
+sony pictures entertainment iberia,in,film_tv_rule,sony,Sony Pictures Iberia,es,jp,mixed,company_knowledge,1
+sony pictures entertainment iberia s.l.u,in,film_tv_rule,sony,Sony Pictures Iberia,es,jp,mixed,company_knowledge,1
+sony pictures entertainment iberia s.l.u spain,in,film_tv_rule,sony,Sony Pictures Iberia,es,jp,mixed,company_knowledge,1
+sony pictures entertainment iberia slu,in,film_tv_rule,sony,Sony Pictures Iberia,es,jp,mixed,company_knowledge,1
+sony pictures entertainment korea,in,film_tv_rule,sony,Sony Pictures Korea,kr,jp,mixed,company_knowledge,1
+sony pictures films india private,in,film_tv_rule,sony,Sony Pictures Films India,in,jp,mixed,company_knowledge,1
+sony pictures france,in,film_tv_rule,sony,Sony Pictures France,fr,jp,mixed,company_knowledge,1
+sony pictures home entertainment,in,film_tv_rule,sony,Sony Pictures Releasing,global,jp,mixed,company_knowledge,1
+sony pictures india,in,film_tv_rule,sony,Culver Max Entertainment,in,jp,mixed,company_knowledge,1
+sony pictures network india,in,film_tv_rule,sony,Culver Max Entertainment,in,jp,mixed,company_knowledge,1
+sony pictures network india pvt,in,film_tv_rule,sony,Culver Max Entertainment,in,jp,mixed,company_knowledge,1
+sony pictures networks distribution india private,in,film_tv_rule,sony,Culver Max Entertainment,in,jp,mixed,company_knowledge,1
+sony pictures networks india private,in,film_tv_rule,sony,Culver Max Entertainment,in,jp,mixed,company_knowledge,1
+sony pictures networks india pvt,in,film_tv_rule,sony,Culver Max Entertainment,in,jp,mixed,company_knowledge,1
+sony pictures production and releasing,in,film_tv_rule,sony,Sony Pictures Releasing,global,jp,mixed,company_knowledge,1
+sony pictures releasing,in,film_tv_rule,sony,Sony Pictures Releasing,global,jp,mixed,company_knowledge,1
+sonyliv,in,film_tv_rule,sony,Culver Max Entertainment,in,jp,mixed,company_knowledge,1
+sonyliv culver max entertainment,in,film_tv_rule,sony,Culver Max Entertainment,in,jp,mixed,company_knowledge,1
+sonytv,in,film_tv_rule,sony,Culver Max Entertainment,in,jp,mixed,company_knowledge,1
+tristar pictures,in,film_tv_rule,sony,TriStar Pictures,global,jp,mixed,company_knowledge,1
+tristar productions,in,film_tv_rule,sony,TriStar Pictures,global,jp,mixed,company_knowledge,1
+tristar television,in,film_tv_rule,sony,Sony Pictures Television,global,jp,mixed,company_knowledge,1
+novyy kanal,in,film_tv_rule,starlight-media,Novyi Kanal,ua,ua,tv,company_knowledge,1
+star media distribution,in,film_tv_rule,starmedia,Star Media,ru,ru,tv,company_knowledge,1
+star media distribyushn,in,film_tv_rule,starmedia,Star Media,ru,ru,tv,company_knowledge,1
+start studio,in,film_tv_rule,start,START Studio,ru,ru,tv,company_knowledge,1
+intigral,in,film_tv_rule,stc,Intigral,mena,sa,tv,company_knowledge,1
+studiya sverdlovsk,in,film_tv_rule,studiya-sverdlovsk,Studiya Sverdlovsk,ru,ru,film,reporter,1
+stx financing,in,film_tv_rule,stx,STX,us,us,film,company_knowledge,1
+sudaca films eirl,in,film_tv_rule,sudaca-films,Sudaca Films,pe,pe,film,reporter,1
+sun tv network,in,film_tv_rule,sun-tv,Sun TV,in,in,tv,company_knowledge,1
+sun tv pvt,in,film_tv_rule,sun-tv,Sun TV,in,in,tv,company_knowledge,1
+sunshine pictures,in,film_tv_rule,sunshine-pictures,Sunshine Pictures,in,in,film,reporter,1
+surinder films private,in,film_tv_rule,surinder-films,Surinder Films,in,in,film,reporter,1
+swell film,in,film_tv_rule,swell-film,Swell Film,ru,ru,film,web,1
+sbs,in,film_tv_rule,taeyoung,SBS,kr,kr,tv,company_knowledge,1
+sbs content hub,in,film_tv_rule,taeyoung,SBS,kr,kr,tv,company_knowledge,1
+sbs contents hub,in,film_tv_rule,taeyoung,SBS Contents Hub,kr,kr,tv,company_knowledge,1
+sbs contentshub,in,film_tv_rule,taeyoung,SBS,kr,kr,tv,company_knowledge,1
+sbs international,in,film_tv_rule,taeyoung,SBS,kr,kr,tv,company_knowledge,1
+sbs network,in,film_tv_rule,taeyoung,SBS,kr,kr,tv,company_knowledge,1
+tandem films,in,film_tv_rule,tandem-films,Tandem Films,es,es,film,reporter,1
+telefilms,in,film_tv_rule,telefilms,Telefilms,latam,ar,film,company_knowledge,1
+canales telefónica,in,film_tv_rule,telefonica,Movistar channels (Telefonica),es,es,tv,company_knowledge,1
+programas telefónica,in,film_tv_rule,telefonica,Movistar Plus+ (Telefonica),es,es,tv,company_knowledge,1
+series y películas telefónica,in,film_tv_rule,telefonica,Movistar Plus+,es,es,tv,company_knowledge,1
+televisa,in,film_tv_rule,televisaunivision,Televisa,mx,us,mixed,company_knowledge,1
+televisa univision,in,film_tv_rule,televisaunivision,TelevisaUnivision,us,us,mixed,company_knowledge,1
+videocine televisa,in,film_tv_rule,televisaunivision,Videocine,mx,us,mixed,company_knowledge,1
+vix televisa univision,in,film_tv_rule,televisaunivision,ViX,latam,us,mixed,company_knowledge,1
+tencent video,in,film_tv_rule,tencent,Tencent Video,cn,cn,tv,company_knowledge,1
+toei,in,film_tv_rule,toei,Toei,jp,jp,mixed,company_knowledge,1
+toei animation,in,film_tv_rule,toei,Toei Animation,jp,jp,mixed,company_knowledge,1
+toei animation europe sas,in,film_tv_rule,toei,Toei Animation Europe,eu,jp,mixed,company_knowledge,1
+toho,in,film_tv_rule,toho,Toho,jp,jp,mixed,company_knowledge,1
+toho global,in,film_tv_rule,toho,Toho,jp,jp,mixed,company_knowledge,1
+toho towa,in,film_tv_rule,toho,Toho,jp,jp,mixed,company_knowledge,1
+trafic films,in,film_tv_rule,trafic-films,Trafic Films,ru,ru,film,reporter,1
+trt,in,film_tv_rule,trt,TRT,tr,tr,tv,company_knowledge,1
+trt 1,in,film_tv_rule,trt,TRT,tr,tr,tv,company_knowledge,1
+trt televizyonlari,in,film_tv_rule,trt,TRT,tr,tr,tv,company_knowledge,1
+trt televizyonları,in,film_tv_rule,trt,TRT,tr,tr,tv,company_knowledge,1
+türkiye radyo televizyon kurumu trt,in,film_tv_rule,trt,TRT,tr,tr,tv,company_knowledge,1
+lifecell tv yayin ve içerik hizmetleri anonim şirketi,in,film_tv_rule,turkcell,lifecell TV,tr,tr,tv,web,1
+tv servis,in,film_tv_rule,tv-servis,TV Servis,ru,ru,tv,reporter,1
+television broadcasts,in,film_tv_rule,tvb,TVB,hk,hk,tv,company_knowledge,1
+tvb,in,film_tv_rule,tvb,TVB,hk,hk,tv,company_knowledge,1
+tvb group,in,film_tv_rule,tvb,TVB,hk,hk,tv,company_knowledge,1
+tvb international,in,film_tv_rule,tvb,TVB,hk,hk,tv,company_knowledge,1
+tvb jade,in,film_tv_rule,tvb,TVB,hk,hk,tv,company_knowledge,1
+tvb network,in,film_tv_rule,tvb,TVB,hk,hk,tv,company_knowledge,1
+ubay film yapim san tic sti,in,film_tv_rule,ubay-film,Ubay Film,tr,tr,film,reporter,1
+ugc images,in,film_tv_rule,ugc,UGC,fr,fr,film,company_knowledge,1
+uip filmcilik ve ticaret,in,film_tv_rule,uip-turkey,UIP Turkey,tr,tr,film,company_knowledge,1
+upera,in,film_tv_rule,upera,Upera,ir,ir,tv,company_knowledge,1
+vayt media,in,film_tv_rule,vayt-media,White Media,ru,ru,tv,company_knowledge,1
+vertical entertainment,in,film_tv_rule,vertical,Vertical Entertainment,us,us,film,company_knowledge,1
+vertice 360,in,film_tv_rule,vertice360,Vertice 360,es,es,film,company_knowledge,1
+vertice360,in,film_tv_rule,vertice360,Vertice 360,es,es,film,company_knowledge,1
+vertigo films,in,film_tv_rule,vertigo-films,Vertigo Films,gb,gb,film,company_knowledge,1
+vi brodkasting,in,film_tv_rule,vi-brodkasting,VI Broadcasting,ru,ru,tv,reporter,1
+viasat,in,film_tv_rule,viasat-russia,Viasat,ru,ru,tv,company_knowledge,1
+viasat world,in,film_tv_rule,viasat-world,Viasat World,eu,gb,tv,company_knowledge,1
+viettel media,in,film_tv_rule,viettel,Viettel Media,vn,vn,tv,company_knowledge,1
+vlg.film,in,film_tv_rule,volgafilm,VLG.FILM,ru,ru,film,company_knowledge,1
+wavve,in,film_tv_rule,wavve,Wavve,kr,kr,tv,company_knowledge,1
+directv,in,film_tv_rule,werthein,DirecTV,latam,ar,tv,company_knowledge,1
+world of wonder productions,in,film_tv_rule,world-of-wonder,World of Wonder,us,us,tv,company_knowledge,1
+uorld pikcherz,in,film_tv_rule,world-pictures,World Pictures,ru,ru,film,reporter,1
+world pictures,in,film_tv_rule,world-pictures,World Pictures,ru,ru,film,reporter,1
+yango play,in,film_tv_rule,yango,Yango Play,mena,ae,tv,company_knowledge,1
+yash raj films,in,film_tv_rule,yash-raj,Yash Raj Films,in,in,mixed,company_knowledge,1
+yash raj films pvt,in,film_tv_rule,yash-raj,Yash Raj Films,in,in,mixed,company_knowledge,1
+youplanet pictures,in,film_tv_rule,youplanet,Youplanet Pictures,es,es,film,company_knowledge,1
+zapping liv,in,film_tv_rule,zapping,Zapping,cl,cl,tv,company_knowledge,1
+essel vision production,in,film_tv_rule,zee,Essel Vision,in,in,mixed,company_knowledge,1
+essel vision productions,in,film_tv_rule,zee,Essel Vision,in,in,mixed,company_knowledge,1
+zee entertaiment enterprises,in,film_tv_rule,zee,Zee,in,in,mixed,company_knowledge,1
+zee entertainment,in,film_tv_rule,zee,Zee,in,in,mixed,company_knowledge,1
+zee5,in,film_tv_rule,zee,ZEE5,in,in,mixed,company_knowledge,1
+zee5 entertainment,in,film_tv_rule,zee,ZEE5,in,in,mixed,company_knowledge,1
+zeetv and wayaak,in,film_tv_rule,zee,Weyyak,mena,in,mixed,company_knowledge,1
+zee media,in,film_tv_rule,zee-media,Zee Media,in,in,tv,company_knowledge,1
+a serial,in,seed_reconfirmed,a-serial,A Serial,ru,ru,tv,company_knowledge,1
+amazon content services,in,seed_reconfirmed,amazon,Prime Video,global,us,mixed,company_knowledge,1
+amazon prime video,in,seed_reconfirmed,amazon,Prime Video,global,us,mixed,company_knowledge,1
+amazon studios,in,seed_reconfirmed,amazon,Amazon MGM Studios,global,us,mixed,company_knowledge,1
+apple video programming,in,seed_reconfirmed,apple,Apple TV,global,us,tv,company_knowledge,1
+rcn,in,seed_reconfirmed,ardila-lulle,RCN,co,co,tv,company_knowledge,1
+rcn vod,in,seed_reconfirmed,ardila-lulle,RCN,co,co,tv,company_knowledge,1
+art pikchers prodakshn,in,seed_reconfirmed,art-pikchers,Art Pictures Distribution,ru,ru,film,company_knowledge,1
+atresmedia cmc,in,seed_reconfirmed,atresmedia,Atresmedia,es,es,tv,company_knowledge,1
+beijing iqiyi science technology,in,seed_reconfirmed,baidu,iQIYI,cn,cn,tv,company_knowledge,1
+iqiyi,in,seed_reconfirmed,baidu,iQIYI,cn,cn,tv,company_knowledge,1
+北京爱奇艺科技有限公司,in,seed_reconfirmed,baidu,iQIYI,cn,cn,tv,company_knowledge,1
+canal,in,seed_reconfirmed,canal,Canal+,fr,fr,mixed,company_knowledge,1
+canal afrique,in,seed_reconfirmed,canal,Canal+ Afrique,africa,fr,mixed,company_knowledge,1
+canal international,in,seed_reconfirmed,canal,Canal+ International,global,fr,mixed,company_knowledge,1
+canal myanmar,in,seed_reconfirmed,canal,Canal+ Myanmar,mm,fr,mixed,company_knowledge,1
+canal polska,in,seed_reconfirmed,canal,Canal+ Polska,pl,fr,mixed,company_knowledge,1
+groupe canal,in,seed_reconfirmed,canal,Canal+,fr,fr,mixed,company_knowledge,1
+cm,in,seed_reconfirmed,cm,CM,ru,ru,mixed,reporter,1
+demirören tv radyo yayıncılık yapımcılık,in,seed_reconfirmed,demiroren,Kanal D,tr,tr,tv,company_knowledge,1
+desyat bukv,in,seed_reconfirmed,desyat-bukv,Desyat Bukv,ru,ru,mixed,company_knowledge,1
+ten letters,in,seed_reconfirmed,desyat-bukv,Desyat Bukv,ru,ru,mixed,company_knowledge,1
+diamond films,in,seed_reconfirmed,diamond-films,Diamond Films,latam,ar,film,company_knowledge,1
+disney,in,seed_reconfirmed,disney,Walt Disney,global,us,mixed,company_knowledge,1
+disney enterprises,in,seed_reconfirmed,disney,Walt Disney,global,us,mixed,company_knowledge,1
+the walt disney company,in,seed_reconfirmed,disney,Walt Disney,global,us,mixed,company_knowledge,1
+america tv peru,in,seed_reconfirmed,el-comercio,America TV,pe,pe,tv,company_knowledge,1
+premer,in,seed_reconfirmed,gazprom-media,Premier,ru,ru,tv,company_knowledge,1
+premier,in,seed_reconfirmed,gazprom-media,Premier,ru,ru,tv,company_knowledge,1
+tnt teleset,in,seed_reconfirmed,gazprom-media,TNT,ru,ru,tv,company_knowledge,1
+tnt-teleset,in,seed_reconfirmed,gazprom-media,TNT,ru,ru,tv,company_knowledge,1
+tsentral partnership,in,seed_reconfirmed,gazprom-media,Central Partnership,ru,ru,tv,company_knowledge,1
+tsentral partnership seylz khaus,in,seed_reconfirmed,gazprom-media,Central Partnership,ru,ru,tv,company_knowledge,1
+ivi.ru,in,seed_reconfirmed,ivi,Ivi,ru,ru,tv,company_knowledge,1
+kinofon,in,seed_reconfirmed,kinofon,Kinofon,ru,ru,film,company_knowledge,1
+kinokompaniya stv,in,seed_reconfirmed,kinokompaniya-stv,STV,ru,ru,film,company_knowledge,1
+korner vork,in,seed_reconfirmed,korner-vork,Korner Vork,ru,ru,tv,company_knowledge,1
+kvartal 95,in,seed_reconfirmed,kvartal-95,Kvartal 95,ua,ua,tv,company_knowledge,1
+m3,in,seed_reconfirmed,m3,M3,ru,ru,mixed,reporter,1
+mars media entertainment,in,seed_reconfirmed,mars-media,Mars Media,ru,ru,tv,company_knowledge,1
+mauris film,in,seed_reconfirmed,mauris-film,Mauris Film,ru,ru,film,reporter,1
+television channel ukraine,in,seed_reconfirmed,media-group-ukraine,TRK Ukraina,ua,ua,tv,company_knowledge,1
+video content library,in,seed_reconfirmed,media-group-ukraine,Video Content Library,ua,ua,tv,company_knowledge,1
+media hub distribution sia,in,seed_reconfirmed,media-hub-distribution-sia,Media Hub Distribution,ru,lv,mixed,reporter,1
+medium kvoliti prodakshn,in,seed_reconfirmed,medium-kvoliti-prodakshn,Medium Kvoliti,ru,ru,mixed,company_knowledge,1
+kion,in,seed_reconfirmed,mts,KION / ON Media,ru,ru,tv,company_knowledge,1
+mts media,in,seed_reconfirmed,mts,KION / ON Media,ru,ru,tv,company_knowledge,1
+netflix,in,seed_reconfirmed,netflix,Netflix,global,us,tv,company_knowledge,1
+netflix us,in,seed_reconfirmed,netflix,Netflix,global,us,tv,company_knowledge,1
+netflix worldwide entertainment,in,seed_reconfirmed,netflix,Netflix,global,us,tv,company_knowledge,1
+1 sts,in,seed_reconfirmed,nmg,STS,ru,ru,tv,company_knowledge,1
+aktsept televizionnyy kanal ren-tv,in,seed_reconfirmed,nmg,REN TV,ru,ru,tv,company_knowledge,1
+nmg kinoprokat,in,seed_reconfirmed,nmg,NMG,ru,ru,tv,company_knowledge,1
+nmg studiya,in,seed_reconfirmed,nmg,NMG,ru,ru,tv,company_knowledge,1
+set televizionnykh stantsiy,in,seed_reconfirmed,nmg,STS,ru,ru,tv,company_knowledge,1
+sts,in,seed_reconfirmed,nmg,STS,ru,ru,tv,company_knowledge,1
+teleradiokompaniya peterburg,in,seed_reconfirmed,nmg,Channel Five,ru,ru,tv,company_knowledge,1
+1ooo okko,in,seed_reconfirmed,okko,Okko,ru,ru,tv,company_knowledge,1
+okko,in,seed_reconfirmed,okko,Okko,ru,ru,tv,company_knowledge,1
+pervyy kanal,in,seed_reconfirmed,pervyy-kanal,Channel One,ru,ru,tv,company_knowledge,1
+prior,in,seed_reconfirmed,prior,Prior,ru,ru,mixed,reporter,1
+r-1,in,seed_reconfirmed,r1,R1,ru,ru,mixed,reporter,1
+r1,in,seed_reconfirmed,r1,R1,ru,ru,mixed,reporter,1
+rvv film,in,seed_reconfirmed,rvv-film,RWV Film,ru,ru,film,company_knowledge,1
+blutv,in,seed_reconfirmed,skydance,BluTV,tr,us,mixed,company_knowledge,1
+blutv iletişim ve dijital yayın hizmetleri,in,seed_reconfirmed,skydance,BluTV,tr,us,mixed,company_knowledge,1
+paramount,in,seed_reconfirmed,skydance,Paramount,global,us,mixed,company_knowledge,1
+paramount global,in,seed_reconfirmed,skydance,Paramount,global,us,mixed,company_knowledge,1
+paramount global fka viacomcbs,in,seed_reconfirmed,skydance,Paramount,global,us,mixed,company_knowledge,1
+paramount pictures,in,seed_reconfirmed,skydance,Paramount,global,us,mixed,company_knowledge,1
+vimn media vostok,in,seed_reconfirmed,skydance,VIMN Media Vostok,ru,us,mixed,company_knowledge,1
+warner bros,in,seed_reconfirmed,skydance,Warner Bros.,global,us,mixed,company_knowledge,1
+warner bros discovery,in,seed_reconfirmed,skydance,Warner Bros. Discovery,global,us,mixed,company_knowledge,1
+warner bros entertainment,in,seed_reconfirmed,skydance,Warner Bros.,global,us,mixed,company_knowledge,1
+warner bros entertainment nederland,in,seed_reconfirmed,skydance,Warner Bros. Netherlands,nl,us,mixed,company_knowledge,1
+columbia pictures industries,in,seed_reconfirmed,sony,Columbia Pictures,global,jp,mixed,company_knowledge,1
+screen gems,in,seed_reconfirmed,sony,Screen Gems,global,jp,mixed,company_knowledge,1
+sony pictures animation,in,seed_reconfirmed,sony,Sony Pictures Animation,global,jp,mixed,company_knowledge,1
+sony pictures classics,in,seed_reconfirmed,sony,Sony Pictures Classics,global,jp,mixed,company_knowledge,1
+sony pictures entertainment,in,seed_reconfirmed,sony,Sony Pictures Entertainment,global,jp,mixed,company_knowledge,1
+sony pictures television,in,seed_reconfirmed,sony,Sony Pictures Television,global,jp,mixed,company_knowledge,1
+sony pictures worldwide acquisitions,in,seed_reconfirmed,sony,Sony Pictures Entertainment,global,jp,mixed,company_knowledge,1
+worldwide acquisitions,in,seed_reconfirmed,sony,Sony Pictures Entertainment,global,jp,mixed,company_knowledge,1
+soyuzmultfilm,in,seed_reconfirmed,soyuzmultfilm,Soyuzmultfilm,ru,ru,mixed,company_knowledge,1
+obshchestvo s ogranichennoy otvetstvennostyu prodyuserskaya kompaniya sreda,in,seed_reconfirmed,sreda,Sreda,ru,ru,tv,company_knowledge,1
+star media,in,seed_reconfirmed,starmedia,Star Media,ru,ru,tv,company_knowledge,1
+starmedia,in,seed_reconfirmed,starmedia,Star Media,ru,ru,tv,company_knowledge,1
+start ru,in,seed_reconfirmed,start,START,ru,ru,tv,company_knowledge,1
+start.film,in,seed_reconfirmed,start,START,ru,ru,tv,company_knowledge,1
+start.ru,in,seed_reconfirmed,start,START,ru,ru,tv,company_knowledge,1
+studiya voenfilm,in,seed_reconfirmed,studiya-voenfilm,Voenfilm,ru,ru,film,company_knowledge,1
+televisaunivision,in,seed_reconfirmed,televisaunivision,TelevisaUnivision,us,us,mixed,company_knowledge,1
+univision communications,in,seed_reconfirmed,televisaunivision,TelevisaUnivision,us,us,mixed,company_knowledge,1
+vix,in,seed_reconfirmed,televisaunivision,ViX,latam,us,mixed,company_knowledge,1
+tpo rok,in,seed_reconfirmed,tpo-rok,TPO Rok,ru,ru,mixed,company_knowledge,1
+vgt,in,seed_reconfirmed,vgtrk,VGTRK,ru,ru,tv,company_knowledge,1
+vgtrk,in,seed_reconfirmed,vgtrk,VGTRK,ru,ru,tv,company_knowledge,1
+viasat global,in,seed_reconfirmed,viasat-russia,Viasat,ru,ru,tv,company_knowledge,1
+volgafilm,in,seed_reconfirmed,volgafilm,VLG.FILM,ru,ru,film,company_knowledge,1
+wtw films,in,seed_reconfirmed,wtw-films,WTW Films,ru,ru,film,company_knowledge,1
+kinopoisk,in,seed_reconfirmed,yandex,Kinopoisk,ru,ru,tv,company_knowledge,1
+zee cis,in,seed_reconfirmed,zee,Zee CIS,ru,in,mixed,company_knowledge,1
+zee entertainment enterprises,in,seed_reconfirmed,zee,Zee,in,in,mixed,company_knowledge,1
+zee studios,in,seed_reconfirmed,zee,Zee,in,in,mixed,company_knowledge,1
+1win brasil partners,out,gambling,,,,,,,1
+1win partners,out,gambling,,,,,,,1
+dragon money,out,gambling,,,,,,,1
+nova data tech two,out,gambling,,,,,,,1
+pinco partners,out,gambling,,,,,,,1
+situs toto,out,gambling,,,,,,,1
+situstoto,out,gambling,,,,,,,1
+slot88resmi,out,gambling,,,,,,,1
+spinboss,out,gambling,,,,,,,1
+toto12,out,gambling,,,,,,,1
+activision blizzard,out,games_software,,,,,,,1
+adobe,out,games_software,,,,,,,1
+adobe systems,out,games_software,,,,,,,1
+atari,out,games_software,,,,,,,1
+atmosfx,out,games_software,,,,,,,1
+autodesk,out,games_software,,,,,,,1
+awesome motive,out,games_software,,,,,,,1
+bandai namco,out,games_software,,,,,,,1
+bethesda softworks,out,games_software,,,,,,,1
+bluebits,out,games_software,,,,,,,1
+candywriter,out,games_software,,,,,,,1
+canva,out,games_software,,,,,,,1
+capcom,out,games_software,,,,,,,1
+cd projekt,out,games_software,,,,,,,1
+cyberghost vpn,out,games_software,,,,,,,1
+dbvis software ab,out,games_software,,,,,,,1
+disney interactive studios,out,games_software,,,,,,,1
+dxo,out,games_software,,,,,,,1
+electronic arts,out,games_software,,,,,,,1
+encephalon,out,games_software,,,,,,,1
+entertainment software association,out,games_software,,,,,,,1
+expressvpn,out,games_software,,,,,,,1
+games workshop,out,games_software,,,,,,,1
+google,out,games_software,,,,,,,1
+huuuge games,out,games_software,,,,,,,1
+jetbrains,out,games_software,,,,,,,1
+kinemaster,out,games_software,,,,,,,1
+konami,out,games_software,,,,,,,1
+macpaw,out,games_software,,,,,,,1
+mavtek,out,games_software,,,,,,,1
+nintendo,out,games_software,,,,,,,1
+nintendo of america,out,games_software,,,,,,,1
+nitro software,out,games_software,,,,,,,1
+nordvpn,out,games_software,,,,,,,1
+parallels,out,games_software,,,,,,,1
+picsart,out,games_software,,,,,,,1
+pix4d,out,games_software,,,,,,,1
+plex,out,games_software,,,,,,,1
+portswigger,out,games_software,,,,,,,1
+scopely,out,games_software,,,,,,,1
+sdl,out,games_software,,,,,,,1
+sony interactive,out,games_software,,,,,,,1
+sony interactive entertainment,out,games_software,,,,,,,1
+sony interactive entertainment europe,out,games_software,,,,,,,1
+square enix,out,games_software,,,,,,,1
+strava,out,games_software,,,,,,,1
+surfshark,out,games_software,,,,,,,1
+synapse,out,games_software,,,,,,,1
+take-two interactive,out,games_software,,,,,,,1
+taketwo interactive software,out,games_software,,,,,,,1
+team17 digital,out,games_software,,,,,,,1
+techsmith,out,games_software,,,,,,,1
+truecaller,out,games_software,,,,,,,1
+ubisoft,out,games_software,,,,,,,1
+warner bros games,out,games_software,,,,,,,1
+wondershare software,out,games_software,,,,,,,1
+adigsi,out,government,,,,,,,1
+goverment from indonesia,out,government,,,,,,,1
+goverment official indonesia,out,government,,,,,,,1
+government from i-ndonesian,out,government,,,,,,,1
+government from indonesian,out,government,,,,,,,1
+government indonesia,out,government,,,,,,,1
+government official indonesia,out,government,,,,,,,1
+indonesia goverment,out,government,,,,,,,1
+komdigi,out,government,,,,,,,1
+kominfo,out,government,,,,,,,1
+pandi.id,out,government,,,,,,,1
+pemerintah indonesia,out,government,,,,,,,1
+türkiye cumhuriyeti,out,government,,,,,,,1
+alpa,out,intermediary,,,,,,,1
+brein participant,out,intermediary,,,,,,,1
+ceyguard,out,intermediary,,,,,,,1
+contentscan,out,intermediary,,,,,,,1
+digiguardians,out,intermediary,,,,,,,1
+f6,out,intermediary,,,,,,,1
+georeportlabs,out,intermediary,,,,,,,1
+japan creative contents alliance,out,intermediary,,,,,,,1
+leak cleaner,out,intermediary,,,,,,,1
+markscan,out,intermediary,,,,,,,1
+netphishing,out,intermediary,,,,,,,1
+phishguard,out,intermediary,,,,,,,1
+phishguard security,out,intermediary,,,,,,,1
+relu oü,out,intermediary,,,,,,,1
+remove your media,out,intermediary,,,,,,,1
+removelabs,out,intermediary,,,,,,,1
+rulta ou,out,intermediary,,,,,,,1
+united dmca partners,out,intermediary,,,,,,,1
+一般社団法人コンテンツ海外流通促進機構,out,intermediary,,,,,,,1
+conmebol,out,sports,,,,,,,1
+conmebol liv,out,sports,,,,,,,1
+dazn,out,sports,,,,,,,1
+fanatiz,out,sports,,,,,,,1
+fanatiz liv,out,sports,,,,,,,1
+img media,out,sports,,,,,,,1
+international basketball federation fiba,out,sports,,,,,,,1
+lega serie a,out,sports,,,,,,,1
+lfp media,out,sports,,,,,,,1
+liga nacional de fútbol profesional,out,sports,,,,,,,1
+ligue de football professionnel,out,sports,,,,,,,1
+mbc sports,out,sports,,,,,,,1
+natsionalnyy sportivnyy telekanal,out,sports,,,,,,,1
+nba properties,out,sports,,,,,,,1
+premier darts,out,sports,,,,,,,1
+premier league,out,sports,,,,,,,1
+premier league epl,out,sports,,,,,,,1
+sky sport,out,sports,,,,,,,1
+sky sports,out,sports,,,,,,,1
+tigo sports bolivia,out,sports,,,,,,,1
+tigo sports liv paraguay,out,sports,,,,,,,1
+tnt spoirts,out,sports,,,,,,,1
+tnt sports,out,sports,,,,,,,1
+tnt sports argentina,out,sports,,,,,,,1
+tnt sports chile,out,sports,,,,,,,1
+uefa,out,sports,,,,,,,1
+win sports cha,out,sports,,,,,,,1
+win sports liv,out,sports,,,,,,,1
+altice france,out,telecom_internet,,,,,,,1
+nos technology,out,telecom_internet,,,,,,,1
+o2 czech republic,out,telecom_internet,,,,,,,1
+pccw,out,telecom_internet,,,,,,,1
+personal,out,telecom_internet,,,,,,,1
+pt telkom,out,telecom_internet,,,,,,,1
+rambler internet kholding,out,telecom_internet,,,,,,,1
+viasat global communications,out,telecom_internet,,,,,,,1
+apple company seo team,out,unrelated_prefix_match,,,,,,,1
+apple creek group,out,unrelated_prefix_match,,,,,,,1
+apple hill studios,out,unrelated_prefix_match,,,,,,,1
+apple orchard solutions,out,unrelated_prefix_match,,,,,,,1
+apple ridge consulting,out,unrelated_prefix_match,,,,,,,1
+apple seo team,out,unrelated_prefix_match,,,,,,,1
+apple valley partners,out,unrelated_prefix_match,,,,,,,1
+applecroft media,out,unrelated_prefix_match,,,,,,,1
+applemac神戸店,out,unrelated_prefix_match,,,,,,,1
+apples of gold jewelry,out,unrelated_prefix_match,,,,,,,1
+appleton group,out,unrelated_prefix_match,,,,,,,1
+applewood studios,out,unrelated_prefix_match,,,,,,,1
+columbia peak solutions,out,unrelated_prefix_match,,,,,,,1
+columbia urban league,out,unrelated_prefix_match,,,,,,,1
+legendary parts,out,unrelated_prefix_match,,,,,,,1
+paramount estimating,out,unrelated_prefix_match,,,,,,,1
+paramount resources,out,unrelated_prefix_match,,,,,,,1
+sbs software sas,out,unrelated_prefix_match,,,,,,,1
+tnt angia group gt,out,unrelated_prefix_match,,,,,,,1
+amazon,out,whole_company_not_film_tv,,,,,,,1
+amazon mobile,out,whole_company_not_film_tv,,,,,,,1
+amazon seller service pvt,out,whole_company_not_film_tv,,,,,,,1
+amazon seller services private,out,whole_company_not_film_tv,,,,,,,1
+amazon seller services pvt,out,whole_company_not_film_tv,,,,,,,1
+amazon technologies,out,whole_company_not_film_tv,,,,,,,1
+amazon.com,out,whole_company_not_film_tv,,,,,,,1
+apple,out,whole_company_not_film_tv,,,,,,,1
+columbia sportswear company,out,whole_company_not_film_tv,,,,,,,1
+sony,out,whole_company_not_film_tv,,,,,,,1
+tencent,out,whole_company_not_film_tv,,,,,,,1
+,out,books_press_education,,,,,,,134
+,out,individual,,,,,,,119
+,out,no_evidence,,,,,,,107
+,out,music,,,,,,,83
+,out,webtoon_manga_novel,,,,,,,47
+,out,compound_credit_name,,,,,,,22
+,out,adult,,,,,,,11
+,out,unverified_claimant,,,,,,,6
+,out,other_business,,,,,,,2
+,out,pirate_site_name,,,,,,,2
+,out,gambling,,,,,,,1
+,out,news_commentary,,,,,,,1
