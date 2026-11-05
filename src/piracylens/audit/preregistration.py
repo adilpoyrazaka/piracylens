@@ -32,6 +32,8 @@ NO_HISTORY_RULES = frozenset({"missing_with_flag"})
 PAST_RATE_FALLBACKS = frozenset({"train_base_rate"})
 BASE_RATE_ROWS = frozenset({"all_train_rows", "train_sample"})
 PR_AUC_METHODS = frozenset({"average_precision"})
+CALIBRATION_ROWS = frozenset({"validation_cross_fitted", "train_out_of_fold"})
+THRESHOLD_RULES = frozenset({"precision_target_on_validation"})
 PRIMARY_METRICS = frozenset({"pr_auc"})
 OTHER_METRICS = frozenset({"recall_at_precision", "brier"})
 INPUTS = frozenset(
@@ -145,6 +147,9 @@ class Preregistration:
     candidates: tuple[str, ...]
     imbalance_variants: tuple[str, ...]
     calibration: str
+    calibration_rows: str
+    calibration_report_folds: int
+    threshold_rule: str
     past_rate_fallback: str
     base_rate_rows: str
     tune_on: str
@@ -298,6 +303,9 @@ def parse_preregistration(data: Any) -> Preregistration:
             "candidates",
             "imbalance_variants",
             "calibration",
+            "calibration_rows",
+            "calibration_report_folds",
+            "threshold_rule",
             "past_rate_fallback",
             "base_rate_rows",
             "tune_on",
@@ -310,6 +318,9 @@ def parse_preregistration(data: Any) -> Preregistration:
     if "none" not in variants:
         raise PreregistrationError("models.imbalance_variants must include none as the reference")
     calibration = _choice(mod, "calibration", "models", CALIBRATIONS)
+    calibration_rows = _choice(mod, "calibration_rows", "models", CALIBRATION_ROWS)
+    calibration_report_folds = _int(mod, "calibration_report_folds", "models", minimum=2)
+    threshold_rule = _choice(mod, "threshold_rule", "models", THRESHOLD_RULES)
     fallback = _choice(mod, "past_rate_fallback", "models", PAST_RATE_FALLBACKS)
     base_rate_rows = _choice(mod, "base_rate_rows", "models", BASE_RATE_ROWS)
     tune_on = _choice(mod, "tune_on", "models", frozenset({"validation"}))
@@ -395,6 +406,9 @@ def parse_preregistration(data: Any) -> Preregistration:
         candidates=candidates,
         imbalance_variants=variants,
         calibration=calibration,
+        calibration_rows=calibration_rows,
+        calibration_report_folds=calibration_report_folds,
+        threshold_rule=threshold_rule,
         past_rate_fallback=fallback,
         base_rate_rows=base_rate_rows,
         tune_on=tune_on,

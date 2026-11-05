@@ -135,6 +135,17 @@ models:
   candidates: ["logistic_regression", "linear_svm_sgd", "xgboost"]
   imbalance_variants: ["none", "class_weight"]
   calibration: "isotonic"
+  # The calibrator is fitted on validation rows, the period closest to the test, because
+  # the label rate moves over time and a calibrator fitted on training rows would carry
+  # the older rate. The map is monotone, so ranking metrics and the threshold are not
+  # affected. Validation Brier scores of calibrated models come from domain-grouped
+  # cross-fitting with this many folds, so no row is scored by a calibrator that saw it.
+  calibration_rows: "validation_cross_fitted"
+  calibration_report_folds: 2
+  # The decision threshold is the one that reaches metrics.precision_target on validation.
+  # If no threshold reaches it, the result is reported as not reached; the target is not
+  # moved.
+  threshold_rule: "precision_target_on_validation"
   # The domain past-rate baseline predicts the training base rate for rows without history.
   past_rate_fallback: "train_base_rate"
   # The training base rate is the label mean over every training row (for each label),
@@ -191,3 +202,8 @@ checks:
 # 2026-11-05: added models.base_rate_rows and metrics.pr_auc_method before any label
 # rate or model output was looked at; they fix which rows give the training base rate
 # and how PR-AUC is computed, for the baselines and every model.
+# 2026-11-05: added models.calibration_rows, calibration_report_folds and threshold_rule
+# after the baselines were run and before any model output was looked at. The baselines
+# showed a higher label rate in validation than in training, so which rows fit the
+# calibrator had to be fixed; the threshold rule makes the precision target the only
+# operating point.
