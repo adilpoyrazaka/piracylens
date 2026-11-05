@@ -4,7 +4,9 @@ The design file fixes the label, the time split, the metrics, the baselines and 
 mandatory checks before any label rate or model output is looked at. This module loads
 it under a strict schema: unknown or missing fields, broken date orders, out-of-range
 thresholds and unknown method names are rejected, so a typo cannot silently change the
-design. The training size starts empty and must be filled before any model runs.
+design. The model inputs are a fixed list of known names; an input that can be missing must come
+with its flag, and no input may also be excluded. The training size starts empty and must be
+filled before any model runs.
 """
 
 from __future__ import annotations
@@ -30,6 +32,37 @@ NO_HISTORY_RULES = frozenset({"missing_with_flag"})
 PAST_RATE_FALLBACKS = frozenset({"train_base_rate"})
 PRIMARY_METRICS = frozenset({"pr_auc"})
 OTHER_METRICS = frozenset({"recall_at_precision", "brier"})
+INPUTS = frozenset(
+    {
+        "domain_ngrams",
+        "tld",
+        "domain_length",
+        "domain_labels",
+        "domain_digit_share",
+        "domain_hyphens",
+        "domain_punycode",
+        "domains_in_request",
+        "urls_in_request",
+        "urls_for_domain",
+        "owner_group",
+        "market",
+        "content_type",
+        "region",
+        "reporter_group",
+        "reporter_brand",
+        "self_filed",
+        "domain_past_rate",
+        "has_domain_history",
+        "domain_past_requests",
+        "domain_age_days",
+        "has_domain_age",
+    }
+)
+# An input that can be missing must come with its flag.
+PAIRED_INPUTS = (("domain_past_rate", "has_domain_history"), ("domain_age_days", "has_domain_age"))
+NGRAM_ANALYZERS = frozenset({"char_wb", "char"})
+REQUEST_SIZE_ROWS = frozenset({"all"})
+SELF_FILED_LEVELS = frozenset({"owner_group"})
 
 _TOP = frozenset(
     {
@@ -85,6 +118,15 @@ class Preregistration:
     past_rate_history: str
     no_history: str
     excluded_features: tuple[str, ...]
+    inputs: tuple[str, ...]
+    ngram_analyzer: str
+    ngram_min: int
+    ngram_max: int
+    ngram_min_df: int
+    ngram_sublinear_tf: bool
+    categorical_top_k: int
+    request_size_rows: str
+    self_filed_level: str
     train_unit: str
     train_requests: int | None
     rebalance_eval: bool
@@ -169,7 +211,17 @@ def parse_preregistration(data: Any) -> Preregistration:
 
     feat = _mapping(
         top["features"],
-        {"past_rate_min_gap_days", "past_rate_history", "no_history", "excluded"},
+        {
+            "past_rate_min_gap_days",
+            "past_rate_history",
+            "no_history",
+            "inputs",
+            "domain_ngrams",
+            "categorical_top_k",
+            "request_size_rows",
+            "self_filed_level",
+            "excluded",
+        },
         "features",
     )
     gap_days = _int(feat, "past_rate_min_gap_days", "features", minimum=1)
@@ -178,6 +230,30 @@ def parse_preregistration(data: Any) -> Preregistration:
     excluded_features = _names(feat, "excluded", "features")
     if "from_abuser" not in excluded_features:
         raise PreregistrationError("features.excluded must list from_abuser")
+    for name in ("requested_at_utc", label_counter):
+        if name not in excluded_features:
+            raise PreregistrationError(f"features.excluded must list {name}")
+    inputs = _names(feat, "inputs", "features", INPUTS)
+    if overlap := sorted(set(inputs) & set(excluded_features)):
+        raise PreregistrationError(f"features: inputs that are also excluded {overlap}")
+    for value, flag in PAIRED_INPUTS:
+        if value in inputs and flag not in inputs:
+            raise PreregistrationError(f"features.inputs: {value} needs {flag}")
+    ngr = _mapping(
+        feat["domain_ngrams"],
+        {"analyzer", "min_n", "max_n", "min_df", "sublinear_tf"},
+        "features.domain_ngrams",
+    )
+    ngram_analyzer = _choice(ngr, "analyzer", "features.domain_ngrams", NGRAM_ANALYZERS)
+    ngram_min = _int(ngr, "min_n", "features.domain_ngrams", minimum=1)
+    ngram_max = _int(ngr, "max_n", "features.domain_ngrams", minimum=1)
+    if ngram_min > ngram_max:
+        raise PreregistrationError("features.domain_ngrams: need min_n <= max_n")
+    ngram_min_df = _int(ngr, "min_df", "features.domain_ngrams", minimum=1)
+    ngram_sublinear_tf = _bool(ngr, "sublinear_tf", "features.domain_ngrams")
+    categorical_top_k = _int(feat, "categorical_top_k", "features", minimum=1)
+    request_size_rows = _choice(feat, "request_size_rows", "features", REQUEST_SIZE_ROWS)
+    self_filed_level = _choice(feat, "self_filed_level", "features", SELF_FILED_LEVELS)
 
     sam = _mapping(
         top["sampling"], {"train_unit", "train_requests", "rebalance_eval", "seed"}, "sampling"
@@ -273,6 +349,15 @@ def parse_preregistration(data: Any) -> Preregistration:
         past_rate_history=history_source,
         no_history=no_history,
         excluded_features=excluded_features,
+        inputs=inputs,
+        ngram_analyzer=ngram_analyzer,
+        ngram_min=ngram_min,
+        ngram_max=ngram_max,
+        ngram_min_df=ngram_min_df,
+        ngram_sublinear_tf=ngram_sublinear_tf,
+        categorical_top_k=categorical_top_k,
+        request_size_rows=request_size_rows,
+        self_filed_level=self_filed_level,
         train_unit=train_unit,
         train_requests=train_requests,
         rebalance_eval=rebalance_eval,

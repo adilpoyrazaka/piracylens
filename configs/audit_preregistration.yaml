@@ -43,8 +43,65 @@ features:
   # Rows without history keep the past rate missing and get a has_domain_history flag;
   # models that cannot take missing values use the training base rate instead.
   no_history: "missing_with_flag"
-  # Never used as features: the URL-level file, an undocumented column, raw free-text names.
-  excluded: ["url_file", "from_abuser", "owner_name", "reporter_name"]
+  # Model inputs, fixed before the feature builder exists. Every input is known when the
+  # request is filed; none depends on Google's decision about the request itself.
+  inputs:
+    # Domain name: character n-grams and its shape.
+    - "domain_ngrams"
+    - "tld"
+    - "domain_length"
+    - "domain_labels"
+    - "domain_digit_share"
+    - "domain_hyphens"
+    - "domain_punycode"
+    # Request size: domains in the request, URLs in the request, URLs for this domain.
+    - "domains_in_request"
+    - "urls_in_request"
+    - "urls_for_domain"
+    # Owner side.
+    - "owner_group"
+    - "market"
+    - "content_type"
+    - "region"
+    # Reporter side: group and brand separately, plus whether the owner filed for itself.
+    - "reporter_group"
+    - "reporter_brand"
+    - "self_filed"
+    # Domain history (rules above) and the domain's age: days since it first appeared in any
+    # request filed strictly earlier, from the same table and start date as the history.
+    - "domain_past_rate"
+    - "has_domain_history"
+    - "domain_past_requests"
+    - "domain_age_days"
+    - "has_domain_age"
+  # Character n-gram settings for the domain name; the vocabulary is fitted on training
+  # only (heuristic values).
+  domain_ngrams: {analyzer: "char_wb", min_n: 3, max_n: 5, min_df: 5, sublinear_tf: true}
+  # Top-level domain, owner group, reporter group and reporter brand keep their most
+  # frequent training values; the rest and unseen values become "other" (heuristic).
+  categorical_top_k: 50
+  # Request-size counts use every domain row of the request, decided or not: which rows
+  # are decided depends on the outcome, so counting only those would leak it.
+  request_size_rows: "all"
+  # A request is self-filed when its reporter is one of the owner names of the request's
+  # own owner group, so a brand filing for its parent also counts.
+  self_filed_level: "owner_group"
+  # Never used as features: the URL-level file, an undocumented column, raw free-text
+  # names, the single URL counters (Google's outcome; one of them is the label), scoping
+  # artifacts, and the filing date itself (a model trained on earlier years cannot read a
+  # later date; time enters through the domain history and age instead).
+  excluded:
+    - "url_file"
+    - "from_abuser"
+    - "owner_name"
+    - "reporter_name"
+    - "urls_removed"
+    - "urls_not_in_index"
+    - "urls_no_action"
+    - "urls_pending"
+    - "evidence_basis"
+    - "source_flags"
+    - "requested_at_utc"
 
 sampling:
   # Training examples are whole requests (all of their domains). The size is set by a
@@ -97,3 +154,8 @@ checks:
 # and models.past_rate_fallback, before any label rate or model output was looked at. A
 # label-blind size measurement showed that most test rows have no earlier history for their
 # domain, so how the past rate is computed and reported without history had to be fixed.
+# 2026-11-05: added features.inputs, domain_ngrams, categorical_top_k, request_size_rows
+# and self_filed_level, and extended features.excluded, before the feature builder existed
+# and before any label rate or model output was looked at. Two inputs come from label-blind
+# volume measurements: owners filing for themselves (about 7% of requests in every split)
+# and the age of a domain, which is known even when the domain has no decided history.

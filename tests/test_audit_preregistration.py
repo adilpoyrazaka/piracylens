@@ -53,6 +53,11 @@ def test_repo_design_file_is_valid():
     assert p.rebalance_eval is False
     assert p.business_at_precision == p.precision_target
     assert p.train.contains(p.stability_train_start)
+    assert len(p.inputs) == 22 and "self_filed" in p.inputs
+    assert {"requested_at_utc", p.label_counter} <= set(p.excluded_features)
+    assert not set(p.inputs) & set(p.excluded_features)
+    assert p.request_size_rows == "all"
+    assert p.ngram_min <= p.ngram_max
 
 
 def test_empty_training_size_stops_training(raw):
@@ -94,6 +99,17 @@ def test_filled_training_size_is_returned(raw):
         (["features", "no_history"], "drop_rows", "is not one of"),
         (["models", "past_rate_fallback"], "zero", "is not one of"),
         (["split", "report_by_history"], _DROP, "missing fields"),
+        (["features", "inputs"], ["domain_ngrams", "calendar_month"], "unknown names"),
+        (["features", "inputs"], ["domain_past_rate"], "needs has_domain_history"),
+        (["features", "inputs"], ["domain_age_days"], "needs has_domain_age"),
+        (["features", "domain_ngrams", "min_n"], 6, "min_n <= max_n"),
+        (["features", "domain_ngrams", "analyzer"], "word", "is not one of"),
+        (["features", "domain_ngrams", "min_df"], 0, "integer >= 1"),
+        (["features", "categorical_top_k"], 0, "integer >= 1"),
+        (["features", "request_size_rows"], "decided", "is not one of"),
+        (["features", "self_filed_level"], "owner_key", "is not one of"),
+        (["features", "excluded"], ["from_abuser", "url_file"], "requested_at_utc"),
+        (["features", "excluded"], ["from_abuser", "requested_at_utc"], "urls_no_action"),
     ],
 )
 def test_schema_violations_are_rejected(raw, path, value, message):
@@ -104,3 +120,9 @@ def test_schema_violations_are_rejected(raw, path, value, message):
 def test_non_mapping_document_is_rejected():
     with pytest.raises(PreregistrationError, match="top level must be a mapping"):
         parse_preregistration(["not", "a", "mapping"])
+
+
+def test_input_that_is_also_excluded_is_rejected(raw):
+    excluded = [*raw["features"]["excluded"], "tld"]
+    with pytest.raises(PreregistrationError, match=r"also excluded \['tld'\]"):
+        parse_preregistration(_edit(raw, ["features", "excluded"], excluded))
