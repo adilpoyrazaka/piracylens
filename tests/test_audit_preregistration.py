@@ -46,6 +46,10 @@ def test_repo_design_file_is_valid():
     assert p.validation.start == p.train.end + dt.timedelta(days=1)
     assert p.test.start == p.validation.end + dt.timedelta(days=1)
     assert "from_abuser" in p.excluded_features
+    assert p.past_rate_history == "full_domains_table"
+    assert p.no_history == "missing_with_flag"
+    assert p.past_rate_fallback == "train_base_rate"
+    assert p.report_by_history is True
     assert p.rebalance_eval is False
     assert p.business_at_precision == p.precision_target
     assert p.train.contains(p.stability_train_start)
@@ -86,6 +90,10 @@ def test_filled_training_size_is_returned(raw):
         (["checks", "stability_train_start"], "2025-03-01", "inside the train period"),
         (["checks", "source_subset"], ["source_e"], "unknown names"),
         (["checks", "reporter_ablation"], "yes", "true or false"),
+        (["features", "past_rate_history"], "lumen", "is not one of"),
+        (["features", "no_history"], "drop_rows", "is not one of"),
+        (["models", "past_rate_fallback"], "zero", "is not one of"),
+        (["split", "report_by_history"], _DROP, "missing fields"),
     ],
 )
 def test_schema_violations_are_rejected(raw, path, value, message):

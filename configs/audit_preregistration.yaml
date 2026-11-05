@@ -29,11 +29,20 @@ split:
   group_by: "domain"
   # The test set is also reported on domains never seen before the test start.
   report_unseen_domains: true
+  # Validation and test metrics are also reported separately for rows with and without
+  # domain history (a decided request on the domain filed at least the gap below earlier).
+  report_by_history: true
 
 features:
   # A domain's past no-action rate uses only requests filed at least this many days
   # earlier, because the decision date is not in the data (heuristic).
   past_rate_min_gap_days: 30
+  # History comes from every owner's requests in the full domains table from data.history_start,
+  # not only from the scoped owners: how Google treated a domain for others is known at filing.
+  past_rate_history: "full_domains_table"
+  # Rows without history keep the past rate missing and get a has_domain_history flag;
+  # models that cannot take missing values use the training base rate instead.
+  no_history: "missing_with_flag"
   # Never used as features: the URL-level file, an undocumented column, raw free-text names.
   excluded: ["url_file", "from_abuser", "owner_name", "reporter_name"]
 
@@ -52,6 +61,8 @@ models:
   candidates: ["logistic_regression", "linear_svm_sgd", "xgboost"]
   imbalance_variants: ["none", "class_weight"]
   calibration: "isotonic"
+  # The domain past-rate baseline predicts the training base rate for rows without history.
+  past_rate_fallback: "train_base_rate"
   # Hyperparameters and the decision threshold are tuned on validation only;
   # the test set is evaluated once, at the end.
   tune_on: "validation"
@@ -80,3 +91,9 @@ checks:
   no_reporter_model: true
   # A drop in PR-AUC larger than this (absolute) counts as a large gap (heuristic).
   large_gap_pr_auc: 0.05
+
+# Change log
+# 2026-11-05: added split.report_by_history, features.past_rate_history, features.no_history
+# and models.past_rate_fallback, before any label rate or model output was looked at. A
+# label-blind size measurement showed that most test rows have no earlier history for their
+# domain, so how the past rate is computed and reported without history had to be fixed.

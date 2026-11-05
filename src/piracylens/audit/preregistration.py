@@ -25,6 +25,9 @@ BASELINES = frozenset({"base_rate", "domain_past_rate"})
 CANDIDATES = frozenset({"logistic_regression", "linear_svm_sgd", "xgboost"})
 IMBALANCE_VARIANTS = frozenset({"none", "class_weight"})
 CALIBRATIONS = frozenset({"isotonic", "sigmoid", "none"})
+HISTORY_SOURCES = frozenset({"full_domains_table", "scoped_table"})
+NO_HISTORY_RULES = frozenset({"missing_with_flag"})
+PAST_RATE_FALLBACKS = frozenset({"train_base_rate"})
 PRIMARY_METRICS = frozenset({"pr_auc"})
 OTHER_METRICS = frozenset({"recall_at_precision", "brier"})
 
@@ -77,7 +80,10 @@ class Preregistration:
     test: Period
     group_by: str
     report_unseen_domains: bool
+    report_by_history: bool
     past_rate_min_gap_days: int
+    past_rate_history: str
+    no_history: str
     excluded_features: tuple[str, ...]
     train_unit: str
     train_requests: int | None
@@ -87,6 +93,7 @@ class Preregistration:
     candidates: tuple[str, ...]
     imbalance_variants: tuple[str, ...]
     calibration: str
+    past_rate_fallback: str
     tune_on: str
     primary_metric: str
     other_metrics: tuple[str, ...]
@@ -143,7 +150,11 @@ def parse_preregistration(data: Any) -> Preregistration:
     label_min_count = _int(primary, "min_count", "label.primary", minimum=1)
     sensitivity_min_share = _share(lab, "sensitivity_min_share", "label", allow_one=True)
 
-    sp = _mapping(top["split"], {*_PERIODS, "group_by", "report_unseen_domains"}, "split")
+    sp = _mapping(
+        top["split"],
+        {*_PERIODS, "group_by", "report_unseen_domains", "report_by_history"},
+        "split",
+    )
     train, validation, test = (_period(sp, name) for name in _PERIODS)
     if train.start != window_start:
         raise PreregistrationError("split.train.start must equal data.window_start")
@@ -154,9 +165,16 @@ def parse_preregistration(data: Any) -> Preregistration:
         raise PreregistrationError("split.test.end must equal data.data_end")
     group_by = _choice(sp, "group_by", "split", frozenset({"domain"}))
     report_unseen = _bool(sp, "report_unseen_domains", "split")
+    report_by_history = _bool(sp, "report_by_history", "split")
 
-    feat = _mapping(top["features"], {"past_rate_min_gap_days", "excluded"}, "features")
+    feat = _mapping(
+        top["features"],
+        {"past_rate_min_gap_days", "past_rate_history", "no_history", "excluded"},
+        "features",
+    )
     gap_days = _int(feat, "past_rate_min_gap_days", "features", minimum=1)
+    history_source = _choice(feat, "past_rate_history", "features", HISTORY_SOURCES)
+    no_history = _choice(feat, "no_history", "features", NO_HISTORY_RULES)
     excluded_features = _names(feat, "excluded", "features")
     if "from_abuser" not in excluded_features:
         raise PreregistrationError("features.excluded must list from_abuser")
@@ -179,7 +197,14 @@ def parse_preregistration(data: Any) -> Preregistration:
 
     mod = _mapping(
         top["models"],
-        {"baselines", "candidates", "imbalance_variants", "calibration", "tune_on"},
+        {
+            "baselines",
+            "candidates",
+            "imbalance_variants",
+            "calibration",
+            "past_rate_fallback",
+            "tune_on",
+        },
         "models",
     )
     baselines = _names(mod, "baselines", "models", BASELINES)
@@ -188,6 +213,7 @@ def parse_preregistration(data: Any) -> Preregistration:
     if "none" not in variants:
         raise PreregistrationError("models.imbalance_variants must include none as the reference")
     calibration = _choice(mod, "calibration", "models", CALIBRATIONS)
+    fallback = _choice(mod, "past_rate_fallback", "models", PAST_RATE_FALLBACKS)
     tune_on = _choice(mod, "tune_on", "models", frozenset({"validation"}))
 
     met = _mapping(
@@ -242,7 +268,10 @@ def parse_preregistration(data: Any) -> Preregistration:
         test=test,
         group_by=group_by,
         report_unseen_domains=report_unseen,
+        report_by_history=report_by_history,
         past_rate_min_gap_days=gap_days,
+        past_rate_history=history_source,
+        no_history=no_history,
         excluded_features=excluded_features,
         train_unit=train_unit,
         train_requests=train_requests,
@@ -252,6 +281,7 @@ def parse_preregistration(data: Any) -> Preregistration:
         candidates=candidates,
         imbalance_variants=variants,
         calibration=calibration,
+        past_rate_fallback=fallback,
         tune_on=tune_on,
         primary_metric=primary_metric,
         other_metrics=other_metrics,
