@@ -49,6 +49,8 @@ def test_repo_design_file_is_valid():
     assert p.past_rate_history == "full_domains_table"
     assert p.no_history == "missing_with_flag"
     assert p.past_rate_fallback == "train_base_rate"
+    assert p.base_rate_rows == "all_train_rows"
+    assert p.pr_auc_method == "average_precision"
     assert p.report_by_history is True
     assert p.rebalance_eval is False
     assert p.business_at_precision == p.precision_target
@@ -101,6 +103,10 @@ def test_filled_training_size_is_returned(raw):
         (["features", "past_rate_history"], "lumen", "is not one of"),
         (["features", "no_history"], "drop_rows", "is not one of"),
         (["models", "past_rate_fallback"], "zero", "is not one of"),
+        (["models", "base_rate_rows"], "validation_rows", "is not one of"),
+        (["models", "base_rate_rows"], _DROP, "missing fields"),
+        (["metrics", "pr_auc_method"], "trapezoid", "is not one of"),
+        (["metrics", "pr_auc_method"], _DROP, "missing fields"),
         (["split", "report_by_history"], _DROP, "missing fields"),
         (["features", "inputs"], ["domain_ngrams", "calendar_month"], "unknown names"),
         (["features", "inputs"], ["domain_past_rate"], "needs has_domain_history"),

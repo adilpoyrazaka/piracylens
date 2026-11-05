@@ -137,12 +137,19 @@ models:
   calibration: "isotonic"
   # The domain past-rate baseline predicts the training base rate for rows without history.
   past_rate_fallback: "train_base_rate"
+  # The training base rate is the label mean over every training row (for each label),
+  # not over the training sample. The same number serves the base-rate baseline, the
+  # past-rate fallback and models that cannot take missing values.
+  base_rate_rows: "all_train_rows"
   # Hyperparameters and the decision threshold are tuned on validation only;
   # the test set is evaluated once, at the end.
   tune_on: "validation"
 
 metrics:
   primary: "pr_auc"
+  # PR-AUC is computed as average precision (a step function over distinct scores), not
+  # as a trapezoid area, which overstates it when many scores are tied.
+  pr_auc_method: "average_precision"
   others: ["recall_at_precision", "brier"]
   precision_target: 0.80
   bootstrap: {resamples: 1000, unit: "domain", confidence: 0.95}
@@ -181,3 +188,6 @@ checks:
 # at; they close what the past rate counts and how domains and times are compared.
 # 2026-11-05: set sampling.train_requests to 150000 from a label-blind memory probe,
 # before any model was trained or any label rate was looked at.
+# 2026-11-05: added models.base_rate_rows and metrics.pr_auc_method before any label
+# rate or model output was looked at; they fix which rows give the training base rate
+# and how PR-AUC is computed, for the baselines and every model.

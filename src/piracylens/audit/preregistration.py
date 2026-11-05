@@ -30,6 +30,8 @@ CALIBRATIONS = frozenset({"isotonic", "sigmoid", "none"})
 HISTORY_SOURCES = frozenset({"full_domains_table", "scoped_table"})
 NO_HISTORY_RULES = frozenset({"missing_with_flag"})
 PAST_RATE_FALLBACKS = frozenset({"train_base_rate"})
+BASE_RATE_ROWS = frozenset({"all_train_rows", "train_sample"})
+PR_AUC_METHODS = frozenset({"average_precision"})
 PRIMARY_METRICS = frozenset({"pr_auc"})
 OTHER_METRICS = frozenset({"recall_at_precision", "brier"})
 INPUTS = frozenset(
@@ -144,8 +146,10 @@ class Preregistration:
     imbalance_variants: tuple[str, ...]
     calibration: str
     past_rate_fallback: str
+    base_rate_rows: str
     tune_on: str
     primary_metric: str
+    pr_auc_method: str
     other_metrics: tuple[str, ...]
     precision_target: float
     bootstrap_resamples: int
@@ -295,6 +299,7 @@ def parse_preregistration(data: Any) -> Preregistration:
             "imbalance_variants",
             "calibration",
             "past_rate_fallback",
+            "base_rate_rows",
             "tune_on",
         },
         "models",
@@ -306,12 +311,16 @@ def parse_preregistration(data: Any) -> Preregistration:
         raise PreregistrationError("models.imbalance_variants must include none as the reference")
     calibration = _choice(mod, "calibration", "models", CALIBRATIONS)
     fallback = _choice(mod, "past_rate_fallback", "models", PAST_RATE_FALLBACKS)
+    base_rate_rows = _choice(mod, "base_rate_rows", "models", BASE_RATE_ROWS)
     tune_on = _choice(mod, "tune_on", "models", frozenset({"validation"}))
 
     met = _mapping(
-        top["metrics"], {"primary", "others", "precision_target", "bootstrap"}, "metrics"
+        top["metrics"],
+        {"primary", "pr_auc_method", "others", "precision_target", "bootstrap"},
+        "metrics",
     )
     primary_metric = _choice(met, "primary", "metrics", PRIMARY_METRICS)
+    pr_auc_method = _choice(met, "pr_auc_method", "metrics", PR_AUC_METHODS)
     other_metrics = _names(met, "others", "metrics", OTHER_METRICS)
     precision_target = _share(met, "precision_target", "metrics")
     boot = _mapping(met["bootstrap"], {"resamples", "unit", "confidence"}, "metrics.bootstrap")
@@ -387,8 +396,10 @@ def parse_preregistration(data: Any) -> Preregistration:
         imbalance_variants=variants,
         calibration=calibration,
         past_rate_fallback=fallback,
+        base_rate_rows=base_rate_rows,
         tune_on=tune_on,
         primary_metric=primary_metric,
+        pr_auc_method=pr_auc_method,
         other_metrics=other_metrics,
         precision_target=precision_target,
         bootstrap_resamples=resamples,
