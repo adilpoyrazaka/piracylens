@@ -10,6 +10,9 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "duckdb==2.0.0",
     "pyyaml>=6.0",
+    # Modelling (CPU build of XGBoost: no CUDA libraries are needed without an NVIDIA GPU).
+    "scikit-learn>=1.9",
+    "xgboost-cpu>=3.4",
 ]
 
 [project.optional-dependencies]
