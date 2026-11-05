@@ -22,7 +22,8 @@ the filled rows, so one split separates them. XGBoost treats zeros that a sparse
 store as missing; for the n-gram, one-hot and flag columns the learned missing branch plays the
 role of zero, and scaled numeric inputs are almost never exactly zero. Each fit grows a fixed
 number of trees and is scored on validation at fixed tree checkpoints without refitting; the
-depth, class weighting and number of trees are chosen together by validation PR-AUC.
+depth, class weighting and number of trees are chosen together by validation PR-AUC. The
+number of cached node histograms is capped to bound memory; the cap does not change the model.
 
 The linear SVM and the trees are compared with the stored logistic regression on the same rows:
 the training sample must equal the stored one, the refitted encoding must reproduce the stored encoder's
@@ -88,6 +89,12 @@ MAX_ITER = 1000
 CHUNK_ROWS = 1_000_000
 # Threads for gradient boosting, leaving some of the machine's threads free.
 XGB_N_JOBS = 16
+# How many node histograms XGBoost keeps instead of recomputing them. A histogram covers
+# every column, so with about 260,000 columns the library default cache reached 16.7 GB on
+# its own in a label-free measurement at depth 10, while 64 nodes peaked at 8.2 GB at the same
+# speed and gave bit-identical margins on all training rows. The setting changes memory only,
+# never the model.
+XGB_MAX_CACHED_HIST_NODE = 64
 # Trees of the dry run's timing fit, on placeholder labels, at the deepest grid depth.
 XGB_TIMING_TREES = 20
 # Worker processes for the bootstrap; each held about 1.3 GB with two evaluated scores and
@@ -315,6 +322,7 @@ def xgboost_spec(
             n_estimators=marks[-1],
             random_state=p.seed,
             n_jobs=XGB_N_JOBS,
+            max_cached_hist_node=XGB_MAX_CACHED_HIST_NODE,
         ),
         iterations=None,
         max_iter=None,

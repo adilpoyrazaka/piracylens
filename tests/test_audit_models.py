@@ -472,6 +472,16 @@ def test_unstored_sparse_zeros_act_as_zeros_for_binary_inputs(design):
     )
 
 
+def test_the_histogram_cache_cap_does_not_change_the_trees(design):
+    rng = np.random.default_rng(9)
+    x = sparse.random(800, 300, density=0.05, format="csr", random_state=9, dtype=np.float32)
+    y = (rng.random(800) < 0.2 + 0.5 * (x[:, :20].sum(axis=1).A.ravel() > 0.3)).astype(float)
+    spec = xgboost_spec(design, depth_grid=(8,), checkpoints=(30,), class_weights=(None,))
+    capped = spec.build(spec.grid[0]).set_params(max_cached_hist_node=2).fit(x, y)
+    default = spec.build(spec.grid[0]).set_params(max_cached_hist_node=None).fit(x, y)
+    np.testing.assert_array_equal(score(capped, x, 30), score(default, x, 30))
+
+
 def test_tree_ties_go_to_fewer_trees_then_shallower_then_no_weighting(design):
     spec = xgboost_spec(design, depth_grid=(10, 6), checkpoints=(100, 300))
     grid = [{**g, "n_trees": k, "validation_pr_auc": 0.5} for g in spec.grid for k in (300, 100)]
@@ -517,6 +527,7 @@ def test_xgboost_spec_follows_the_design(design):
     expected = {
         "tree_method": "hist", "learning_rate": 0.1, "max_depth": 10, "n_estimators": 500,
         "random_state": design.seed, "n_jobs": 16, "subsample": None, "colsample_bytree": None,
+        "max_cached_hist_node": 64,
     }  # fmt: skip
     assert {k: params[k] for k in expected} == expected
     other = dataclasses.replace(
