@@ -134,6 +134,15 @@ python -m piracylens.data.scoped_tables domains
 
 Both commands print row counts only, per window flag and per year; they print no sums or rates of the URL counters.
 
+### 7. Build the audit feature table
+
+```bash
+python -m piracylens.audit.features --dry-run
+python -m piracylens.audit.features
+```
+
+Reads the pre-registered audit design in `configs/audit_preregistration.yaml`, both alias files, the scoped sub-tables from step 6 and the full processed `requests` and `domains` tables, and writes `data/interim/audit_features.parquet`: one row per decided in-window request × domain row (at least one URL removed or left with no action), with its split by filing date (train, validation, test), the model inputs fixed in the design file and both labels. A domain's past no-action rate uses only decided rows from every owner filed at least 30 days earlier; its age uses only strictly earlier appearances; request size counts every row of the request, decided or not. Category encodings and the domain character n-grams are not built here: the model pipeline fits them on training rows only. `--dry-run` prints the sizes and writes nothing; `--memory-limit` sets the DuckDB memory limit (default 14GB). The command prints row counts and feature coverage only, never label sums or rates, and writes to a temporary file that replaces the target only after the row count matches. On this snapshot: 112,708,603 rows (train 63,797,596, validation 9,881,520, test 39,029,487), about 2.7 GB; about 71 s for the dry run and 10 min for the build at a 14 GB memory peak on the reference machine.
+
 ## Development
 
 ```bash
@@ -151,6 +160,7 @@ configs/            alias groups and pre-registered parameters (YAML)
 docs/               data card and public summary of the scope review
 src/piracylens/     package source
   data/             conversion, owner normalization, alias loading
+  audit/            audit feature table and pre-registered design loader
 tests/              unit tests
 data/               local data, git-ignored (raw/, interim/, processed/)
 ```
