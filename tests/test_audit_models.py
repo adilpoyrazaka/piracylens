@@ -535,3 +535,52 @@ def test_xgboost_spec_follows_the_design(design):
     )
     with pytest.raises(SystemExit, match="settings not built here"):
         xgboost_spec(other)
+
+
+def test_saved_tree_fits_are_reused_with_identical_results(tmp_path, design, capsys):
+    features = _write(tmp_path / "f.parquet", _table())
+    _, first = _lr_then_xgb(tmp_path, design, features, "out")
+    assert "fitted max_depth=2 class_weight=None: 5 trees" in capsys.readouterr().out
+    fits = tmp_path / "out" / "xgboost_fits"
+    assert len(list(fits.glob("*.ubj"))) == len(list(fits.glob("*.json"))) == 4
+    assert not list(fits.glob("*.tmp*"))
+    second = run(design, features, tmp_path / "out-sample.parquet", tmp_path / "out",
+                 model="xgboost", depth_grid=(2, 3), checkpoints=(2, 5), chunk_rows=37)  # fmt: skip
+    printed = capsys.readouterr().out
+    assert printed.count("loaded saved fit") == 4 and "fitted max_depth" not in printed
+    for key in ("results", "threshold", "winner", "grid"):
+        assert first[key] == second[key]
+    stored = joblib.load(tmp_path / "out" / "xgboost.joblib")
+    if second["winner"]["class_weight"] == "balanced":
+        assert stored["model"].get_params()["scale_pos_weight"] is not None
+
+
+def test_only_missing_or_changed_tree_fits_are_refitted(tmp_path, design, capsys):
+    features = _write(tmp_path / "f.parquet", _table())
+    _lr_then_xgb(tmp_path, design, features, "out")
+    capsys.readouterr()
+    fits = tmp_path / "out" / "xgboost_fits"
+    min(fits.glob("*.json")).unlink()  # an interrupted fit: no completion marker
+    kw = {"depth_grid": (2, 3), "checkpoints": (2, 5), "chunk_rows": 37}
+    sample = tmp_path / "out-sample.parquet"
+    run(design, features, sample, tmp_path / "out", model="xgboost", **kw)
+    printed = capsys.readouterr().out
+    assert printed.count("loaded saved fit") == 3 and printed.count("fitted max_depth") == 1
+    other = dataclasses.replace(
+        design, xgboost=dataclasses.replace(design.xgboost, learning_rate=0.3)
+    )
+    run(other, features, sample, tmp_path / "out", model="xgboost", **kw)
+    printed = capsys.readouterr().out
+    assert "loaded saved fit" not in printed and printed.count("fitted max_depth") == 4
+
+
+def test_a_saved_fit_that_does_not_match_its_key_stops_the_run(tmp_path, design):
+    features = _write(tmp_path / "f.parquet", _table())
+    _lr_then_xgb(tmp_path, design, features, "out")
+    meta = min((tmp_path / "out" / "xgboost_fits").glob("*.json"))
+    saved = json.loads(meta.read_text())
+    saved["key"]["rows"] += 1
+    meta.write_text(json.dumps(saved))
+    with pytest.raises(SystemExit, match="does not match its key"):
+        run(design, features, tmp_path / "out-sample.parquet", tmp_path / "out",
+            model="xgboost", depth_grid=(2, 3), checkpoints=(2, 5))  # fmt: skip

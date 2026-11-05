@@ -24,6 +24,10 @@ role of zero, and scaled numeric inputs are almost never exactly zero. Each fit 
 number of trees and is scored on validation at fixed tree checkpoints without refitting; the
 depth, class weighting and number of trees are chosen together by validation PR-AUC. The
 number of cached node histograms is capped to bound memory; the cap does not change the model.
+Each finished tree fit is saved under `<stem>_fits/` in the output directory, keyed by the
+training sample file, the training matrix size, the training label mean, the design's
+gradient-boosting settings, the fit's own settings and the library version; a rerun loads a
+fit whose key matches instead of refitting it, so a crash late in the grid keeps earlier fits.
 
 The linear SVM and the trees are compared with the stored logistic regression on the same rows:
 the training sample must equal the stored one, the refitted encoding must reproduce the stored encoder's
@@ -54,6 +58,7 @@ Usage (from the repo root):
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import hashlib
 import json
 import multiprocessing
@@ -337,6 +342,51 @@ def score(model: Any, x: sparse.csr_matrix, n_trees: int | None = None) -> np.nd
     if n_trees is None:
         return model.decision_function(x)
     return model.predict(x, output_margin=True, iteration_range=(0, n_trees))
+
+
+def _fit_key(
+    p: Preregistration, sample_sha256: str, x: sparse.csr_matrix, y: np.ndarray, settings: dict
+) -> dict[str, Any]:
+    """Everything that determines one tree fit; equal keys give identical fits."""
+    return {
+        "sample_sha256": sample_sha256,
+        "rows": int(x.shape[0]),
+        "columns": int(x.shape[1]),
+        "nnz": int(x.nnz),
+        "label_mean": float(y.mean()),
+        "design": dataclasses.asdict(p.xgboost),
+        "seed": p.seed,
+        "settings": settings,
+        "xgboost_version": xgboost.__version__,
+    }
+
+
+def _fit_or_load(
+    estimator: Any, key: dict[str, Any], folder: Path, x: sparse.csr_matrix, y: np.ndarray
+) -> tuple[Any, float, bool]:
+    """Fit and save, or load a saved fit with the same key. Returns (model, fit seconds, loaded)."""
+    text = json.dumps(key, sort_keys=True)
+    name = hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+    model_path, meta_path = folder / f"{name}.ubj", folder / f"{name}.json"
+    if meta_path.is_file():
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        # Compared after a JSON round trip, as stored (tuples become lists).
+        if meta["key"] != json.loads(text) or not model_path.is_file():
+            raise SystemExit(f"saved fit {meta_path} does not match its key, stopped")
+        estimator.load_model(model_path)
+        return estimator, meta["fit_seconds"], True
+    t = time.perf_counter()
+    estimator.fit(x, y)
+    seconds = round(time.perf_counter() - t, 1)
+    folder.mkdir(parents=True, exist_ok=True)
+    tmp = model_path.with_name(f"{name}.tmp.ubj")  # the extension selects the format
+    estimator.save_model(tmp)
+    tmp.replace(model_path)
+    # The metadata file is written last: it marks the saved fit as complete.
+    tmp = meta_path.with_name(meta_path.name + ".tmp")
+    tmp.write_text(json.dumps({"key": key, "fit_seconds": seconds}, indent=2), encoding="utf-8")
+    tmp.replace(meta_path)
+    return estimator, seconds, False
 
 
 def _sample_pos_weight(y: np.ndarray) -> float:
@@ -712,6 +762,7 @@ def run(
     y_train = np.asarray(train["label_primary"], dtype=float)
     del train
     grid = []
+    sample_sha = _sha256(sample_path) if spec.checkpoints is not None else ""
     for params in spec.grid:
         t = time.perf_counter()
         estimator = spec.build(params)
@@ -719,8 +770,14 @@ def run(
         if spec.weight_from_sample and params["class_weight"] == "balanced":
             extra["scale_pos_weight"] = _sample_pos_weight(y_train)
             estimator.set_params(scale_pos_weight=extra["scale_pos_weight"])
-        fitted = estimator.fit(x_train, y_train)
-        seconds = round(time.perf_counter() - t, 1)
+        if spec.checkpoints is None:
+            fitted = estimator.fit(x_train, y_train)
+            seconds = round(time.perf_counter() - t, 1)
+        else:
+            key = _fit_key(p, sample_sha, x_train, y_train, {**params, **extra})
+            fitted, seconds, loaded = _fit_or_load(
+                estimator, key, out_dir / f"{spec.stem}_fits", x_train, y_train
+            )
         if spec.checkpoints is None:
             n_iter = spec.iterations(fitted)
             grid.append(
@@ -738,7 +795,12 @@ def run(
                 grid.append(
                     {**params, "n_trees": k, **extra, "fit_seconds": seconds, "model": fitted}
                 )
-            print(f"fitted {_params_text(params)}: {spec.checkpoints[-1]} trees, {seconds}s")
+            how = "loaded saved fit" if loaded else "fitted"
+            print(
+                f"{how} {_params_text(params)}: {spec.checkpoints[-1]} trees, {seconds}s; "
+                f"peak memory so far {_peak_gb():.1f} GB",
+                flush=True,
+            )
     train_peak = _peak_gb()
     del x_train
 
