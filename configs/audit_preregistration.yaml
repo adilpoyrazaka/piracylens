@@ -41,7 +41,9 @@ features:
   # not only from the scoped owners: how Google treated a domain for others is known at filing.
   past_rate_history: "full_domains_table"
   # Rows without history keep the past rate missing and get a has_domain_history flag;
-  # models that cannot take missing values use the training base rate instead.
+  # models that cannot take missing values use the training base rate instead. Gradient-
+  # boosted trees get the same filled matrix: the flag marks exactly the filled rows, so one
+  # split separates them and the filled value carries the same information as a missing one.
   no_history: "missing_with_flag"
   # Model inputs, fixed before the feature builder exists. Every input is known when the
   # request is filed; none depends on Google's decision about the request itself.
@@ -174,6 +176,23 @@ models:
     n_iter_no_change: 5
     early_stopping: false
     tie_break: "larger_alpha_then_no_class_weight"
+  # Gradient-boosted trees on the same encoded matrix as the linear models (so the same
+  # guards prove identical inputs). Each depth crosses with models.imbalance_variants, where
+  # class weighting is scale_pos_weight = negatives / positives in the training sample. Each
+  # fit grows n_estimators trees and is scored on validation at every tree checkpoint, without
+  # refitting; no rows are held out for early stopping, because a random hold-out would ignore
+  # the request and domain grouping. The winner is the depth, weighting and number of trees
+  # with the highest validation PR-AUC; ties go to fewer trees, then the shallower depth, then
+  # no class weighting. No row or column subsampling.
+  xgboost:
+    tree_method: "hist"
+    learning_rate: 0.1
+    max_depth_grid: [6, 10]
+    n_estimators: 500
+    tree_checkpoints: [100, 200, 300, 500]
+    class_weighting: "scale_pos_weight_from_sample"
+    input_matrix: "shared_linear_encoding"
+    tie_break: "fewer_trees_then_shallower_then_no_class_weight"
 
 metrics:
   primary: "pr_auc"
@@ -226,3 +245,9 @@ checks:
 # showed a higher label rate in validation than in training, so which rows fit the
 # calibrator had to be fixed; the threshold rule makes the precision target the only
 # operating point.
+# 2026-11-05: added models.linear_svm_sgd after the logistic regression's validation result
+# and before any linear SVM code or output existed (this entry was written with the next
+# change; the section itself was committed first).
+# 2026-11-05: added models.xgboost after the linear SVM's validation result and before any
+# gradient-boosting code or output existed, and clarified features.no_history for trees,
+# which get the same filled matrix with its flag.

@@ -37,6 +37,10 @@ THRESHOLD_RULES = frozenset({"precision_target_on_validation"})
 SVM_LOSSES = frozenset({"hinge"})
 SVM_PENALTIES = frozenset({"l2"})
 SVM_TIE_BREAKS = frozenset({"larger_alpha_then_no_class_weight"})
+XGB_TREE_METHODS = frozenset({"hist"})
+XGB_CLASS_WEIGHTINGS = frozenset({"scale_pos_weight_from_sample"})
+XGB_INPUT_MATRICES = frozenset({"shared_linear_encoding"})
+XGB_TIE_BREAKS = frozenset({"fewer_trees_then_shallower_then_no_class_weight"})
 PRIMARY_METRICS = frozenset({"pr_auc"})
 OTHER_METRICS = frozenset({"recall_at_precision", "brier"})
 INPUTS = frozenset(
@@ -122,6 +126,20 @@ class LinearSvmDesign:
 
 
 @dataclass(frozen=True)
+class XgboostDesign:
+    """Grid, tree checkpoints and weighting of the gradient-boosted trees."""
+
+    tree_method: str
+    learning_rate: float
+    max_depth_grid: tuple[int, ...]
+    n_estimators: int
+    tree_checkpoints: tuple[int, ...]
+    class_weighting: str
+    input_matrix: str
+    tie_break: str
+
+
+@dataclass(frozen=True)
 class Preregistration:
     """Validated audit design."""
 
@@ -187,6 +205,7 @@ class Preregistration:
     no_reporter_model: bool
     large_gap_pr_auc: float
     linear_svm: LinearSvmDesign
+    xgboost: XgboostDesign
 
     def require_train_requests(self) -> int:
         """Return the training size, or stop if it has not been fixed yet."""
@@ -328,6 +347,7 @@ def parse_preregistration(data: Any) -> Preregistration:
             "base_rate_rows",
             "tune_on",
             "linear_svm_sgd",
+            "xgboost",
         },
         "models",
     )
@@ -344,6 +364,7 @@ def parse_preregistration(data: Any) -> Preregistration:
     base_rate_rows = _choice(mod, "base_rate_rows", "models", BASE_RATE_ROWS)
     tune_on = _choice(mod, "tune_on", "models", frozenset({"validation"}))
     linear_svm = _linear_svm(mod["linear_svm_sgd"])
+    xgboost = _xgboost(mod["xgboost"])
 
     met = _mapping(
         top["metrics"],
@@ -449,7 +470,55 @@ def parse_preregistration(data: Any) -> Preregistration:
         no_reporter_model=_bool(chk, "no_reporter_model", "checks"),
         large_gap_pr_auc=_share(chk, "large_gap_pr_auc", "checks"),
         linear_svm=linear_svm,
+        xgboost=xgboost,
     )
+
+
+def _xgboost(obj: Any) -> XgboostDesign:
+    where = "models.xgboost"
+    xgb = _mapping(
+        obj,
+        {
+            "tree_method",
+            "learning_rate",
+            "max_depth_grid",
+            "n_estimators",
+            "tree_checkpoints",
+            "class_weighting",
+            "input_matrix",
+            "tie_break",
+        },
+        where,
+    )
+    depths = _int_list(xgb, "max_depth_grid", where)
+    checkpoints = _int_list(xgb, "tree_checkpoints", where)
+    n_estimators = _int(xgb, "n_estimators", where, minimum=1)
+    if list(checkpoints) != sorted(checkpoints) or checkpoints[-1] != n_estimators:
+        raise PreregistrationError(
+            f"{where}.tree_checkpoints must be increasing and end at n_estimators ({n_estimators})"
+        )
+    return XgboostDesign(
+        tree_method=_choice(xgb, "tree_method", where, XGB_TREE_METHODS),
+        learning_rate=_share(xgb, "learning_rate", where, allow_one=True),
+        max_depth_grid=depths,
+        n_estimators=n_estimators,
+        tree_checkpoints=checkpoints,
+        class_weighting=_choice(xgb, "class_weighting", where, XGB_CLASS_WEIGHTINGS),
+        input_matrix=_choice(xgb, "input_matrix", where, XGB_INPUT_MATRICES),
+        tie_break=_choice(xgb, "tie_break", where, XGB_TIE_BREAKS),
+    )
+
+
+def _int_list(obj: Mapping[str, Any], field: str, where: str) -> tuple[int, ...]:
+    value = obj[field]
+    name = f"{where}.{field}"
+    if not isinstance(value, list) or not value:
+        raise PreregistrationError(f"{name} must be a non-empty list")
+    if not all(isinstance(v, int) and not isinstance(v, bool) and v >= 1 for v in value):
+        raise PreregistrationError(f"{name} must contain integers >= 1 only")
+    if len(set(value)) != len(value):
+        raise PreregistrationError(f"{name} contains duplicates")
+    return tuple(value)
 
 
 def _linear_svm(obj: Any) -> LinearSvmDesign:

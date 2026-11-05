@@ -71,6 +71,12 @@ def test_repo_design_file_is_valid():
     assert svm.alpha_grid == (5e-4, 5e-5, 5e-6, 5e-7, 5e-8)
     assert (svm.max_epochs, svm.tol, svm.n_iter_no_change) == (50, 1e-4, 5)
     assert svm.tie_break == "larger_alpha_then_no_class_weight"
+    xgb = p.xgboost
+    assert (xgb.tree_method, xgb.learning_rate, xgb.n_estimators) == ("hist", 0.1, 500)
+    assert xgb.max_depth_grid == (6, 10) and xgb.tree_checkpoints == (100, 200, 300, 500)
+    assert xgb.class_weighting == "scale_pos_weight_from_sample"
+    assert xgb.input_matrix == "shared_linear_encoding"
+    assert xgb.tie_break == "fewer_trees_then_shallower_then_no_class_weight"
 
 
 def test_empty_training_size_stops_training(raw):
@@ -151,6 +157,22 @@ def test_filled_training_size_is_returned(raw):
         (["models", "linear_svm_sgd", "early_stopping"], "no", "true or false"),
         (["models", "linear_svm_sgd", "tie_break"], "best_recall", "is not one of"),
         (["models", "linear_svm_sgd", "extra"], 1, "unexpected fields"),
+        (["models", "xgboost"], _DROP, "missing fields"),
+        (["models", "xgboost", "tree_method"], "exact", "is not one of"),
+        (["models", "xgboost", "learning_rate"], 0, r"\(0, 1\]"),
+        (["models", "xgboost", "learning_rate"], 1.5, r"\(0, 1\]"),
+        (["models", "xgboost", "max_depth_grid"], [], "non-empty list"),
+        (["models", "xgboost", "max_depth_grid"], [6, 0], "integers >= 1"),
+        (["models", "xgboost", "max_depth_grid"], [6, 6.5], "integers >= 1"),
+        (["models", "xgboost", "max_depth_grid"], [6, True], "integers >= 1"),
+        (["models", "xgboost", "max_depth_grid"], [6, 6], "duplicates"),
+        (["models", "xgboost", "n_estimators"], 0, "integer >= 1"),
+        (["models", "xgboost", "tree_checkpoints"], [100, 300, 200, 500], "increasing"),
+        (["models", "xgboost", "tree_checkpoints"], [100, 200, 300], "end at n_estimators"),
+        (["models", "xgboost", "class_weighting"], "balanced", "is not one of"),
+        (["models", "xgboost", "input_matrix"], "raw_with_nan", "is not one of"),
+        (["models", "xgboost", "tie_break"], "deeper_first", "is not one of"),
+        (["models", "xgboost", "extra"], 1, "unexpected fields"),
     ],
 )
 def test_schema_violations_are_rejected(raw, path, value, message):
