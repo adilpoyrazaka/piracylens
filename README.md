@@ -152,6 +152,15 @@ python -m piracylens.audit.baselines
 
 Reads the training and validation rows of `data/interim/audit_features.parquet` (test rows are filtered out in the query, so no test label is read) and writes `data/interim/audit_baselines.json`. Two baselines are evaluated for both labels: the training base rate as a constant score, and the domain's past no-action rate, with the training base rate for rows whose domain has no history. Each is scored on all validation rows and separately on rows with and without domain history: PR-AUC as average precision, recall at the precision target of the design file, and the Brier score, each with a percentile interval from domain-level bootstrap resamples (number, confidence and seed from the design file). `--dry-run` reads no label column: it prints the row, group and domain counts and times one batch of resamples on placeholder labels. On this snapshot: 9,881,520 validation rows over 155,089 domains, compressed to 1,623,800 groups; about 8 s for the dry run and 4 min for the run with 1,000 resamples, at a 3.1 GB memory peak on the reference machine.
 
+### 9. Fit and evaluate the audit logistic regression
+
+```bash
+python -m piracylens.audit.models --dry-run
+python -m piracylens.audit.models
+```
+
+Draws the training sample (the number of whole training requests set in the design file, uniformly with the design seed) and writes its request ids to `data/interim/audit_train_sample.parquet`, so every model trains on the same rows. The input encoding is fitted on the sample rows only: domain character n-grams, the most frequent categories with one "other" column, log-transformed counts and scaled numeric inputs; a missing past rate becomes the training base rate and a missing domain age zero days. A grid of logistic regressions (four regularization strengths, with and without class weighting) is fitted on the encoded sample, and the fit with the highest validation PR-AUC wins, so its validation figures are optimistic; the test set is not read. Writes `data/interim/audit_models/logreg.json` (every grid fit; the winner's PR-AUC, recall at the precision target and Brier score with domain-bootstrap intervals, overall and by domain history, each paired with the domain past-rate baseline; the decision threshold at the precision target; peak memory) and `logreg.joblib` (the encoder, the model, an isotonic calibrator fitted on validation and the threshold). The Brier score uses isotonic probabilities cross-fitted on validation domain folds. The bootstrap runs in 8 worker processes that read memory-mapped arrays from a temporary folder in the output directory. `--dry-run` reads no label column: it draws and writes the sample, fits the encoding and times the encoding of one validation chunk.
+
 ## Development
 
 ```bash
@@ -169,7 +178,7 @@ configs/            alias groups and pre-registered parameters (YAML)
 docs/               data card and public summary of the scope review
 src/piracylens/     package source
   data/             conversion, owner normalization, alias loading
-  audit/            audit feature table, baselines and pre-registered design loader
+  audit/            audit feature table, baselines, models and pre-registered design loader
 tests/              unit tests
 data/               local data, git-ignored (raw/, interim/, processed/)
 ```
