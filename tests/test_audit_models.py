@@ -8,6 +8,7 @@ import duckdb
 import joblib
 import numpy as np
 import pytest
+from scipy import sparse
 from sklearn.isotonic import IsotonicRegression
 
 from piracylens.audit.baselines import metrics, ranked
@@ -23,7 +24,9 @@ from piracylens.audit.models import (
     rank_rows,
     row_metrics,
     run,
+    score,
     select_winner,
+    xgboost_spec,
 )
 from piracylens.audit.preregistration import load_preregistration
 
@@ -406,3 +409,118 @@ def test_model_specs_follow_the_fixed_settings(design):
     }  # fmt: skip
     assert {k: params[k] for k in expected} == expected
     assert max(svm.grid, key=svm.prefer) == {"alpha": 5e-4, "class_weight": None}
+
+
+def _lr_then_xgb(tmp_path, design, features, out, **xgb):
+    """Run the logistic regression, then the trees against it, in one output folder."""
+    sample = tmp_path / f"{out}-sample.parquet"
+    lr = run(design, features, sample, tmp_path / out, grid_c=(0.1, 1.0), class_weights=(None,))
+    kw = {"depth_grid": (2, 3), "checkpoints": (2, 5), "chunk_rows": 37}
+    report = run(design, features, sample, tmp_path / out, model="xgboost", **(kw | xgb))
+    return lr, report
+
+
+def test_xgboost_scores_checkpoints_and_is_paired_with_the_logistic_regression(tmp_path, design):
+    features = _write(tmp_path / "f.parquet", _table())
+    lr, report = _lr_then_xgb(tmp_path, design, features, "out")
+    saved = json.loads((tmp_path / "out" / "xgboost.json").read_text())
+    assert saved["results"] == report["results"] and report["model"] == "xgboost"
+    stored = joblib.load(tmp_path / "out" / "xgboost.joblib")
+    assert stored["n_trees"] == report["winner"]["n_trees"]
+    assert [(g["max_depth"], g["class_weight"], g["n_trees"]) for g in report["grid"]] == [
+        (d, cw, k) for d in (2, 3) for cw in (None, "balanced") for k in (2, 5)
+    ]
+    assert set(report["winner"]) == {"max_depth", "class_weight", "n_trees"}
+    rate = report["train_label_rate_sample"]
+    weights = [g["scale_pos_weight"] for g in report["grid"] if g["class_weight"] == "balanced"]
+    assert len(weights) == 4 and weights == pytest.approx([(1 - rate) / rate] * 4)
+    assert all("scale_pos_weight" not in g for g in report["grid"] if g["class_weight"] is None)
+    stored_lr = {e["subset"]: e for e in lr["results"]}
+    for e in report["results"]:
+        for metric in ("pr_auc", "recall_at_precision", "brier"):
+            assert e[metric]["logistic_regression"] == stored_lr[e["subset"]][metric]["model"]
+
+
+def test_balanced_trees_are_fitted_with_the_sample_weight(tmp_path, design):
+    features = _write(tmp_path / "f.parquet", _table())
+    _, report = _lr_then_xgb(tmp_path, design, features, "out", class_weights=("balanced",))
+    stored = joblib.load(tmp_path / "out" / "xgboost.joblib")
+    rate = report["train_label_rate_sample"]
+    assert stored["model"].get_params()["scale_pos_weight"] == pytest.approx((1 - rate) / rate)
+
+
+def test_a_tree_checkpoint_scores_like_a_refit_with_that_many_trees(design):
+    rng = np.random.default_rng(6)
+    x = sparse.csr_matrix((rng.random((400, 12)) < 0.3).astype(np.float32))
+    y = (rng.random(400) < 0.3 + 0.4 * x[:, 0].toarray().ravel()).astype(float)
+    spec = xgboost_spec(design, depth_grid=(3,), checkpoints=(4, 9), class_weights=(None,))
+    full = spec.build(spec.grid[0]).fit(x, y)
+    short = spec.build(spec.grid[0]).set_params(n_estimators=4).fit(x, y)
+    np.testing.assert_array_equal(score(full, x, 4), score(short, x, 4))
+    assert not np.array_equal(score(full, x, 4), score(full, x, 9))
+
+
+def test_unstored_sparse_zeros_act_as_zeros_for_binary_inputs(design):
+    rng = np.random.default_rng(8)
+    b = (rng.random((600, 6)) < 0.3).astype(np.float32)
+    y = ((b[:, 0] + b[:, 1] * b[:, 2] + 0.5 * rng.random(600)) > 0.9).astype(float)
+    spec = xgboost_spec(design, depth_grid=(3,), checkpoints=(20,), class_weights=(None,))
+    dense = spec.build(spec.grid[0]).fit(b, y)
+    sparse_fit = spec.build(spec.grid[0]).fit(sparse.csr_matrix(b), y)
+    np.testing.assert_array_equal(
+        dense.predict(b, output_margin=True), score(sparse_fit, sparse.csr_matrix(b), 20)
+    )
+
+
+def test_tree_ties_go_to_fewer_trees_then_shallower_then_no_weighting(design):
+    spec = xgboost_spec(design, depth_grid=(10, 6), checkpoints=(100, 300))
+    grid = [{**g, "n_trees": k, "validation_pr_auc": 0.5} for g in spec.grid for k in (300, 100)]
+    winner = grid[select_winner(grid, spec.prefer)]
+    assert (winner["n_trees"], winner["max_depth"], winner["class_weight"]) == (100, 6, None)
+
+
+def test_xgboost_test_labels_never_reach_the_output(tmp_path, design):
+    a = _lr_then_xgb(tmp_path, design, _write(tmp_path / "a.parquet", _table()), "a")[1]
+    b = _lr_then_xgb(tmp_path, design, _write(tmp_path / "b.parquet", _table(flip_test=True)), "b")[
+        1
+    ]
+    for key in ("results", "threshold", "winner", "train_base_rate_all_rows"):
+        assert a[key] == b[key]
+    assert [g["validation_pr_auc"] for g in a["grid"]] == [
+        g["validation_pr_auc"] for g in b["grid"]
+    ]
+
+
+def test_xgboost_dry_run_times_trees_without_labels(tmp_path, design, capsys):
+    labelled = _write(tmp_path / "f.parquet", _table())
+    sample = tmp_path / "s.parquet"
+    run(design, labelled, sample, tmp_path / "out", grid_c=(1.0,), class_weights=(None,))
+    capsys.readouterr()
+    unlabelled = _write(tmp_path / "u.parquet", _table(labels=False))
+    result = run(
+        design, unlabelled, sample, tmp_path / "out", model="xgboost", dry_run=True,
+        depth_grid=(2, 3), checkpoints=(2, 5), chunk_rows=25,
+    )  # fmt: skip
+    assert result is None and not (tmp_path / "out" / "xgboost.json").exists()
+    printed = capsys.readouterr().out
+    assert "timing fit: 20 trees at depth 3 on placeholder labels" in printed
+    assert "same n-gram vocabulary and categories" in printed and "no label read" in printed
+
+
+def test_xgboost_spec_follows_the_design(design):
+    spec = xgboost_spec(design)
+    assert spec.stem == "xgboost" and spec.checkpoints == (100, 200, 300, 500)
+    assert [(g["max_depth"], g["class_weight"]) for g in spec.grid] == [
+        (6, None), (6, "balanced"), (10, None), (10, "balanced"),
+    ]  # fmt: skip
+    params = spec.build(spec.grid[3]).get_params()
+    expected = {
+        "tree_method": "hist", "learning_rate": 0.1, "max_depth": 10, "n_estimators": 500,
+        "random_state": design.seed, "n_jobs": 16, "subsample": None, "colsample_bytree": None,
+    }  # fmt: skip
+    assert {k: params[k] for k in expected} == expected
+    other = dataclasses.replace(
+        design, xgboost=dataclasses.replace(design.xgboost, tie_break="deeper_first")
+    )
+    with pytest.raises(SystemExit, match="settings not built here"):
+        xgboost_spec(other)

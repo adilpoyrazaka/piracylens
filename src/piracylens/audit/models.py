@@ -1,4 +1,4 @@
-"""Linear models for the takedown audit (logistic regression, linear SVM), tuned on validation.
+"""Models for the takedown audit (logistic regression, linear SVM, gradient-boosted trees).
 
 The training sample is a fixed number of whole training requests drawn uniformly without
 replacement with the design seed; the drawn request ids are written to a file so every model
@@ -16,8 +16,16 @@ used for selection) and are labelled as such; the test set is not read here. The
 regression grid is fixed in this module; the linear SVM (hinge loss, trained by stochastic
 gradient descent) takes its grid and stopping rule from the design file.
 
-The linear SVM is compared with the stored logistic regression on the same rows: the training
-sample must equal the stored one, the refitted encoding must reproduce the stored encoder's
+Gradient-boosted trees (XGBoost, histogram method) take the same encoded matrix, so the same
+guards prove identical inputs. The filled past rate keeps its history flag, which marks exactly
+the filled rows, so one split separates them. XGBoost treats zeros that a sparse matrix does not
+store as missing; for the n-gram, one-hot and flag columns the learned missing branch plays the
+role of zero, and scaled numeric inputs are almost never exactly zero. Each fit grows a fixed
+number of trees and is scored on validation at fixed tree checkpoints without refitting; the
+depth, class weighting and number of trees are chosen together by validation PR-AUC.
+
+The linear SVM and the trees are compared with the stored logistic regression on the same rows:
+the training sample must equal the stored one, the refitted encoding must reproduce the stored encoder's
 training matrix exactly, and the stored model's validation metrics must reproduce its own
 report before the bootstrap starts. Both models then share the resamples, so their difference
 has a paired interval.
@@ -38,6 +46,8 @@ Usage (from the repo root):
     python -m piracylens.audit.models
     python -m piracylens.audit.models --model linear_svm --dry-run
     python -m piracylens.audit.models --model linear_svm
+    python -m piracylens.audit.models --model xgboost --dry-run   # adds a short timing fit
+    python -m piracylens.audit.models --model xgboost
 """
 
 from __future__ import annotations
@@ -59,6 +69,7 @@ from typing import Any
 import duckdb
 import joblib
 import numpy as np
+import xgboost
 from scipy import sparse
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.isotonic import IsotonicRegression
@@ -75,6 +86,10 @@ GRID_C = (0.01, 0.1, 1.0, 10.0)
 CLASS_WEIGHTS = (None, "balanced")
 MAX_ITER = 1000
 CHUNK_ROWS = 1_000_000
+# Threads for gradient boosting, leaving some of the machine's threads free.
+XGB_N_JOBS = 16
+# Trees of the dry run's timing fit, on placeholder labels, at the deepest grid depth.
+XGB_TIMING_TREES = 20
 # Worker processes for the bootstrap; each held about 1.3 GB with two evaluated scores and
 # needs more with three, so six keep the total within a 23 GB machine. The shared arrays are
 # memory-mapped from a temporary folder in the output directory. The result does not depend
@@ -212,10 +227,14 @@ class ModelSpec:
     stem: str  # output file name stem
     grid: tuple[dict[str, Any], ...]
     build: Callable[[dict[str, Any]], Any]
-    iterations: Callable[[Any], int]
-    max_iter: int
-    # Among fits with equal validation PR-AUC, the largest value of this key wins.
+    iterations: Callable[[Any], int] | None  # optimizer iterations; None for trees
+    max_iter: int | None
+    # Among candidates with equal validation PR-AUC, the largest value of this key wins.
     prefer: Callable[[dict[str, Any]], tuple]
+    # Trees: each fit is also scored with its first k trees for every k listed here.
+    checkpoints: tuple[int, ...] | None = None
+    # Trees: class weighting is set from the training sample's class balance at fit time.
+    weight_from_sample: bool = False
 
 
 def logistic_regression_spec(
@@ -264,6 +283,60 @@ def linear_svm_spec(
         max_iter=s.max_epochs,
         prefer=lambda g: (g["alpha"], g["class_weight"] is None),
     )
+
+
+def xgboost_spec(
+    p: Preregistration,
+    depth_grid: tuple[int, ...] | None = None,
+    checkpoints: tuple[int, ...] | None = None,
+    class_weights: tuple[str | None, ...] | None = None,
+) -> ModelSpec:
+    x = p.xgboost
+    fixed = (x.tree_method, x.class_weighting, x.input_matrix, x.tie_break)
+    if fixed != (
+        "hist",
+        "scale_pos_weight_from_sample",
+        "shared_linear_encoding",
+        "fewer_trees_then_shallower_then_no_class_weight",
+    ):
+        raise SystemExit(f"the design asks for gradient-boosting settings not built here: {fixed}")
+    if class_weights is None:
+        class_weights = tuple(None if v == "none" else "balanced" for v in p.imbalance_variants)
+    depths = x.max_depth_grid if depth_grid is None else depth_grid
+    marks = x.tree_checkpoints if checkpoints is None else checkpoints
+    return ModelSpec(
+        name="xgboost",
+        stem="xgboost",
+        grid=tuple({"max_depth": d, "class_weight": cw} for d in depths for cw in class_weights),
+        build=lambda g: xgboost.XGBClassifier(
+            tree_method=x.tree_method,
+            learning_rate=x.learning_rate,
+            max_depth=g["max_depth"],
+            n_estimators=marks[-1],
+            random_state=p.seed,
+            n_jobs=XGB_N_JOBS,
+        ),
+        iterations=None,
+        max_iter=None,
+        prefer=lambda g: (-g["n_trees"], -g["max_depth"], g["class_weight"] is None),
+        checkpoints=marks,
+        weight_from_sample=True,
+    )
+
+
+def score(model: Any, x: sparse.csr_matrix, n_trees: int | None = None) -> np.ndarray:
+    """Ranking score: the linear decision value, or the trees' margin with the first n trees."""
+    if n_trees is None:
+        return model.decision_function(x)
+    return model.predict(x, output_margin=True, iteration_range=(0, n_trees))
+
+
+def _sample_pos_weight(y: np.ndarray) -> float:
+    """Negatives per positive in the training sample (scale_pos_weight of "balanced")."""
+    pos = float(y.sum())
+    if pos == 0 or pos == len(y):
+        raise SystemExit("the training sample has a single class")
+    return (len(y) - pos) / pos
 
 
 def select_winner(grid: list[dict[str, Any]], prefer: Callable[[dict], tuple]) -> int:
@@ -533,6 +606,8 @@ def run(
     memory_limit: str = "14GB",
     grid_c: tuple[float, ...] = GRID_C,
     alpha_grid: tuple[float, ...] | None = None,
+    depth_grid: tuple[int, ...] | None = None,
+    checkpoints: tuple[int, ...] | None = None,
     class_weights: tuple[str | None, ...] | None = None,
     reference: Path | None = None,
     resamples: int | None = None,
@@ -544,8 +619,11 @@ def run(
             grid_c, CLASS_WEIGHTS if class_weights is None else class_weights
         )
         ref_path = None
-    elif model == "linear_svm":
-        spec = linear_svm_spec(p, alpha_grid, class_weights)
+    elif model in ("linear_svm", "xgboost"):
+        if model == "linear_svm":
+            spec = linear_svm_spec(p, alpha_grid, class_weights)
+        else:
+            spec = xgboost_spec(p, depth_grid, checkpoints, class_weights)
         ref_path = out_dir / "logreg.joblib" if reference is None else reference
     else:
         raise SystemExit(f"unknown model {model!r}")
@@ -610,6 +688,8 @@ def run(
         if ref is not None:
             print(f"reference {ref_path}: same n-gram vocabulary and categories")
         print(f"grid: {len(spec.grid)} fits of {spec.name}")
+        if spec.checkpoints is not None:
+            _time_trees(spec, x_train, p.seed)
         print(
             f"validation: {n_val:,} rows in {n_chunks} chunks, about {t_chunk:.1f}s to encode "
             f"one chunk (about {t_chunk * n_chunks / 60:.1f} min for all)"
@@ -626,18 +706,31 @@ def run(
     grid = []
     for params in spec.grid:
         t = time.perf_counter()
-        fitted = spec.build(params).fit(x_train, y_train)
-        n_iter = spec.iterations(fitted)
-        grid.append(
-            {
-                **params,
-                "fit_seconds": round(time.perf_counter() - t, 1),
-                "n_iter": n_iter,
-                "converged": n_iter < spec.max_iter,
-                "model": fitted,
-            }
-        )
-        print(f"fitted {_params_text(params)}: {n_iter} iterations, {grid[-1]['fit_seconds']}s")
+        estimator = spec.build(params)
+        extra: dict[str, Any] = {}
+        if spec.weight_from_sample and params["class_weight"] == "balanced":
+            extra["scale_pos_weight"] = _sample_pos_weight(y_train)
+            estimator.set_params(scale_pos_weight=extra["scale_pos_weight"])
+        fitted = estimator.fit(x_train, y_train)
+        seconds = round(time.perf_counter() - t, 1)
+        if spec.checkpoints is None:
+            n_iter = spec.iterations(fitted)
+            grid.append(
+                {
+                    **params,
+                    "fit_seconds": seconds,
+                    "n_iter": n_iter,
+                    "converged": n_iter < spec.max_iter,
+                    "model": fitted,
+                }
+            )
+            print(f"fitted {_params_text(params)}: {n_iter} iterations, {seconds}s")
+        else:
+            for k in spec.checkpoints:
+                grid.append(
+                    {**params, "n_trees": k, **extra, "fit_seconds": seconds, "model": fitted}
+                )
+            print(f"fitted {_params_text(params)}: {spec.checkpoints[-1]} trees, {seconds}s")
     train_peak = _peak_gb()
     del x_train
 
@@ -653,9 +746,9 @@ def run(
         x = encoder.transform(chunk)
         n = x.shape[0]
         for i, g in enumerate(grid):
-            scores[i, pos : pos + n] = g["model"].decision_function(x)
+            scores[i, pos : pos + n] = score(g["model"], x, g.get("n_trees"))
         if ref is not None:
-            ref_scores[pos : pos + n] = ref["model"].decision_function(x)
+            ref_scores[pos : pos + n] = score(ref["model"], x)
         y[pos : pos + n] = chunk["label_primary"]
         domain[pos : pos + n] = chunk["did"]
         history[pos : pos + n] = chunk["history_flag"]
@@ -664,7 +757,9 @@ def run(
     if pos != n_val:
         raise SystemExit("validation rows changed while scoring")
     if bad := [
-        _params_text(spec.grid[i]) for i in range(len(grid)) if not np.isfinite(scores[i]).all()
+        _params_text(_candidate(spec, g))
+        for i, g in enumerate(grid)
+        if not np.isfinite(scores[i]).all()
     ]:
         raise SystemExit(f"non-finite validation scores from {bad}, stopped before any output")
     n_domains = int(domain.max()) + 1
@@ -735,11 +830,12 @@ def run(
             "calibrator": final_calibrator,
             "threshold": threshold,
             "base_rate": base_rate,
+            "n_trees": winner.get("n_trees"),
         },
         tmp,
     )
     tmp.replace(artifact)
-    params = list(spec.grid[0])
+    params = list(_candidate(spec, winner))
     report = {
         "model": spec.name,
         "features": str(features),
@@ -800,6 +896,29 @@ def run(
     return report
 
 
+def _candidate(spec: ModelSpec, g: dict[str, Any]) -> dict[str, Any]:
+    """The settings that identify one candidate: its grid values, and its trees if any."""
+    keys = [*spec.grid[0], *(["n_trees"] if spec.checkpoints is not None else [])]
+    return {k: g[k] for k in keys}
+
+
+def _time_trees(spec: ModelSpec, x_train: sparse.csr_matrix, seed: int) -> None:
+    """Fit a few trees at the deepest depth on placeholder labels; prints time and memory."""
+    labels = np.random.default_rng(seed).integers(0, 2, size=x_train.shape[0]).astype(float)
+    deepest = max(spec.grid, key=lambda g: g["max_depth"])
+    est = spec.build(deepest).set_params(n_estimators=XGB_TIMING_TREES)
+    t = time.perf_counter()
+    est.fit(x_train, labels)
+    per_tree = (time.perf_counter() - t) / XGB_TIMING_TREES
+    total = per_tree * spec.checkpoints[-1] * len(spec.grid)
+    print(
+        f"timing fit: {XGB_TIMING_TREES} trees at depth {deepest['max_depth']} on placeholder "
+        f"labels, {per_tree:.2f}s per tree; the grid at that depth would take about "
+        f"{total / 60:.0f} min (an upper bound; shallower trees are faster); "
+        f"peak memory {_peak_gb():.1f} GB"
+    )
+
+
 def _check_reference_reproduces(point: dict, report_path: Path, subsets: dict) -> None:
     """Stop unless the reference model's validation metrics equal its own stored report."""
     if not report_path.is_file():
@@ -822,9 +941,11 @@ def _check_reference_reproduces(point: dict, report_path: Path, subsets: dict) -
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Fit and evaluate a linear audit model.")
+    parser = argparse.ArgumentParser(description="Fit and evaluate an audit model.")
     parser.add_argument(
-        "--model", choices=("logistic_regression", "linear_svm"), default="logistic_regression"
+        "--model",
+        choices=("logistic_regression", "linear_svm", "xgboost"),
+        default="logistic_regression",
     )
     parser.add_argument("--dry-run", action="store_true", help="sample and sizes, read no label")
     parser.add_argument("--design", type=Path, default=Path("configs/audit_preregistration.yaml"))
@@ -835,7 +956,7 @@ def main() -> None:
         "--reference",
         type=Path,
         default=None,
-        help="stored logistic regression for the linear SVM comparison "
+        help="stored logistic regression for the linear SVM and XGBoost comparison "
         "(default: logreg.joblib in the output directory)",
     )
     parser.add_argument("--memory-limit", default="14GB")
