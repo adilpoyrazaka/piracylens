@@ -120,7 +120,12 @@ sampling:
   # memory measurement that reads no label, and is written here before any model runs;
   # training refuses to run while it is empty.
   train_unit: "request"
-  train_requests: null
+  # 150,000 requests are about 2.0 M rows. A label-blind probe (random labels, the label
+  # columns never read) measured peak memory on about 0.1 M, 0.3 M and 1.0 M rows; the
+  # gradient-boosted model grew by about 4.3 GB per million rows and reached 7.5 GB at
+  # 1.0 M rows, so 150,000 requests keep it near 12 GB (heuristic target) on a 23 GB
+  # machine. All models train on the same sample so their comparison stays fair.
+  train_requests: 150000
   # Validation and test keep the real class rate: no rebalancing.
   rebalance_eval: false
   seed: 20261104
@@ -174,3 +179,5 @@ checks:
 # 2026-11-05: added features.past_rate_unit, tld_rule, time_basis and domain_normalization
 # before the feature builder existed and before any label rate or model output was looked
 # at; they close what the past rate counts and how domains and times are compared.
+# 2026-11-05: set sampling.train_requests to 150000 from a label-blind memory probe,
+# before any model was trained or any label rate was looked at.

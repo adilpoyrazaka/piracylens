@@ -60,6 +60,7 @@ def test_repo_design_file_is_valid():
     assert p.past_rate_unit == "decided_rows" and p.time_basis == "timestamp"
     assert p.tld_rule == "last_label" and p.domain_normalization == "lowercase_trim"
     assert p.ngram_min <= p.ngram_max
+    assert p.require_train_requests() == 150_000
 
 
 def test_empty_training_size_stops_training(raw):
