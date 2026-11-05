@@ -44,7 +44,10 @@ the target is not reached. Intervals come from domain-level bootstrap resamples 
 seed, shared with a row-level evaluation of the domain past-rate baseline, so the difference
 between the model and that baseline has a paired interval.
 
-Only training and validation rows are read; test rows are filtered out in every query.
+Only training and validation rows are read; test rows are filtered out in every query. The
+database connection that reads the training rows is closed before any model is fitted, and the
+validation rows are staged in a new connection afterwards, so the database's memory and the
+training memory never add up; the rows and their order are the same either way.
 
 Usage (from the repo root):
     python -m piracylens.audit.models --dry-run   # sample, encoding size and timing; no label
@@ -653,6 +656,13 @@ def _same_matrix(a: sparse.csr_matrix, b: sparse.csr_matrix) -> bool:
     return a.shape == b.shape and (a != b).nnz == 0
 
 
+def _connect(memory_limit: str) -> duckdb.DuckDBPyConnection:
+    con = duckdb.connect()
+    con.execute(f"SET memory_limit = '{memory_limit}'")
+    con.execute(f"SET threads = {os.cpu_count() or 1}")
+    return con
+
+
 def run(
     p: Preregistration,
     features: Path,
@@ -703,9 +713,7 @@ def run(
     n_boot = p.bootstrap_resamples if resamples is None else resamples
     ref = None if ref_path is None else _load_reference(ref_path)
     t0 = time.perf_counter()
-    con = duckdb.connect()
-    con.execute(f"SET memory_limit = '{memory_limit}'")
-    con.execute(f"SET threads = {os.cpu_count() or 1}")
+    con = _connect(memory_limit)
 
     ids = draw_sample(con, features, n_requests, p.seed)
     sample_state = use_sample(con, ids, sample_path)
@@ -727,14 +735,11 @@ def run(
                 raise SystemExit("the training base rate differs from the reference model's")
             if not _same_matrix(x_train, ref["encoder"].transform(train)):
                 raise SystemExit("the training matrix differs from the reference encoder's")
-    n_val = stage_validation(con, features, labels=not dry_run)
+    # Free the database's memory before training; validation is staged after the fits.
+    con.close()
 
     if dry_run:
-        t2 = time.perf_counter()
-        chunk = next(validation_chunks(con, n_val, chunk_rows))
-        encoder.transform(chunk)
-        t_chunk = time.perf_counter() - t2
-        n_chunks = -(-n_val // chunk_rows)
+        del train
         print(
             f"sample: {len(ids):,} training requests, {x_train.shape[0]:,} rows -> {sample_path} "
             f"({sample_state})"
@@ -748,6 +753,13 @@ def run(
         print(f"grid: {len(spec.grid)} fits of {spec.name}")
         if spec.checkpoints is not None:
             _time_trees(spec, x_train, p.seed)
+        con = _connect(memory_limit)
+        n_val = stage_validation(con, features, labels=False)
+        t2 = time.perf_counter()
+        chunk = next(validation_chunks(con, n_val, chunk_rows))
+        encoder.transform(chunk)
+        t_chunk = time.perf_counter() - t2
+        n_chunks = -(-n_val // chunk_rows)
         print(
             f"validation: {n_val:,} rows in {n_chunks} chunks, about {t_chunk:.1f}s to encode "
             f"one chunk (about {t_chunk * n_chunks / 60:.1f} min for all)"
@@ -803,6 +815,8 @@ def run(
             )
     train_peak = _peak_gb()
     del x_train
+    con = _connect(memory_limit)
+    n_val = stage_validation(con, features, labels=True)
 
     # One pass over validation: encode each chunk once and score it with every model.
     scores = np.empty((len(grid), n_val))
