@@ -1,4 +1,4 @@
-"""Logistic regression for the takedown audit model, tuned and evaluated on validation.
+"""Linear models for the takedown audit (logistic regression, linear SVM), tuned on validation.
 
 The training sample is a fixed number of whole training requests drawn uniformly without
 replacement with the design seed; the drawn request ids are written to a file so every model
@@ -10,9 +10,17 @@ are log-transformed before scaling. A missing past rate is filled with the train
 first appearance, is filled with zero days and keeps its flag.
 
 A small grid of regularization strengths and class weightings is fitted on the same encoded
-sample. The winner has the highest validation PR-AUC; ties go to the smaller strength, then to
-no class weighting. Validation metrics of the winner are therefore optimistic (they were used
-for selection) and are labelled as such; the test set is not read here.
+sample. The winner has the highest validation PR-AUC; ties go to the stronger regularization,
+then to no class weighting. Validation metrics of the winner are therefore optimistic (they were
+used for selection) and are labelled as such; the test set is not read here. The logistic
+regression grid is fixed in this module; the linear SVM (hinge loss, trained by stochastic
+gradient descent) takes its grid and stopping rule from the design file.
+
+The linear SVM is compared with the stored logistic regression on the same rows: the training
+sample must equal the stored one, the refitted encoding must reproduce the stored encoder's
+training matrix exactly, and the stored model's validation metrics must reproduce its own
+report before the bootstrap starts. Both models then share the resamples, so their difference
+has a paired interval.
 
 Ranking metrics (PR-AUC as average precision, recall at the precision target) use the raw
 model scores. The Brier score uses isotonic-calibrated probabilities that are cross-fitted on
@@ -28,11 +36,14 @@ Only training and validation rows are read; test rows are filtered out in every 
 Usage (from the repo root):
     python -m piracylens.audit.models --dry-run   # sample, encoding size and timing; no label
     python -m piracylens.audit.models
+    python -m piracylens.audit.models --model linear_svm --dry-run
+    python -m piracylens.audit.models --model linear_svm
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import multiprocessing
 import os
@@ -40,8 +51,10 @@ import resource
 import tempfile
 import time
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 import duckdb
 import joblib
@@ -49,7 +62,7 @@ import numpy as np
 from scipy import sparse
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.isotonic import IsotonicRegression
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, SGDClassifier
 
 from piracylens.audit.preregistration import Preregistration, load_preregistration
 
@@ -62,9 +75,11 @@ GRID_C = (0.01, 0.1, 1.0, 10.0)
 CLASS_WEIGHTS = (None, "balanced")
 MAX_ITER = 1000
 CHUNK_ROWS = 1_000_000
-# Worker processes for the bootstrap; each holds its own temporaries of about 0.5 GB, and
-# the shared arrays are memory-mapped from a temporary folder in the output directory.
-BOOTSTRAP_WORKERS = 8
+# Worker processes for the bootstrap; each held about 1.3 GB with two evaluated scores and
+# needs more with three, so six keep the total within a 23 GB machine. The shared arrays are
+# memory-mapped from a temporary folder in the output directory. The result does not depend
+# on the number of workers.
+BOOTSTRAP_WORKERS = 6
 
 TOP_K_COLUMNS = ("tld", "owner_group", "reporter_group", "reporter_brand")
 ONE_HOT_COLUMNS = ("market", "content_type", "region")
@@ -186,6 +201,88 @@ class AuditEncoder:
         return n + sum(len(v) for v in self.categories.values()) + len(NUMERIC_COLUMNS) + 4
 
 
+# Model families -----------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class ModelSpec:
+    """One model family: its grid, how one fit is built, and its tie-break."""
+
+    name: str  # the design's candidate name
+    stem: str  # output file name stem
+    grid: tuple[dict[str, Any], ...]
+    build: Callable[[dict[str, Any]], Any]
+    iterations: Callable[[Any], int]
+    max_iter: int
+    # Among fits with equal validation PR-AUC, the largest value of this key wins.
+    prefer: Callable[[dict[str, Any]], tuple]
+
+
+def logistic_regression_spec(
+    grid_c: tuple[float, ...] = GRID_C, class_weights: tuple[str | None, ...] = CLASS_WEIGHTS
+) -> ModelSpec:
+    return ModelSpec(
+        name="logistic_regression",
+        stem="logreg",
+        grid=tuple({"C": c, "class_weight": cw} for c in grid_c for cw in class_weights),
+        build=lambda g: LogisticRegression(
+            C=g["C"], class_weight=g["class_weight"], solver="lbfgs", max_iter=MAX_ITER
+        ),
+        iterations=lambda m: int(m.n_iter_[0]),
+        max_iter=MAX_ITER,
+        prefer=lambda g: (-g["C"], g["class_weight"] is None),
+    )
+
+
+def linear_svm_spec(
+    p: Preregistration,
+    alpha_grid: tuple[float, ...] | None = None,
+    class_weights: tuple[str | None, ...] | None = None,
+) -> ModelSpec:
+    s = p.linear_svm
+    if s.tie_break != "larger_alpha_then_no_class_weight":
+        raise SystemExit(f"the design asks for a tie-break not built here: {s.tie_break}")
+    if class_weights is None:
+        class_weights = tuple(None if v == "none" else "balanced" for v in p.imbalance_variants)
+    alphas = s.alpha_grid if alpha_grid is None else alpha_grid
+    return ModelSpec(
+        name="linear_svm_sgd",
+        stem="linear_svm",
+        grid=tuple({"alpha": a, "class_weight": cw} for a in alphas for cw in class_weights),
+        build=lambda g: SGDClassifier(
+            loss=s.loss,
+            penalty=s.penalty,
+            alpha=g["alpha"],
+            class_weight=g["class_weight"],
+            max_iter=s.max_epochs,
+            tol=s.tol,
+            n_iter_no_change=s.n_iter_no_change,
+            early_stopping=False,
+            random_state=p.seed,
+        ),
+        iterations=lambda m: int(m.n_iter_),
+        max_iter=s.max_epochs,
+        prefer=lambda g: (g["alpha"], g["class_weight"] is None),
+    )
+
+
+def select_winner(grid: list[dict[str, Any]], prefer: Callable[[dict], tuple]) -> int:
+    """Index of the fit with the highest validation PR-AUC; ties go to the preferred fit."""
+    return max(range(len(grid)), key=lambda i: (grid[i]["validation_pr_auc"], prefer(grid[i])))
+
+
+def _params_text(g: dict[str, Any]) -> str:
+    return " ".join(f"{k}={v:g}" if isinstance(v, float) else f"{k}={v}" for k, v in g.items())
+
+
+def _sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for block in iter(lambda: f.read(1 << 20), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
 def draw_sample(con: duckdb.DuckDBPyConnection, features: Path, n: int, seed: int) -> np.ndarray:
     """Request ids of `n` whole training requests, uniform without replacement (sorted)."""
     ids = con.execute(
@@ -210,6 +307,19 @@ def write_sample(con: duckdb.DuckDBPyConnection, ids: np.ndarray, path: Path) ->
         tmp.unlink()
         raise SystemExit("sample file row count differs from the draw")
     tmp.replace(path)
+
+
+def use_sample(con: duckdb.DuckDBPyConnection, ids: np.ndarray, path: Path) -> str:
+    """Write the drawn sample, or check that an existing sample file holds the same ids."""
+    if not path.exists():
+        write_sample(con, ids, path)
+        return "written"
+    stored = con.execute(
+        "SELECT request_id FROM read_parquet(?) ORDER BY request_id", [str(path)]
+    ).fetchnumpy()["request_id"]
+    if not np.array_equal(stored, ids):
+        raise SystemExit(f"{path} holds a different sample than the design draws, stopped")
+    return "matches the stored file"
 
 
 def read_sample_rows(
@@ -395,20 +505,52 @@ def _peak_gb() -> float:
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024**2
 
 
+def _load_reference(path: Path) -> dict:
+    if not path.is_file():
+        raise SystemExit(f"reference model not found: {path} (run the logistic regression first)")
+    ref = joblib.load(path)
+    if not isinstance(ref, dict) or not {"encoder", "model", "base_rate"} <= set(ref):
+        raise SystemExit(f"{path} is not a stored audit model")
+    return ref
+
+
+def _same_vocabulary(a: AuditEncoder, b: AuditEncoder) -> bool:
+    return a.ngrams.vocabulary_ == b.ngrams.vocabulary_ and a.categories == b.categories
+
+
+def _same_matrix(a: sparse.csr_matrix, b: sparse.csr_matrix) -> bool:
+    return a.shape == b.shape and (a != b).nnz == 0
+
+
 def run(
     p: Preregistration,
     features: Path,
     sample_path: Path,
     out_dir: Path,
     *,
+    model: str = "logistic_regression",
     dry_run: bool = False,
     memory_limit: str = "14GB",
     grid_c: tuple[float, ...] = GRID_C,
-    class_weights: tuple[str | None, ...] = CLASS_WEIGHTS,
+    alpha_grid: tuple[float, ...] | None = None,
+    class_weights: tuple[str | None, ...] | None = None,
+    reference: Path | None = None,
     resamples: int | None = None,
     chunk_rows: int = CHUNK_ROWS,
     workers: int = BOOTSTRAP_WORKERS,
 ) -> dict | None:
+    if model == "logistic_regression":
+        spec = logistic_regression_spec(
+            grid_c, CLASS_WEIGHTS if class_weights is None else class_weights
+        )
+        ref_path = None
+    elif model == "linear_svm":
+        spec = linear_svm_spec(p, alpha_grid, class_weights)
+        ref_path = out_dir / "logreg.joblib" if reference is None else reference
+    else:
+        raise SystemExit(f"unknown model {model!r}")
+    if spec.name not in p.candidates:
+        raise SystemExit(f"the design does not list {spec.name} as a candidate")
     if missing := sorted(set(p.inputs) - ENCODED_INPUTS):
         raise SystemExit(f"design inputs this module does not encode: {missing}")
     if extra := sorted(ENCODED_INPUTS - set(p.inputs)):
@@ -423,13 +565,14 @@ def run(
         raise SystemExit("the design asks for a base-rate source or PR-AUC method not built here")
     n_requests = p.require_train_requests()
     n_boot = p.bootstrap_resamples if resamples is None else resamples
+    ref = None if ref_path is None else _load_reference(ref_path)
     t0 = time.perf_counter()
     con = duckdb.connect()
     con.execute(f"SET memory_limit = '{memory_limit}'")
     con.execute(f"SET threads = {os.cpu_count() or 1}")
 
     ids = draw_sample(con, features, n_requests, p.seed)
-    write_sample(con, ids, sample_path)
+    sample_state = use_sample(con, ids, sample_path)
     base_rate = 0.5 if dry_run else _train_base_rate(con, features)
     train = read_sample_rows(con, features, sample_path, labels=not dry_run)
     t1 = time.perf_counter()
@@ -439,6 +582,15 @@ def run(
     ).fit(train)  # fmt: skip
     x_train = encoder.transform(train)
     t_encode = time.perf_counter() - t1
+    if ref is not None:
+        # Without labels the base rate is a placeholder, so only the label-free parts compare.
+        if not _same_vocabulary(encoder, ref["encoder"]):
+            raise SystemExit("the encoding differs from the reference model's encoder, stopped")
+        if not dry_run:
+            if ref["base_rate"] != base_rate:
+                raise SystemExit("the training base rate differs from the reference model's")
+            if not _same_matrix(x_train, ref["encoder"].transform(train)):
+                raise SystemExit("the training matrix differs from the reference encoder's")
     n_val = stage_validation(con, features, labels=not dry_run)
 
     if dry_run:
@@ -447,18 +599,24 @@ def run(
         encoder.transform(chunk)
         t_chunk = time.perf_counter() - t2
         n_chunks = -(-n_val // chunk_rows)
-        print(f"sample: {len(ids):,} training requests, {x_train.shape[0]:,} rows -> {sample_path}")
+        print(
+            f"sample: {len(ids):,} training requests, {x_train.shape[0]:,} rows -> {sample_path} "
+            f"({sample_state})"
+        )
         print(
             f"encoding: {encoder.n_columns:,} columns, {x_train.nnz / x_train.shape[0]:.1f} "
             f"non-zeros per row, fitted in {t_encode:.1f}s"
         )
+        if ref is not None:
+            print(f"reference {ref_path}: same n-gram vocabulary and categories")
+        print(f"grid: {len(spec.grid)} fits of {spec.name}")
         print(
             f"validation: {n_val:,} rows in {n_chunks} chunks, about {t_chunk:.1f}s to encode "
             f"one chunk (about {t_chunk * n_chunks / 60:.1f} min for all)"
         )
         print(f"peak memory so far {_peak_gb():.1f} GB")
         print(
-            "dry run: no label read, no model fitted; only the sample file is written "
+            "dry run: no label read, no model fitted; only a missing sample file is written "
             f"({time.perf_counter() - t0:.1f}s)"
         )
         return None
@@ -466,30 +624,26 @@ def run(
     y_train = np.asarray(train["label_primary"], dtype=float)
     del train
     grid = []
-    for c in grid_c:
-        for cw in class_weights:
-            t = time.perf_counter()
-            model = LogisticRegression(C=c, class_weight=cw, solver="lbfgs", max_iter=MAX_ITER)
-            model.fit(x_train, y_train)
-            n_iter = int(model.n_iter_[0])
-            grid.append(
-                {
-                    "C": c,
-                    "class_weight": cw,
-                    "fit_seconds": round(time.perf_counter() - t, 1),
-                    "n_iter": n_iter,
-                    "converged": n_iter < MAX_ITER,
-                    "model": model,
-                }
-            )
-            print(
-                f"fitted C={c:g} class_weight={cw}: {n_iter} iterations, {grid[-1]['fit_seconds']}s"
-            )
+    for params in spec.grid:
+        t = time.perf_counter()
+        fitted = spec.build(params).fit(x_train, y_train)
+        n_iter = spec.iterations(fitted)
+        grid.append(
+            {
+                **params,
+                "fit_seconds": round(time.perf_counter() - t, 1),
+                "n_iter": n_iter,
+                "converged": n_iter < spec.max_iter,
+                "model": fitted,
+            }
+        )
+        print(f"fitted {_params_text(params)}: {n_iter} iterations, {grid[-1]['fit_seconds']}s")
     train_peak = _peak_gb()
     del x_train
 
     # One pass over validation: encode each chunk once and score it with every model.
     scores = np.empty((len(grid), n_val))
+    ref_scores = np.empty(n_val) if ref is not None else None
     y = np.empty(n_val)
     domain = np.empty(n_val, dtype=np.int64)
     history = np.empty(n_val, dtype=bool)
@@ -500,6 +654,8 @@ def run(
         n = x.shape[0]
         for i, g in enumerate(grid):
             scores[i, pos : pos + n] = g["model"].decision_function(x)
+        if ref is not None:
+            ref_scores[pos : pos + n] = ref["model"].decision_function(x)
         y[pos : pos + n] = chunk["label_primary"]
         domain[pos : pos + n] = chunk["did"]
         history[pos : pos + n] = chunk["history_flag"]
@@ -507,23 +663,26 @@ def run(
         pos += n
     if pos != n_val:
         raise SystemExit("validation rows changed while scoring")
+    if bad := [
+        _params_text(spec.grid[i]) for i in range(len(grid)) if not np.isfinite(scores[i]).all()
+    ]:
+        raise SystemExit(f"non-finite validation scores from {bad}, stopped before any output")
     n_domains = int(domain.max()) + 1
     for i, g in enumerate(grid):
         r = rank_rows(scores[i], y, scores[i], domain)
         g["validation_pr_auc"] = row_metrics(r, np.ones(n_val), p.precision_target)[0]
-    best = max(
-        range(len(grid)),
-        key=lambda i: (
-            grid[i]["validation_pr_auc"],
-            -grid[i]["C"],
-            grid[i]["class_weight"] is None,
-        ),
-    )
+    best = select_winner(grid, spec.prefer)
     winner = grid[best]
     s = scores[best]
     prob = cross_fit_probabilities(s, y, domain, n_domains, p.calibration_report_folds, p.seed)
     final_calibrator = IsotonicRegression(y_min=0.0, y_max=1.0, out_of_bounds="clip").fit(s, y)
     baseline = np.where(history, past, base_rate)
+    others = ["domain_past_rate"]
+    if ref is not None:
+        others.append("logistic_regression")
+        ref_prob = cross_fit_probabilities(
+            ref_scores, y, domain, n_domains, p.calibration_report_folds, p.seed
+        )
 
     subsets = {"all": slice(None), "with_history": history, "without_history": ~history}
     cases = {}
@@ -532,7 +691,13 @@ def run(
         cases[("domain_past_rate", name)] = rank_rows(
             baseline[mask], y[mask], baseline[mask], domain[mask]
         )
+        if ref is not None:
+            cases[("logistic_regression", name)] = rank_rows(
+                ref_scores[mask], y[mask], ref_prob[mask], domain[mask]
+            )
     point = {k: row_metrics(r, np.ones(len(r.y)), p.precision_target) for k, r in cases.items()}
+    if ref is not None:
+        _check_reference_reproduces(point, ref_path.with_suffix(".json"), subsets)
     t3 = time.perf_counter()
     out_dir.mkdir(parents=True, exist_ok=True)
     boot = bootstrap(cases, n_domains, p, n_boot, workers, scratch=out_dir)
@@ -546,20 +711,22 @@ def run(
         entry = {"subset": name, "rows": len(cases[("model", name)].y)}
         for j, metric in enumerate(("pr_auc", "recall_at_precision", "brier")):
             m = point[("model", name)][j]
-            b = point[("domain_past_rate", name)][j]
-            diff = boot[("model", name)][:, j] - boot[("domain_past_rate", name)][:, j]
             entry[metric] = {
-                "model": {"value": _value(m), **_interval(boot[("model", name)][:, j], conf)},
-                "domain_past_rate": {
-                    "value": _value(b),
-                    **_interval(boot[("domain_past_rate", name)][:, j], conf),
-                },
-                "difference": {"value": _value(m - b), **_interval(diff, conf)},
+                "model": {"value": _value(m), **_interval(boot[("model", name)][:, j], conf)}
             }
+            for other in others:
+                b = point[(other, name)][j]
+                diff = boot[("model", name)][:, j] - boot[(other, name)][:, j]
+                key = "difference" if other == "domain_past_rate" else f"difference_vs_{other}"
+                entry[metric][other] = {
+                    "value": _value(b),
+                    **_interval(boot[(other, name)][:, j], conf),
+                }
+                entry[metric][key] = {"value": _value(m - b), **_interval(diff, conf)}
         results.append(entry)
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    artifact = out_dir / "logreg.joblib"
+    artifact = out_dir / f"{spec.stem}.joblib"
     tmp = artifact.with_name(artifact.name + ".tmp")
     joblib.dump(
         {
@@ -572,15 +739,16 @@ def run(
         tmp,
     )
     tmp.replace(artifact)
+    params = list(spec.grid[0])
     report = {
-        "model": "logistic_regression",
+        "model": spec.name,
         "features": str(features),
         "sample": {"requests": len(ids), "rows": len(y_train), "file": str(sample_path)},
         "train_label_rate_sample": float(y_train.mean()),
         "train_base_rate_all_rows": base_rate,
         "encoding_columns": encoder.n_columns,
         "grid": [{k: v for k, v in g.items() if k != "model"} for g in grid],
-        "winner": {"C": winner["C"], "class_weight": winner["class_weight"]},
+        "winner": {k: winner[k] for k in params},
         "selection": "highest validation PR-AUC; validation metrics are optimistic",
         "validation_rows": n_val,
         "validation_domains": n_domains,
@@ -598,23 +766,25 @@ def run(
         "peak_gb": round(_peak_gb(), 2),
         "artifact": str(artifact),
     }
+    if ref is not None:
+        report["reference"] = {"artifact": str(ref_path), "sha256": _sha256(ref_path)}
     for metric_set in report["grid"]:
         metric_set["validation_pr_auc"] = _value(metric_set["validation_pr_auc"])
-    path = out_dir / "logreg.json"
+    path = out_dir / f"{spec.stem}.json"
     tmp = path.with_name(path.name + ".tmp")
     tmp.write_text(json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     tmp.replace(path)
 
-    print(f"winner C={winner['C']:g} class_weight={winner['class_weight']} (validation PR-AUC)")
+    print(f"winner {_params_text(report['winner'])} (validation PR-AUC)")
     print(
         f"validation, used for selection (point [{100 * conf:.0f}% interval]); "
-        "model, domain past rate, difference:"
+        f"model, then each comparison and the model's difference from it:"
     )
     for entry in results:
         print(f"  {entry['subset']:<16}rows {entry['rows']:>10,}")
         for metric in ("pr_auc", "recall_at_precision", "brier"):
             parts = []
-            for who in ("model", "domain_past_rate", "difference"):
+            for who in entry[metric]:
                 m = entry[metric][who]
                 v = "n/a" if m["value"] is None else f"{m['value']:+.4f}"
                 ci = (
@@ -630,13 +800,44 @@ def run(
     return report
 
 
+def _check_reference_reproduces(point: dict, report_path: Path, subsets: dict) -> None:
+    """Stop unless the reference model's validation metrics equal its own stored report."""
+    if not report_path.is_file():
+        raise SystemExit(f"reference report not found: {report_path}")
+    stored = {
+        e["subset"]: e for e in json.loads(report_path.read_text(encoding="utf-8"))["results"]
+    }
+    for name in subsets:
+        for j, metric in enumerate(("pr_auc", "recall_at_precision", "brier")):
+            want = stored[name][metric]["model"]["value"]
+            got = _value(point[("logistic_regression", name)][j])
+            if (want is None) != (got is None) or (
+                want is not None and not np.isclose(got, want, rtol=1e-9, atol=0.0)
+            ):
+                raise SystemExit(
+                    f"the reference model does not reproduce its report: {name} {metric} "
+                    f"{got} vs {want}"
+                )
+    print(f"reference model reproduces {report_path} on every subset and metric")
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Fit and evaluate the audit logistic regression.")
+    parser = argparse.ArgumentParser(description="Fit and evaluate a linear audit model.")
+    parser.add_argument(
+        "--model", choices=("logistic_regression", "linear_svm"), default="logistic_regression"
+    )
     parser.add_argument("--dry-run", action="store_true", help="sample and sizes, read no label")
     parser.add_argument("--design", type=Path, default=Path("configs/audit_preregistration.yaml"))
     parser.add_argument("--features", type=Path, default=DEFAULT_FEATURES)
     parser.add_argument("--sample", type=Path, default=DEFAULT_SAMPLE)
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
+    parser.add_argument(
+        "--reference",
+        type=Path,
+        default=None,
+        help="stored logistic regression for the linear SVM comparison "
+        "(default: logreg.joblib in the output directory)",
+    )
     parser.add_argument("--memory-limit", default="14GB")
     args = parser.parse_args()
     run(
@@ -644,8 +845,10 @@ def main() -> None:
         args.features,
         args.sample,
         args.out_dir,
+        model=args.model,
         dry_run=args.dry_run,
         memory_limit=args.memory_limit,
+        reference=args.reference,
     )
 
 

@@ -1,10 +1,11 @@
-"""Tests for the audit logistic regression on a synthetic feature table with the real columns."""
+"""Tests for the linear audit models on a synthetic feature table with the real columns."""
 
 import dataclasses
 import json
 from pathlib import Path
 
 import duckdb
+import joblib
 import numpy as np
 import pytest
 from sklearn.isotonic import IsotonicRegression
@@ -17,9 +18,12 @@ from piracylens.audit.models import (
     bootstrap,
     cross_fit_probabilities,
     draw_sample,
+    linear_svm_spec,
+    logistic_regression_spec,
     rank_rows,
     row_metrics,
     run,
+    select_winner,
 )
 from piracylens.audit.preregistration import load_preregistration
 
@@ -276,3 +280,129 @@ def test_design_inputs_must_match_the_encoding(tmp_path, design):
     p = dataclasses.replace(design, inputs=tuple(i for i in design.inputs if i != "tld"))
     with pytest.raises(SystemExit, match="does not list"):
         run(p, tmp_path / "missing.parquet", tmp_path / "s.parquet", tmp_path / "o")
+
+
+def _lr_then(tmp_path, design, features, out, **svm):
+    """Run the logistic regression, then the linear SVM against it, in one output folder."""
+    sample = tmp_path / f"{out}-sample.parquet"
+    lr = run(design, features, sample, tmp_path / out, grid_c=(0.1, 1.0), class_weights=(None,))
+    kw = {"alpha_grid": (1e-2, 1e-3), "class_weights": (None, "balanced"), "chunk_rows": 37}
+    svm_report = run(design, features, sample, tmp_path / out, model="linear_svm", **(kw | svm))
+    return lr, svm_report
+
+
+def test_linear_svm_is_paired_with_the_stored_logistic_regression(tmp_path, design):
+    features = _write(tmp_path / "f.parquet", _table())
+    lr, report = _lr_then(tmp_path, design, features, "out")
+    saved = json.loads((tmp_path / "out" / "linear_svm.json").read_text())
+    assert saved["results"] == report["results"] and report["model"] == "linear_svm_sgd"
+    assert (tmp_path / "out" / "linear_svm.joblib").exists()
+    assert (tmp_path / "out" / "logreg.json").exists()  # the reference report is untouched
+    assert [(g["alpha"], g["class_weight"]) for g in report["grid"]] == [
+        (1e-2, None), (1e-2, "balanced"), (1e-3, None), (1e-3, "balanced"),
+    ]  # fmt: skip
+    assert set(report["winner"]) == {"alpha", "class_weight"}
+    assert report["sample"] == lr["sample"] and report["reference"]["sha256"]
+    stored = {e["subset"]: e for e in lr["results"]}
+    for e in report["results"]:
+        for metric in ("pr_auc", "recall_at_precision", "brier"):
+            m = e[metric]
+            # The logistic regression column reproduces its own run on the same resamples.
+            assert m["logistic_regression"] == stored[e["subset"]][metric]["model"]
+            assert m["domain_past_rate"] == stored[e["subset"]][metric]["domain_past_rate"]
+            if m["model"]["value"] is not None and m["logistic_regression"]["value"] is not None:
+                assert m["difference_vs_logistic_regression"]["value"] == pytest.approx(
+                    m["model"]["value"] - m["logistic_regression"]["value"]
+                )
+
+
+def test_ties_go_to_the_stronger_regularization_then_no_weighting():
+    def tied(spec):
+        return [{**g, "validation_pr_auc": 0.5} for g in spec.grid]
+
+    svm = linear_svm_spec(load_preregistration(DESIGN), alpha_grid=(1e-6, 1e-4, 1e-5))
+    grid = tied(svm)
+    winner = grid[select_winner(grid, svm.prefer)]
+    assert (winner["alpha"], winner["class_weight"]) == (1e-4, None)
+    grid[0]["validation_pr_auc"] = 0.6  # a strictly better fit wins regardless of the tie-break
+    assert select_winner(grid, svm.prefer) == 0
+    lr = logistic_regression_spec(grid_c=(1.0, 0.1, 10.0))
+    grid = tied(lr)
+    winner = grid[select_winner(grid, lr.prefer)]
+    assert (winner["C"], winner["class_weight"]) == (0.1, None)
+
+
+def test_linear_svm_test_labels_never_reach_the_output(tmp_path, design):
+    a = _lr_then(tmp_path, design, _write(tmp_path / "a.parquet", _table()), "a")[1]
+    b = _lr_then(tmp_path, design, _write(tmp_path / "b.parquet", _table(flip_test=True)), "b")[1]
+    for key in ("results", "threshold", "winner", "train_base_rate_all_rows"):
+        assert a[key] == b[key]
+    assert [g["validation_pr_auc"] for g in a["grid"]] == [
+        g["validation_pr_auc"] for g in b["grid"]
+    ]
+
+
+def test_linear_svm_needs_the_same_encoding_as_its_reference(tmp_path, design):
+    features = _write(tmp_path / "f.parquet", _table())
+    sample = tmp_path / "s.parquet"
+    run(design, features, sample, tmp_path / "out", grid_c=(1.0,), class_weights=(None,))
+    other = dataclasses.replace(design, ngram_max=4)
+    with pytest.raises(SystemExit, match="encoding differs"):
+        run(other, features, sample, tmp_path / "out", model="linear_svm", alpha_grid=(1e-3,))
+    with pytest.raises(SystemExit, match="encoding differs"):
+        run(other, features, sample, tmp_path / "out", model="linear_svm", dry_run=True)
+    with pytest.raises(SystemExit, match="reference model not found"):
+        run(design, features, sample, tmp_path / "empty", model="linear_svm")
+
+
+def test_linear_svm_needs_the_reference_training_matrix(tmp_path, design):
+    features = _write(tmp_path / "f.parquet", _table())
+    sample = tmp_path / "s.parquet"
+    run(design, features, sample, tmp_path / "out", grid_c=(1.0,), class_weights=(None,))
+    path = tmp_path / "out" / "logreg.joblib"
+    stored = joblib.load(path)
+    stored["encoder"].mean = stored["encoder"].mean + 1.0  # same vocabulary, other scaling
+    joblib.dump(stored, path)
+    with pytest.raises(SystemExit, match="training matrix differs"):
+        run(design, features, sample, tmp_path / "out", model="linear_svm", alpha_grid=(1e-3,))
+
+
+def test_linear_svm_stops_when_the_reference_does_not_reproduce(tmp_path, design):
+    features = _write(tmp_path / "f.parquet", _table())
+    sample = tmp_path / "s.parquet"
+    run(design, features, sample, tmp_path / "out", grid_c=(1.0,), class_weights=(None,))
+    path = tmp_path / "out" / "logreg.json"
+    stored = json.loads(path.read_text())
+    stored["results"][0]["pr_auc"]["model"]["value"] += 0.01
+    path.write_text(json.dumps(stored))
+    with pytest.raises(SystemExit, match="does not reproduce its report: all pr_auc"):
+        run(design, features, sample, tmp_path / "out", model="linear_svm", alpha_grid=(1e-3,))
+    assert not (tmp_path / "out" / "linear_svm.json").exists()
+
+
+def test_a_stored_sample_must_equal_the_draw(tmp_path, design):
+    features = _write(tmp_path / "f.parquet", _table())
+    sample = tmp_path / "s.parquet"
+    con = duckdb.connect()
+    con.execute(f"COPY (SELECT range::BIGINT AS request_id FROM range(1, 41)) TO '{sample}'")
+    with pytest.raises(SystemExit, match="different sample"):
+        run(design, features, sample, tmp_path / "out", dry_run=True)
+
+
+def test_model_specs_follow_the_fixed_settings(design):
+    lr = logistic_regression_spec()
+    assert len(lr.grid) == 8 and lr.stem == "logreg"
+    params = lr.build({"C": 0.01, "class_weight": None}).get_params()
+    assert (params["C"], params["solver"], params["max_iter"]) == (0.01, "lbfgs", 1000)
+    assert max(lr.grid, key=lr.prefer) == {"C": 0.01, "class_weight": None}
+    svm = linear_svm_spec(design)
+    assert len(svm.grid) == 10 and svm.stem == "linear_svm" and svm.max_iter == 50
+    assert [g["alpha"] for g in svm.grid[::2]] == list(design.linear_svm.alpha_grid)
+    params = svm.build({"alpha": 5e-4, "class_weight": "balanced"}).get_params()
+    expected = {
+        "loss": "hinge", "penalty": "l2", "alpha": 5e-4, "class_weight": "balanced",
+        "max_iter": 50, "tol": 1e-4, "n_iter_no_change": 5, "early_stopping": False,
+        "random_state": design.seed,
+    }  # fmt: skip
+    assert {k: params[k] for k in expected} == expected
+    assert max(svm.grid, key=svm.prefer) == {"alpha": 5e-4, "class_weight": None}
