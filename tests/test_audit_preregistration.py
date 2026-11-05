@@ -66,6 +66,11 @@ def test_repo_design_file_is_valid():
     assert p.tld_rule == "last_label" and p.domain_normalization == "lowercase_trim"
     assert p.ngram_min <= p.ngram_max
     assert p.require_train_requests() == 150_000
+    svm = p.linear_svm
+    assert (svm.loss, svm.penalty, svm.early_stopping) == ("hinge", "l2", False)
+    assert svm.alpha_grid == (5e-4, 5e-5, 5e-6, 5e-7, 5e-8)
+    assert (svm.max_epochs, svm.tol, svm.n_iter_no_change) == (50, 1e-4, 5)
+    assert svm.tie_break == "larger_alpha_then_no_class_weight"
 
 
 def test_empty_training_size_stops_training(raw):
@@ -132,6 +137,20 @@ def test_filled_training_size_is_returned(raw):
         (["features", "time_basis"], _DROP, "missing fields"),
         (["features", "excluded"], ["from_abuser", "url_file"], "requested_at_utc"),
         (["features", "excluded"], ["from_abuser", "requested_at_utc"], "urls_no_action"),
+        (["models", "linear_svm_sgd"], _DROP, "missing fields"),
+        (["models", "linear_svm_sgd", "loss"], "log_loss", "is not one of"),
+        (["models", "linear_svm_sgd", "penalty"], "elasticnet", "is not one of"),
+        (["models", "linear_svm_sgd", "alpha_grid"], [], "non-empty list"),
+        (["models", "linear_svm_sgd", "alpha_grid"], [1e-4, 0.0], "positive numbers"),
+        (["models", "linear_svm_sgd", "alpha_grid"], [1e-4, True], "positive numbers"),
+        (["models", "linear_svm_sgd", "alpha_grid"], [1e-4, 1e-4], "duplicates"),
+        (["models", "linear_svm_sgd", "max_epochs"], 0, "integer >= 1"),
+        (["models", "linear_svm_sgd", "tol"], 0, "positive number"),
+        (["models", "linear_svm_sgd", "n_iter_no_change"], 0, "integer >= 1"),
+        (["models", "linear_svm_sgd", "early_stopping"], True, "must be false"),
+        (["models", "linear_svm_sgd", "early_stopping"], "no", "true or false"),
+        (["models", "linear_svm_sgd", "tie_break"], "best_recall", "is not one of"),
+        (["models", "linear_svm_sgd", "extra"], 1, "unexpected fields"),
     ],
 )
 def test_schema_violations_are_rejected(raw, path, value, message):

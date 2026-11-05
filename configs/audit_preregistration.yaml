@@ -155,6 +155,25 @@ models:
   # Hyperparameters and the decision threshold are tuned on validation only;
   # the test set is evaluated once, at the end.
   tune_on: "validation"
+  # Linear SVM trained by stochastic gradient descent (a kernel SVM is infeasible at this
+  # size). Its regularization strength alpha relates to the logistic regression's C by
+  # alpha = 1 / (C * training rows); at about 2.0 M rows this grid spans C from 0.001 to 10,
+  # the logistic regression range plus one stronger step. The stronger step was added after
+  # the logistic regression's validation result, where the best strength sat at the edge of
+  # its grid; the test set had not been read. Every value crosses with
+  # models.imbalance_variants. The winner has the highest validation PR-AUC; ties go to the
+  # larger alpha, then to no class weighting. Training stops when the loss has not improved
+  # by tol for n_iter_no_change epochs, or after max_epochs; no rows are held out for early
+  # stopping, because a random hold-out would ignore the request and domain grouping.
+  linear_svm_sgd:
+    loss: "hinge"
+    penalty: "l2"
+    alpha_grid: [5.0e-4, 5.0e-5, 5.0e-6, 5.0e-7, 5.0e-8]
+    max_epochs: 50
+    tol: 1.0e-4
+    n_iter_no_change: 5
+    early_stopping: false
+    tie_break: "larger_alpha_then_no_class_weight"
 
 metrics:
   primary: "pr_auc"

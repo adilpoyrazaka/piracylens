@@ -34,6 +34,9 @@ BASE_RATE_ROWS = frozenset({"all_train_rows", "train_sample"})
 PR_AUC_METHODS = frozenset({"average_precision"})
 CALIBRATION_ROWS = frozenset({"validation_cross_fitted", "train_out_of_fold"})
 THRESHOLD_RULES = frozenset({"precision_target_on_validation"})
+SVM_LOSSES = frozenset({"hinge"})
+SVM_PENALTIES = frozenset({"l2"})
+SVM_TIE_BREAKS = frozenset({"larger_alpha_then_no_class_weight"})
 PRIMARY_METRICS = frozenset({"pr_auc"})
 OTHER_METRICS = frozenset({"recall_at_precision", "brier"})
 INPUTS = frozenset(
@@ -105,6 +108,20 @@ class Period:
 
 
 @dataclass(frozen=True)
+class LinearSvmDesign:
+    """Grid and stopping rule of the linear SVM trained by stochastic gradient descent."""
+
+    loss: str
+    penalty: str
+    alpha_grid: tuple[float, ...]
+    max_epochs: int
+    tol: float
+    n_iter_no_change: int
+    early_stopping: bool
+    tie_break: str
+
+
+@dataclass(frozen=True)
 class Preregistration:
     """Validated audit design."""
 
@@ -169,6 +186,7 @@ class Preregistration:
     source_subset: tuple[str, ...]
     no_reporter_model: bool
     large_gap_pr_auc: float
+    linear_svm: LinearSvmDesign
 
     def require_train_requests(self) -> int:
         """Return the training size, or stop if it has not been fixed yet."""
@@ -309,6 +327,7 @@ def parse_preregistration(data: Any) -> Preregistration:
             "past_rate_fallback",
             "base_rate_rows",
             "tune_on",
+            "linear_svm_sgd",
         },
         "models",
     )
@@ -324,6 +343,7 @@ def parse_preregistration(data: Any) -> Preregistration:
     fallback = _choice(mod, "past_rate_fallback", "models", PAST_RATE_FALLBACKS)
     base_rate_rows = _choice(mod, "base_rate_rows", "models", BASE_RATE_ROWS)
     tune_on = _choice(mod, "tune_on", "models", frozenset({"validation"}))
+    linear_svm = _linear_svm(mod["linear_svm_sgd"])
 
     met = _mapping(
         top["metrics"],
@@ -428,7 +448,53 @@ def parse_preregistration(data: Any) -> Preregistration:
         source_subset=_names(chk, "source_subset", "checks", SOURCE_FLAGS),
         no_reporter_model=_bool(chk, "no_reporter_model", "checks"),
         large_gap_pr_auc=_share(chk, "large_gap_pr_auc", "checks"),
+        linear_svm=linear_svm,
     )
+
+
+def _linear_svm(obj: Any) -> LinearSvmDesign:
+    where = "models.linear_svm_sgd"
+    svm = _mapping(
+        obj,
+        {
+            "loss",
+            "penalty",
+            "alpha_grid",
+            "max_epochs",
+            "tol",
+            "n_iter_no_change",
+            "early_stopping",
+            "tie_break",
+        },
+        where,
+    )
+    grid = svm["alpha_grid"]
+    if not isinstance(grid, list) or not grid:
+        raise PreregistrationError(f"{where}.alpha_grid must be a non-empty list")
+    if not all(_is_positive_number(a) for a in grid):
+        raise PreregistrationError(f"{where}.alpha_grid must contain positive numbers only")
+    if len(set(grid)) != len(grid):
+        raise PreregistrationError(f"{where}.alpha_grid contains duplicates")
+    if not _is_positive_number(svm["tol"]):
+        raise PreregistrationError(f"{where}.tol must be a positive number, got {svm['tol']!r}")
+    if _bool(svm, "early_stopping", where):
+        raise PreregistrationError(
+            f"{where}.early_stopping must be false: a random hold-out ignores the grouping"
+        )
+    return LinearSvmDesign(
+        loss=_choice(svm, "loss", where, SVM_LOSSES),
+        penalty=_choice(svm, "penalty", where, SVM_PENALTIES),
+        alpha_grid=tuple(float(a) for a in grid),
+        max_epochs=_int(svm, "max_epochs", where, minimum=1),
+        tol=float(svm["tol"]),
+        n_iter_no_change=_int(svm, "n_iter_no_change", where, minimum=1),
+        early_stopping=False,
+        tie_break=_choice(svm, "tie_break", where, SVM_TIE_BREAKS),
+    )
+
+
+def _is_positive_number(value: Any) -> bool:
+    return not isinstance(value, bool) and isinstance(value, int | float) and value > 0
 
 
 def _mapping(obj: Any, required: set[str] | frozenset[str], where: str) -> Mapping[str, Any]:
