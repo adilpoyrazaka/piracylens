@@ -57,6 +57,8 @@ def test_repo_design_file_is_valid():
     assert {"requested_at_utc", p.label_counter} <= set(p.excluded_features)
     assert not set(p.inputs) & set(p.excluded_features)
     assert p.request_size_rows == "all"
+    assert p.past_rate_unit == "decided_rows" and p.time_basis == "timestamp"
+    assert p.tld_rule == "last_label" and p.domain_normalization == "lowercase_trim"
     assert p.ngram_min <= p.ngram_max
 
 
@@ -108,6 +110,11 @@ def test_filled_training_size_is_returned(raw):
         (["features", "categorical_top_k"], 0, "integer >= 1"),
         (["features", "request_size_rows"], "decided", "is not one of"),
         (["features", "self_filed_level"], "owner_key", "is not one of"),
+        (["features", "past_rate_unit"], "urls", "is not one of"),
+        (["features", "tld_rule"], "public_suffix", "is not one of"),
+        (["features", "time_basis"], "date", "is not one of"),
+        (["features", "domain_normalization"], "strip_www", "is not one of"),
+        (["features", "time_basis"], _DROP, "missing fields"),
         (["features", "excluded"], ["from_abuser", "url_file"], "requested_at_utc"),
         (["features", "excluded"], ["from_abuser", "requested_at_utc"], "urls_no_action"),
     ],

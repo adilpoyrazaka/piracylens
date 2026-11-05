@@ -63,6 +63,10 @@ PAIRED_INPUTS = (("domain_past_rate", "has_domain_history"), ("domain_age_days",
 NGRAM_ANALYZERS = frozenset({"char_wb", "char"})
 REQUEST_SIZE_ROWS = frozenset({"all"})
 SELF_FILED_LEVELS = frozenset({"owner_group"})
+PAST_RATE_UNITS = frozenset({"decided_rows"})
+TLD_RULES = frozenset({"last_label"})
+TIME_BASES = frozenset({"timestamp"})
+DOMAIN_NORMALIZATIONS = frozenset({"lowercase_trim"})
 
 _TOP = frozenset(
     {
@@ -127,6 +131,10 @@ class Preregistration:
     categorical_top_k: int
     request_size_rows: str
     self_filed_level: str
+    past_rate_unit: str
+    tld_rule: str
+    time_basis: str
+    domain_normalization: str
     train_unit: str
     train_requests: int | None
     rebalance_eval: bool
@@ -220,6 +228,10 @@ def parse_preregistration(data: Any) -> Preregistration:
             "categorical_top_k",
             "request_size_rows",
             "self_filed_level",
+            "past_rate_unit",
+            "tld_rule",
+            "time_basis",
+            "domain_normalization",
             "excluded",
         },
         "features",
@@ -254,6 +266,10 @@ def parse_preregistration(data: Any) -> Preregistration:
     categorical_top_k = _int(feat, "categorical_top_k", "features", minimum=1)
     request_size_rows = _choice(feat, "request_size_rows", "features", REQUEST_SIZE_ROWS)
     self_filed_level = _choice(feat, "self_filed_level", "features", SELF_FILED_LEVELS)
+    past_rate_unit = _choice(feat, "past_rate_unit", "features", PAST_RATE_UNITS)
+    tld_rule = _choice(feat, "tld_rule", "features", TLD_RULES)
+    time_basis = _choice(feat, "time_basis", "features", TIME_BASES)
+    domain_normalization = _choice(feat, "domain_normalization", "features", DOMAIN_NORMALIZATIONS)
 
     sam = _mapping(
         top["sampling"], {"train_unit", "train_requests", "rebalance_eval", "seed"}, "sampling"
@@ -358,6 +374,10 @@ def parse_preregistration(data: Any) -> Preregistration:
         categorical_top_k=categorical_top_k,
         request_size_rows=request_size_rows,
         self_filed_level=self_filed_level,
+        past_rate_unit=past_rate_unit,
+        tld_rule=tld_rule,
+        time_basis=time_basis,
+        domain_normalization=domain_normalization,
         train_unit=train_unit,
         train_requests=train_requests,
         rebalance_eval=rebalance_eval,

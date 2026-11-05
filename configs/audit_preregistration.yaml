@@ -86,6 +86,18 @@ features:
   # A request is self-filed when its reporter is one of the owner names of the request's
   # own owner group, so a brand filing for its parent also counts.
   self_filed_level: "owner_group"
+  # The past rate counts earlier decided request x domain rows with the primary label, so it
+  # has the same unit as the label and one very large request cannot dominate it.
+  past_rate_unit: "decided_rows"
+  # The top-level domain is the last label after the final dot; a public suffix list would
+  # add an input that changes over time.
+  tld_rule: "last_label"
+  # The 30-day gap and "strictly earlier" compare filing timestamps, not calendar dates, so
+  # two requests filed on the same day never count as earlier for each other.
+  time_basis: "timestamp"
+  # Domain names are lowercased and trimmed only; how many start with "www." is measured
+  # before any change to this rule.
+  domain_normalization: "lowercase_trim"
   # Never used as features: the URL-level file, an undocumented column, raw free-text
   # names, the single URL counters (Google's outcome; one of them is the label), scoping
   # artifacts, and the filing date itself (a model trained on earlier years cannot read a
@@ -159,3 +171,6 @@ checks:
 # and before any label rate or model output was looked at. Two inputs come from label-blind
 # volume measurements: owners filing for themselves (about 7% of requests in every split)
 # and the age of a domain, which is known even when the domain has no decided history.
+# 2026-11-05: added features.past_rate_unit, tld_rule, time_basis and domain_normalization
+# before the feature builder existed and before any label rate or model output was looked
+# at; they close what the past rate counts and how domains and times are compared.
